@@ -1,0 +1,67 @@
+{
+  "name": "argsert",
+  "version": "1.0.9",
+  "description": "Type assertion utility for method arguments.",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blujedis/app.git"
+  },
+  "build": {
+    "clean": [
+      "./dist"
+    ],
+    "copy": []
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "./build/spec"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "keywords": [
+    "assert",
+    "assertion",
+    "types",
+    "arguments",
+    "validate",
+    "validation"
+  ],
+  "author": "Blujedi <blujedicorp@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blujedis/app/issues"
+  },
+  "homepage": "https://github.com/blujedis/app#readme",
+  "devDependencies": {
+    "@types/chai": "^4.0.1",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.10.21",
+    "chai": "^4.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.2.1",
+    "stiks": "^1.1.6",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.5.0",
+    "typedoc": "^0.7.1",
+    "typescript": "^2.5.2"
+  }
+}

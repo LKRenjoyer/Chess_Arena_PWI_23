@@ -1,0 +1,326 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Argsert</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">Argsert</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> Argsert</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="argsert">Argsert</h1>
+				<p>Simple argument type assertion.</p>
+				<h2 id="install">Install</h2>
+				<pre><code class="lang-sh">$ npm install argsert
+</code></pre>
+				<h2 id="usage">Usage</h2>
+				<p>Argsert works by mapping defined types for each argument in a method&#39;s signature to a given type. Arguments can be marked as required or optional using the &lt;&gt; and [] tokens. If an argument can be of multiple types simply separate each type by |.</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Argsert <span class="hljs-keyword">from</span> <span class="hljs-string">'argsert'</span>;
+<span class="hljs-keyword">const</span> argsert = Argsert.configure(<span class="hljs-comment">/* your options here */</span>);
+
+<span class="hljs-comment">// This method allows "email" to be the second argument.</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addUser</span>(<span class="hljs-params">name, age, email</span>) </span>{
+  argsert.assert(<span class="hljs-string">'&lt;string&gt; &lt;string|number&gt; [string]'</span>, [name, age, email]);
+}
+</code></pre>
+				<h2 id="tokens">Tokens</h2>
+				<p>Angle brackets &lt;&gt; denote a required argument square brackets [] denote an optional argument. Each definition is separated by a space. To define multiple types for an argument we use a | to denote the argument accepts multiple types.</p>
+				<p>For example the following creates definitions for a method with two arguments. The first being a string and the second an array or args.</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> map = <span class="hljs-string">'&lt;string&gt; [array]'</span>
+</code></pre>
+				<p>Multiple assertion types.</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> map = <span class="hljs-string">'&lt;string&gt; [string|array]'</span>
+</code></pre>
+				<p>Custom named argument by prefixing with &quot;some_name:&quot;. This would replace the &quot;first&quot; since its the first arg with &quot;username&quot; instead. For complex methods with multiple overrides using the positional placeholders e.g. first, second... is likely a better option.</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> map = <span class="hljs-string">'&lt;username:string&gt; [array]'</span>
+</code></pre>
+				<table>
+					<tr><td>&lt;string&gt;</pre></td><td>required argument of string.</td></tr>
+					<tr><td>[number]</td><td>an optional argument of number.</td></tr>
+					<tr><td>[string|array]</td><td>optional argument of string or array.</td></tr>
+				</table>
+				<h2 id="options">Options</h2>
+				<p>The defaults will likely work for most use cases. You may wish to have errors not thrown which you can disable by setting &quot;onError&quot; to false. Or you may want to use your own validators other than the defaults that are shipped.</p>
+				<table>
+					<tr><td>separator</td><td>The char used to separate/denote multiple types.</td><td>|</td></tr>
+					<tr><td>any</td><td>The string denoting any type is acceptable.</td><td>any</td></tr>
+					<tr><td>positions</td><td>An array of argument position names (defaults to up to 7).</td><td>[&#39;first&#39;..., &#39;seventh&#39;]</td></tr>
+					<tr><td>expander</td><td>A RegExp or function for expanding assertion map.</td><td>/([[&lt;])\S+([]&gt;])/g</td></tr>
+					<tr><td>stripper</td><td>A RegExp or function for stripping tokens/chars.</td><td>/[&lt;&gt;[]]/g</td></tr>
+					<tr><td>parser</td><td>A function used to inspect an argument&#39;s type.</td><td>parseType</td></tr>
+					<tr><td>strict</td><td>When false an undefined assertion config is allowed.</td><td>false</td></tr>
+					<tr><td>onError</td><td>True to have errors thrown, false to return result or function to handle by user.</td><td>true</td></tr>
+					<tr><td>templates</td><td>Message templates used for built in validators, useful in localization.</td><td>see Templates</td></tr>
+					<tr><td>validators</td><td>A map of validator configurations.</td><td>see Validators</td></tr>
+				</table>
+				<h2 id="validators">Validators</h2>
+				<p>Validators are simple configuation objects with two properties. A handler function and a key representing whether it&#39;s enabled or disabled. By default there are only three validators as listed below.</p>
+				<table>
+					<tr><td>unmet</td><td>Validates if less than the required number of arguments are provided. </td></tr>
+					<tr><td>extra</td><td>Validates if extra arguments beyond the maxium allowed are provided.</td></tr>
+					<tr><td>mismatch</td><td>Handles type mismatch failures for both required and optional arguments.</td></tr>
+				</table>
+				<h3 id="add">Add</h3>
+				<p>Adding a validator is pretty easy just provide a name and a config with a handler method. The handler should return either null if it passes or a string which will be converted to an error, an Error instance or an IArgsertValidationResult object containing the error and optionally the offending argument.</p>
+				<pre><code class="lang-ts">argsert.add(<span class="hljs-string">'myValidator'</span>, {
+
+  enabled: <span class="hljs-literal">true</span>,
+  handler: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> {
+
+    <span class="hljs-comment">// Argsert creates two arrays of keys one for</span>
+    <span class="hljs-comment">// required and one for optional arguments.</span>
+    <span class="hljs-comment">// For this example validator we'll combine</span>
+    <span class="hljs-comment">// them for this example.</span>
+
+    <span class="hljs-comment">// Filter out any arg which contains</span>
+    <span class="hljs-comment">// a type of "email".</span>
+    <span class="hljs-keyword">const</span> keys =
+      result
+        .required
+        .concat(result.optional);
+
+    keys.forEach(<span class="hljs-function"><span class="hljs-params">i</span> =&gt;</span> {
+
+      <span class="hljs-comment">// Get the config for this argument.</span>
+      <span class="hljs-comment">// A parsed argument looks like the below.</span>
+
+      <span class="hljs-comment">// arg = {</span>
+      <span class="hljs-comment">//    index: 0</span>
+      <span class="hljs-comment">//    type: 'string'</span>
+      <span class="hljs-comment">//    types: ['string']</span>
+      <span class="hljs-comment">//    value: any;</span>
+      <span class="hljs-comment">//    required: boolean;</span>
+      <span class="hljs-comment">// }</span>
+
+      <span class="hljs-comment">// Get the arg's parsed config by key.</span>
+      <span class="hljs-comment">// The keys are basically the argument's index.</span>
+      <span class="hljs-keyword">const</span> arg = result[i];
+
+      <span class="hljs-comment">// Run some check if valid return null.</span>
+      <span class="hljs-keyword">if</span> (valid)
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+
+      <span class="hljs-comment">// Otherwise return the string or error along</span>
+      <span class="hljs-comment">// with the optional offending argument</span>
+      <span class="hljs-keyword">return</span> {
+        error: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`whoops <span class="hljs-subst">${arg.value}</span> doesn't look right...`</span>),
+        argument: arg;
+      };
+
+      <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> you can also just return the</span>
+      <span class="hljs-comment">// error string or Error instance</span>
+
+    });
+
+  }
+});
+</code></pre>
+				<h3 id="enable-disable">Enable &amp; Disable</h3>
+				<p>You can call .enable() or .disable() to define which validators are active or inactive and then toggle them back.</p>
+				<pre><code class="lang-ts">argsert
+  .disable()              <span class="hljs-comment">// disable all.</span>
+  .enable(<span class="hljs-string">'mismatch'</span>);    <span class="hljs-comment">// enable only mismatch.</span>
+</code></pre>
+				<h3 id="validate-once">Validate Once</h3>
+				<p>The validate once method enables only the validators you provide and uses them once then discards reverting to previous settings.</p>
+				<pre><code class="lang-ts">argsert
+  .once(<span class="hljs-string">'unmet'</span>) <span class="hljs-comment">// only unmet is enabled for next validate call.</span>
+  .assert(<span class="hljs-string">'&lt;string&gt; &lt;string|number&gt;'</span>, <span class="hljs-built_in">arguments</span>);
+</code></pre>
+				<h2 id="types-parser">Types &amp; Parser</h2>
+				<p>By default the following types are supported.</p>
+				<ul>
+					<li>string</li>
+					<li>boolean</li>
+					<li>number</li>
+					<li>array</li>
+					<li>function</li>
+					<li>object</li>
+					<li>regexp</li>
+					<li>null</li>
+					<li>undefined</li>
+				</ul>
+				<p>If you wish to implement even more granular detail as to types this can be done quite easily by providing your own parser. Below is the logic for the default parser as you can see it&#39;s rather simple.</p>
+				<p>It would be trivial to implement logic for say floats or say email addresses and so on.</p>
+				<pre><code class="lang-ts"> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseType</span>(<span class="hljs-params">val: <span class="hljs-built_in">any</span></span>) </span>{
+
+    <span class="hljs-keyword">if</span> (val === <span class="hljs-literal">null</span>)
+      <span class="hljs-keyword">return</span> <span class="hljs-string">'null'</span>;
+
+    <span class="hljs-keyword">if</span> ((val <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">RegExp</span>))
+      <span class="hljs-keyword">return</span> <span class="hljs-string">'regexp'</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Array</span>.isArray(val))
+      <span class="hljs-keyword">return</span> <span class="hljs-string">'array'</span>;
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> val;
+
+  }
+</code></pre>
+				<h3 id="using-a-custom-parser">Using a Custom Parser</h3>
+				<p>You could also provide this in your configuration object.</p>
+				<pre><code class="lang-ts">argsert.option(<span class="hljs-string">'parser'</span>, myCustomParser);
+</code></pre>
+				<h2 id="templates">Templates</h2>
+				<p>These are primarily exposed for use with localization. It&#39;s important that the same number of format args are maintained. If you wish greater control you&#39;ll need to create your own validators rather than using the defaults.</p>
+				<table>
+					<tr><td>unmet</td><td><code>expected at least %d arguments but got %d.</code></td></tr>
+					<tr><td>extra</td><td><code>expected no more than %d arguments but got %d.</code></td></tr>
+					<tr><td>mismatch</td><td><code>%s arg has type %s but only %s is allowed.</code></td></tr>
+					<tr><td>unknown</td><td><code>validator %s could not be found.</code></td></tr>
+				</table>
+				<h2 id="docs">Docs</h2>
+				<p>See <a href="https://blujedis.github.io/argsert/">https://blujedis.github.io/argsert/</a></p>
+				<h2 id="change">Change</h2>
+				<p>See <a href="CHANGE.md">CHANGE.md</a></p>
+				<h2 id="license">License</h2>
+				<p>See <a href="LICENSE">LICENSE</a></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_argsert_.html">"argsert"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_interfaces_.html">"interfaces"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

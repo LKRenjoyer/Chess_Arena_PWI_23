@@ -29,6 +29,7 @@
     "@emotion/styled": "^11.11.0",
     "argsert": "^1.0.9",
     "axios": "^1.5.0",
+    "react-chessboard": "^4.3.2",
     "react-router-dom": "^6.15.0",
     "yargs": "^17.7.2"
   }
