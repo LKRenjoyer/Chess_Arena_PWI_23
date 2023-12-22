@@ -1,9 +1,9 @@
-import { useState } from "react";
-import Chess from "./chess";
 import { Chessboard } from "react-chessboard";
+import React,{ useState } from 'react';
+import {Chess} from 'chess.js';
 
-export default function PlayRandomMoveEngine() {
-  const [game, setGame] = useState(new Chess());
+export default function Main() {
+    const [game, setGame] = useState(new Chess());
 
   function makeAMove(move) {
     const gameCopy = { ...game };
@@ -33,5 +33,9 @@ export default function PlayRandomMoveEngine() {
     return true;
   }
 
-  return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;
+  return <Chessboard 
+  position={game.fen()} 
+  onPieceDrop={onDrop} 
+  boardWidth={500}
+  />;
 }
