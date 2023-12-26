@@ -49,22 +49,20 @@ Liczba pełnych ruchów -  czyli pełny cykl, posunięcie figury białych oraz p
 */
 
 struct pozycja {
-    char plansza[8][8];
-    char czyj_ruch; 
-    bool czy_Q, czy_K, czy_q, czy_k;
-    bool czy_bicie_w_przelocie;
-    char wiersz_bwp, kolumna_bwp;
-    int liczba_polowek_ruchow, liczba_ruchow;
+    char plansza[8][8] = {};
+    char czyj_ruch = ' '; 
+    bool czy_Q = 0, czy_K = 0, czy_q = 0, czy_k = 0;
+    bool czy_bicie_w_przelocie = 0;
+    char wiersz_bwp = ' ', kolumna_bwp = ' ';
+    int liczba_polowek_ruchow = 0, liczba_ruchow = 0;
 };
 
 string pozycja_startowa = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-pozycja stan;
-
-void fen_to_chessboard(string fen) {
+void fen_to_chessboard(string fen, pozycja *poz) {
     for(int i = 0; i <= 7; i++) {
         for(int ii = 0; ii <= 7; ii++) {
-            stan.plansza[i][ii] = ' ';
+            poz->plansza[i][ii] = ' ';
         }
     }
     int x = 0;
@@ -79,25 +77,25 @@ void fen_to_chessboard(string fen) {
                 x++;
             }
             else {
-                stan.plansza[i][ii] = fen[x];
+                poz->plansza[i][ii] = fen[x];
                 x++;
             }
         }
     }
-    stan.czyj_ruch = fen[x];
+    poz->czyj_ruch = fen[x];
     x += 2;
     while(fen[x] != ' ') {
         if(fen[x] == 'K') {
-            stan.czy_K = 1;
+            poz->czy_K = 1;
         }
         else if(fen[x] == 'Q') {
-            stan.czy_Q = 1;
+            poz->czy_Q = 1;
         }
         else if(fen[x] == 'k') {
-            stan.czy_k = 1;
+            poz->czy_k = 1;
         }
         else if(fen[x] == 'q'){
-            stan.czy_q = 1;
+            poz->czy_q = 1;
         }
         x++;
     }
@@ -106,10 +104,10 @@ void fen_to_chessboard(string fen) {
         x += 2;
     }
     else {
-        stan.czy_bicie_w_przelocie = 1;
-        stan.wiersz_bwp = fen[x];
+        poz->czy_bicie_w_przelocie = 1;
+        poz->wiersz_bwp = fen[x];
         x++;
-        stan.kolumna_bwp = fen[x];
+        poz->kolumna_bwp = fen[x];
         x += 2;
     }
     string pom = "";
@@ -117,17 +115,17 @@ void fen_to_chessboard(string fen) {
         pom += fen[x];
         x++;
     }
-    stan.liczba_polowek_ruchow = stoi(pom);
+    poz->liczba_polowek_ruchow = stoi(pom);
     x++;
     pom = "";
     while(x < (int)fen.size()) {
         pom += fen[x];
         x++;
     }
-    stan.liczba_ruchow = stoi(pom);
+    poz->liczba_ruchow = stoi(pom);
 }
 
-void wizualizacja() {
+void wizualizacja(pozycja *poz) {
     cout << '\n';
     cout << '*';
     for(int i = 0; i < 16; i++) {
@@ -137,7 +135,7 @@ void wizualizacja() {
     for(int i = 7; i >= 0; i--) {
         cout << '|';
         for(int ii = 0; ii < 8; ii++) {
-            cout << stan.plansza[i][ii] << ' ';
+            cout << poz->plansza[i][ii] << ' ';
         }
         cout << '|';
         cout << '\n';
@@ -148,11 +146,11 @@ void wizualizacja() {
     }
     cout << '*' << '\n';
     cout << '\n';
-    cout << "czyj ruch: " << stan.czyj_ruch << '\n';
-    cout << "możliwe roszady: " << (stan.czy_K ? "K" : "") << (stan.czy_Q ? "Q" : "") << (stan.czy_k ? "k" : "") << (stan.czy_q ? "q" : "") << '\n';
-    cout << "czy mozliwe bicie w przelocie: " << (stan.czy_bicie_w_przelocie ? "TAK " : "NIE ") << (stan.czy_bicie_w_przelocie ? stan.kolumna_bwp : ' ') << (stan.czy_bicie_w_przelocie ? stan.wiersz_bwp : ' ') << '\n';
-    cout << "liczba_polowek_ruchow: " << stan.liczba_polowek_ruchow << '\n';
-    cout << "liczba_ruchow: " << stan.liczba_ruchow << '\n'; 
+    cout << "czyj ruch: " << poz->czyj_ruch << '\n';
+    cout << "możliwe roszady: " << (poz->czy_K ? "K" : "") << (poz->czy_Q ? "Q" : "") << (poz->czy_k ? "k" : "") << (poz->czy_q ? "q" : "") << '\n';
+    cout << "czy mozliwe bicie w przelocie: " << (poz->czy_bicie_w_przelocie ? "TAK " : "NIE ") << (poz->czy_bicie_w_przelocie ? poz->kolumna_bwp : ' ') << (poz->czy_bicie_w_przelocie ? poz->wiersz_bwp : ' ') << '\n';
+    cout << "liczba_polowek_ruchow: " << poz->liczba_polowek_ruchow << '\n';
+    cout << "liczba_ruchow: " << poz->liczba_ruchow << '\n'; 
 }
 
 void porusz(string ruch, pozycja *poz) {
@@ -282,31 +280,31 @@ void porusz(string ruch, pozycja *poz) {
     }
 }
 
-bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jest szachowane przez figury koloru "kolor"
+bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz) {//sprawdza czy pole jest szachowane przez figury koloru "kolor"
     vector <pair <int,int> > ruchy_skoczka = {{1, 2}, {1, -2}, {-1, 2}, {-1, -2}, {2, -1}, {2, 1}, {-2, -1}, {-2, 1}};
     vector <pair <int,int> > ruchy_krola = {{1, 1}, {1, 0}, {1, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {0, -1}};
     if(kolor == 'w') {
         //czy pion szachuje
         if(y - 1 >= 0 && x - 1 >= 0) {
-            if(stan.plansza[y - 1][x - 1] == 'P') {
+            if(poz->plansza[y - 1][x - 1] == 'P') {
                 return 1;
             }
         }
         if(y - 1 >= 0 && x + 1 <= 7) {
-            if(stan.plansza[y - 1][x + 1] == 'P') {
+            if(poz->plansza[y - 1][x + 1] == 'P') {
                 return 1;
             }
         }
         for(int i = 0; i < 8; i++) {
             //czy skoczek szachuje
             if(y + ruchy_skoczka[i].st >= 0 && y + ruchy_skoczka[i].st <= 7 && x + ruchy_skoczka[i].nd >= 0 && x + ruchy_skoczka[i].nd <= 7) {
-                if(stan.plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'N') {
+                if(poz->plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'N') {
                     return 1;
                 }    
             }
             //czy krol szachuje
             if(y + ruchy_krola[i].st >= 0 && y + ruchy_krola[i].st <= 7 && x + ruchy_krola[i].nd >= 0 && x + ruchy_krola[i].nd <= 7) {
-                if(stan.plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'K') {
+                if(poz->plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'K') {
                     return 1;
                 }    
             }
@@ -314,8 +312,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         //czy kolumny i wiersze
         int pom = 1;
         while(y + pom <= 7) {
-            if(stan.plansza[y + pom][x] != ' ') {
-                if(stan.plansza[y + pom][x] == 'Q' || stan.plansza[y + pom][x] == 'R') {
+            if(poz->plansza[y + pom][x] != ' ') {
+                if(poz->plansza[y + pom][x] == 'Q' || poz->plansza[y + pom][x] == 'R') {
                     return 1;
                 }
                 else {
@@ -326,8 +324,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0) {
-            if(stan.plansza[y - pom][x] != ' ') {
-                if(stan.plansza[y - pom][x] == 'Q' || stan.plansza[y - pom][x] == 'R') {
+            if(poz->plansza[y - pom][x] != ' ') {
+                if(poz->plansza[y - pom][x] == 'Q' || poz->plansza[y - pom][x] == 'R') {
                     return 1;
                 }
                 else {
@@ -338,8 +336,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(x + pom <= 7) {
-            if(stan.plansza[y][x + pom] != ' ') {
-                if(stan.plansza[y][x + pom] == 'Q' || stan.plansza[y][x + pom] == 'R') {
+            if(poz->plansza[y][x + pom] != ' ') {
+                if(poz->plansza[y][x + pom] == 'Q' || poz->plansza[y][x + pom] == 'R') {
                     return 1;
                 }
                 else {
@@ -350,8 +348,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(x - pom >= 0) {
-            if(stan.plansza[y][x - pom] != ' ') {
-                if(stan.plansza[y][x - pom] == 'Q' || stan.plansza[y][x - pom] == 'R') {
+            if(poz->plansza[y][x - pom] != ' ') {
+                if(poz->plansza[y][x - pom] == 'Q' || poz->plansza[y][x - pom] == 'R') {
                     return 1;
                 }
                 else {
@@ -363,8 +361,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         //czy przekatne
         pom = 1;
         while(y + pom <= 7 && x + pom <= 7) {
-            if(stan.plansza[y + pom][x + pom] != ' ') {
-                if(stan.plansza[y + pom][x + pom] == 'Q' || stan.plansza[y + pom][x + pom] == 'B') {
+            if(poz->plansza[y + pom][x + pom] != ' ') {
+                if(poz->plansza[y + pom][x + pom] == 'Q' || poz->plansza[y + pom][x + pom] == 'B') {
                     return 1;
                 }
                 else {
@@ -375,8 +373,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y + pom <= 7 && x - pom >= 0) {
-            if(stan.plansza[y + pom][x - pom] != ' ') {
-                if(stan.plansza[y + pom][x - pom] == 'Q' || stan.plansza[y + pom][x - pom] == 'B') {
+            if(poz->plansza[y + pom][x - pom] != ' ') {
+                if(poz->plansza[y + pom][x - pom] == 'Q' || poz->plansza[y + pom][x - pom] == 'B') {
                     return 1;
                 }
                 else {
@@ -387,8 +385,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0 && x + pom <= 7) {
-            if(stan.plansza[y - pom][x + pom] != ' ') {
-                if(stan.plansza[y - pom][x + pom] == 'Q' || stan.plansza[y - pom][x + pom] == 'B') {
+            if(poz->plansza[y - pom][x + pom] != ' ') {
+                if(poz->plansza[y - pom][x + pom] == 'Q' || poz->plansza[y - pom][x + pom] == 'B') {
                     return 1;
                 }
                 else {
@@ -399,8 +397,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0 && x - pom >= 0) {
-            if(stan.plansza[y - pom][x - pom] != ' ') {
-                if(stan.plansza[y - pom][x - pom] == 'Q' || stan.plansza[y - pom][x - pom] == 'B') {
+            if(poz->plansza[y - pom][x - pom] != ' ') {
+                if(poz->plansza[y - pom][x - pom] == 'Q' || poz->plansza[y - pom][x - pom] == 'B') {
                     return 1;
                 }
                 else {
@@ -413,25 +411,25 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
     else {
         //czy pion szachuje
         if(y + 1 <= 7 && x - 1 >= 0) {
-            if(stan.plansza[y + 1][x - 1] == 'p') {
+            if(poz->plansza[y + 1][x - 1] == 'p') {
                 return 1;
             }
         }
         if(y + 1 <= 7 && x + 1 <= 7) {
-            if(stan.plansza[y + 1][x + 1] == 'p') {
+            if(poz->plansza[y + 1][x + 1] == 'p') {
                 return 1;
             }
         }
         for(int i = 0; i < 8; i++) {
             //czy skoczek szachuje
             if(y + ruchy_skoczka[i].st >= 0 && y + ruchy_skoczka[i].st <= 7 && x + ruchy_skoczka[i].nd >= 0 && x + ruchy_skoczka[i].nd <= 7) {
-                if(stan.plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'n') {
+                if(poz->plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'n') {
                     return 1;
                 }    
             }
             //czy krol szachuje
             if(y + ruchy_krola[i].st >= 0 && y + ruchy_krola[i].st <= 7 && x + ruchy_krola[i].nd >= 0 && x + ruchy_krola[i].nd <= 7) {
-                if(stan.plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'k') {
+                if(poz->plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'k') {
                     return 1;
                 }    
             }
@@ -439,8 +437,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         //czy kolumny i wiersze
         int pom = 1;
         while(y + pom <= 7) {
-            if(stan.plansza[y + pom][x] != ' ') {
-                if(stan.plansza[y + pom][x] == 'q' || stan.plansza[y + pom][x] == 'r') {
+            if(poz->plansza[y + pom][x] != ' ') {
+                if(poz->plansza[y + pom][x] == 'q' || poz->plansza[y + pom][x] == 'r') {
                     return 1;
                 }
                 else {
@@ -451,8 +449,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0) {
-            if(stan.plansza[y - pom][x] != ' ') {
-                if(stan.plansza[y - pom][x] == 'q' || stan.plansza[y - pom][x] == 'r') {
+            if(poz->plansza[y - pom][x] != ' ') {
+                if(poz->plansza[y - pom][x] == 'q' || poz->plansza[y - pom][x] == 'r') {
                     return 1;
                 }
                 else {
@@ -463,8 +461,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(x + pom <= 7) {
-            if(stan.plansza[y][x + pom] != ' ') {
-                if(stan.plansza[y][x + pom] == 'q' || stan.plansza[y][x + pom] == 'r') {
+            if(poz->plansza[y][x + pom] != ' ') {
+                if(poz->plansza[y][x + pom] == 'q' || poz->plansza[y][x + pom] == 'r') {
                     return 1;
                 }
                 else {
@@ -475,8 +473,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(x - pom >= 0) {
-            if(stan.plansza[y][x - pom] != ' ') {
-                if(stan.plansza[y][x - pom] == 'q' || stan.plansza[y][x - pom] == 'r') {
+            if(poz->plansza[y][x - pom] != ' ') {
+                if(poz->plansza[y][x - pom] == 'q' || poz->plansza[y][x - pom] == 'r') {
                     return 1;
                 }
                 else {
@@ -488,8 +486,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         //czy przekatne
         pom = 1;
         while(y + pom <= 7 && x + pom <= 7) {
-            if(stan.plansza[y + pom][x + pom] != ' ') {
-                if(stan.plansza[y + pom][x + pom] == 'q' || stan.plansza[y + pom][x + pom] == 'b') {
+            if(poz->plansza[y + pom][x + pom] != ' ') {
+                if(poz->plansza[y + pom][x + pom] == 'q' || poz->plansza[y + pom][x + pom] == 'b') {
                     return 1;
                 }
                 else {
@@ -500,8 +498,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y + pom <= 7 && x - pom >= 0) {
-            if(stan.plansza[y + pom][x - pom] != ' ') {
-                if(stan.plansza[y + pom][x - pom] == 'q' || stan.plansza[y + pom][x - pom] == 'b') {
+            if(poz->plansza[y + pom][x - pom] != ' ') {
+                if(poz->plansza[y + pom][x - pom] == 'q' || poz->plansza[y + pom][x - pom] == 'b') {
                     return 1;
                 }
                 else {
@@ -512,8 +510,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0 && x + pom <= 7) {
-            if(stan.plansza[y - pom][x + pom] != ' ') {
-                if(stan.plansza[y - pom][x + pom] == 'q' || stan.plansza[y - pom][x + pom] == 'b') {
+            if(poz->plansza[y - pom][x + pom] != ' ') {
+                if(poz->plansza[y - pom][x + pom] == 'q' || poz->plansza[y - pom][x + pom] == 'b') {
                     return 1;
                 }
                 else {
@@ -524,8 +522,8 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
         }
         pom = 1;
         while(y - pom >= 0 && x - pom >= 0) {
-            if(stan.plansza[y - pom][x - pom] != ' ') {
-                if(stan.plansza[y - pom][x - pom] == 'q' || stan.plansza[y - pom][x - pom] == 'b') {
+            if(poz->plansza[y - pom][x - pom] != ' ') {
+                if(poz->plansza[y - pom][x - pom] == 'q' || poz->plansza[y - pom][x - pom] == 'b') {
                     return 1;
                 }
                 else {
@@ -539,24 +537,14 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jes
 }
 
 int main() {
-    string fen;
-    getline(cin, fen);
-    fen_to_chessboard(fen);
-    wizualizacja();
-    //porusz(format, &stuct);
-    cout << '\n';
-    for(int i = 7; i >= 0; i--) {
-        for(int ii = 0; ii <= 7; ii++) {
-            cout << czy_pole_jest_szachowane(i, ii, 'w') << ' '; 
-        }
-        cout << '\n';
-    }
-    cout << '\n';
-    for(int i = 7; i >= 0; i--) {
-        for(int ii = 0; ii <= 7; ii++) {
-            cout << czy_pole_jest_szachowane(i, ii, 'b') << ' '; 
-        }
-        cout << '\n';
+    string fen = pozycja_startowa;
+    pozycja poz;
+    fen_to_chessboard(fen, &poz);
+    while(true) {
+        string ruch;
+        cin >> ruch;
+        porusz(ruch, &poz);
+        wizualizacja(&poz);
     }
 
     return 0;
