@@ -149,7 +149,7 @@ void porusz(string ruch) {
     //zmiana ruchu
     if(czyj_ruch == 'b') {
         liczba_ruchow++;
-        czyj_ruch = 'k';
+        czyj_ruch = 'w';
     }
     else {
         czyj_ruch = 'b';
