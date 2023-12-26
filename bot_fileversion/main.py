@@ -5,6 +5,7 @@ class Bot:
     def __init__(self):
         self.board = chess.Board()
         self.tura = True #True - moja tura, False - tura przeciwnika
+        self.licznik = 2
 
     def get_move(self):
         with open('komunikacja.txt','a') as file:
@@ -12,10 +13,12 @@ class Bot:
             # legal_moves_for_white_list = [move for move in legal_moves_for_white if self.board.piece_at(move.from_square).color == chess.WHITE]
             # print("1.",legal_moves_for_white_list,"2.",legal_moves_for_white)
             ruch = random.choice(list(move.uci() for move in self.board.legal_moves))
-            print(f'bot {ruch}')
-            file.write(f'\nbot {ruch}')
+            print(f'bot {ruch} {self.licznik}')
+            file.write(f'\nbot {ruch} {self.licznik}')
+            self.licznik+=2
             file.flush()
         # print(f'bot {ruch}') 
+        self.board.push(chess.Move.from_uci(ruch))
         self.tura = False
         # return random.choice(list(move.uci() for move in self.board.legal_moves))
             
@@ -31,9 +34,9 @@ class Bot:
             # zm+=1
             # if zm == 100000:
             #     break
-            if len(move)>2 and move[-2]=='client':
+            if len(move)>2 and move[-3]=='client' and int(move[-1])==self.licznik-1:
                 invalid_ruch = False
-                move = move[-1]
+                move = move[-2]
 
         # print(move)
         self.board.push(chess.Move.from_uci(move))
