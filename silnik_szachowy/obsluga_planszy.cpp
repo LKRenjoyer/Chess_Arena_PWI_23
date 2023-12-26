@@ -1,4 +1,9 @@
 #include <iostream>
+#include <vector>
+
+#define pb push_back
+#define st first
+#define nd second
 
 using namespace std;
 
@@ -269,17 +274,280 @@ void porusz(string ruch) {
     }
 }
 
-int main() {
-    string fen = pozycja_startowa;
-    fen_to_chessboard(fen);
-    while(true) {
-        string ruch;
-        cin >> ruch;
-        if(ruch.size() == 1) {
-            break;
+bool czy_pole_jest_szachowane(int y, int x, char kolor) {//sprawdza czy pole jest szachowane przez figury koloru "kolor"
+    vector <pair <int,int> > ruchy_skoczka = {{1, 2}, {1, -2}, {-1, 2}, {-1, -2}, {2, -1}, {2, 1}, {-2, -1}, {-2, 1}};
+    vector <pair <int,int> > ruchy_krola = {{1, 1}, {1, 0}, {1, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {0, -1}};
+    if(kolor == 'w') {
+        //czy pion szachuje
+        if(y - 1 >= 0 && x - 1 >= 0) {
+            if(plansza[y - 1][x - 1] == 'P') {
+                return 1;
+            }
         }
-        porusz(ruch);
-        wizualizacja();
+        if(y - 1 >= 0 && x + 1 <= 7) {
+            if(plansza[y - 1][x + 1] == 'P') {
+                return 1;
+            }
+        }
+        for(int i = 0; i < 8; i++) {
+            //czy skoczek szachuje
+            if(y + ruchy_skoczka[i].st >= 0 && y + ruchy_skoczka[i].st <= 7 && x + ruchy_skoczka[i].nd >= 0 && x + ruchy_skoczka[i].nd <= 7) {
+                if(plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'N') {
+                    return 1;
+                }    
+            }
+            //czy krol szachuje
+            if(y + ruchy_krola[i].st >= 0 && y + ruchy_krola[i].st <= 7 && x + ruchy_krola[i].nd >= 0 && x + ruchy_krola[i].nd <= 7) {
+                if(plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'K') {
+                    return 1;
+                }    
+            }
+        }
+        //czy kolumny i wiersze
+        int pom = 1;
+        while(y + pom <= 7) {
+            if(plansza[y + pom][x] != ' ') {
+                if(plansza[y + pom][x] == 'Q' || plansza[y + pom][x] == 'R') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0) {
+            if(plansza[y - pom][x] != ' ') {
+                if(plansza[y - pom][x] == 'Q' || plansza[y - pom][x] == 'R') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(x + pom <= 7) {
+            if(plansza[y][x + pom] != ' ') {
+                if(plansza[y][x + pom] == 'Q' || plansza[y][x + pom] == 'R') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(x - pom >= 0) {
+            if(plansza[y][x - pom] != ' ') {
+                if(plansza[y][x - pom] == 'Q' || plansza[y][x - pom] == 'R') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        } 
+        //czy przekatne
+        pom = 1;
+        while(y + pom <= 7 && x + pom <= 7) {
+            if(plansza[y + pom][x + pom] != ' ') {
+                if(plansza[y + pom][x + pom] == 'Q' || plansza[y + pom][x + pom] == 'B') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y + pom <= 7 && x - pom >= 0) {
+            if(plansza[y + pom][x - pom] != ' ') {
+                if(plansza[y + pom][x - pom] == 'Q' || plansza[y + pom][x - pom] == 'B') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0 && x + pom <= 7) {
+            if(plansza[y - pom][x + pom] != ' ') {
+                if(plansza[y - pom][x + pom] == 'Q' || plansza[y - pom][x + pom] == 'B') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0 && x - pom >= 0) {
+            if(plansza[y - pom][x - pom] != ' ') {
+                if(plansza[y - pom][x - pom] == 'Q' || plansza[y - pom][x - pom] == 'B') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+    }
+    else {
+        //czy pion szachuje
+        if(y + 1 <= 7 && x - 1 >= 0) {
+            if(plansza[y + 1][x - 1] == 'p') {
+                return 1;
+            }
+        }
+        if(y + 1 <= 7 && x + 1 <= 7) {
+            if(plansza[y + 1][x + 1] == 'p') {
+                return 1;
+            }
+        }
+        for(int i = 0; i < 8; i++) {
+            //czy skoczek szachuje
+            if(y + ruchy_skoczka[i].st >= 0 && y + ruchy_skoczka[i].st <= 7 && x + ruchy_skoczka[i].nd >= 0 && x + ruchy_skoczka[i].nd <= 7) {
+                if(plansza[y + ruchy_skoczka[i].st][x + ruchy_skoczka[i].nd] == 'n') {
+                    return 1;
+                }    
+            }
+            //czy krol szachuje
+            if(y + ruchy_krola[i].st >= 0 && y + ruchy_krola[i].st <= 7 && x + ruchy_krola[i].nd >= 0 && x + ruchy_krola[i].nd <= 7) {
+                if(plansza[y + ruchy_krola[i].st][x + ruchy_krola[i].nd] == 'k') {
+                    return 1;
+                }    
+            }
+        }
+        //czy kolumny i wiersze
+        int pom = 1;
+        while(y + pom <= 7) {
+            if(plansza[y + pom][x] != ' ') {
+                if(plansza[y + pom][x] == 'q' || plansza[y + pom][x] == 'r') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0) {
+            if(plansza[y - pom][x] != ' ') {
+                if(plansza[y - pom][x] == 'q' || plansza[y - pom][x] == 'r') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(x + pom <= 7) {
+            if(plansza[y][x + pom] != ' ') {
+                if(plansza[y][x + pom] == 'q' || plansza[y][x + pom] == 'r') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(x - pom >= 0) {
+            if(plansza[y][x - pom] != ' ') {
+                if(plansza[y][x - pom] == 'q' || plansza[y][x - pom] == 'r') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        } 
+        //czy przekatne
+        pom = 1;
+        while(y + pom <= 7 && x + pom <= 7) {
+            if(plansza[y + pom][x + pom] != ' ') {
+                if(plansza[y + pom][x + pom] == 'q' || plansza[y + pom][x + pom] == 'b') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y + pom <= 7 && x - pom >= 0) {
+            if(plansza[y + pom][x - pom] != ' ') {
+                if(plansza[y + pom][x - pom] == 'q' || plansza[y + pom][x - pom] == 'b') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0 && x + pom <= 7) {
+            if(plansza[y - pom][x + pom] != ' ') {
+                if(plansza[y - pom][x + pom] == 'q' || plansza[y - pom][x + pom] == 'b') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+        pom = 1;
+        while(y - pom >= 0 && x - pom >= 0) {
+            if(plansza[y - pom][x - pom] != ' ') {
+                if(plansza[y - pom][x - pom] == 'q' || plansza[y - pom][x - pom] == 'b') {
+                    return 1;
+                }
+                else {
+                    break;
+                }
+            }
+            pom++;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    string fen;
+    getline(cin, fen);
+    fen_to_chessboard(fen);
+    wizualizacja();
+    cout << '\n';
+    for(int i = 7; i >= 0; i--) {
+        for(int ii = 0; ii <= 7; ii++) {
+            cout << czy_pole_jest_szachowane(i, ii, 'w') << ' '; 
+        }
+        cout << '\n';
+    }
+    cout << '\n';
+    for(int i = 7; i >= 0; i--) {
+        for(int ii = 0; ii <= 7; ii++) {
+            cout << czy_pole_jest_szachowane(i, ii, 'b') << ' '; 
+        }
+        cout << '\n';
     }
 
     return 0;
