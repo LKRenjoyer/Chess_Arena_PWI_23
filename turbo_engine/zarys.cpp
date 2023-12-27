@@ -49,7 +49,89 @@ ll position_hash(position* pos) {
 }
 
 void make_move(string move, position* pos) {
-
+    pii st_kord, en_kord, bicie_kord = {-1,-1};
+    char przemiana = '';
+    char typ_figury='';
+    char kon = move[move.size() - 1];
+    if ('a' <= kon && kon <= 'z')przemiana = kon;
+    if ('A' <= kon && kon <= 'Z')przemiana = kon;
+    pos->row_enpas = '';
+    pos->col_enpas = '';
+    if (move=='O-O'){
+        if (pos->mover == 'W') {
+            pos->board[7][4] = ' '; 
+            pos->board[7][5] = 'R';
+            pos->board[7][6] = 'K';
+            pos->board[7][7] = ' ';
+            poss_Q = 1; poss_K = 1;
+        }
+        else {
+            pos->board[0][4] = ' ';
+            pos->board[0][5] = 'r';
+            pos->board[0][6] = 'k';
+            pos->board[0][7] = ' ';
+            poss_q = 1; poss_k = 1;
+        }
+        pos->halfmoves_amo++;
+        if (pos->mover == 'W')pos->mover = 'b';
+        else { pos->mover = 'W'; pos->moves_amo++; }
+        return;
+    }
+    //roszady krótkie
+    if (move == 'O-O-O') {
+        if (pos->mover == 'W') {
+            pos->board[7][0] = ' ';
+            pos->board[7][1] = ' ';
+            pos->board[7][2] = 'K';
+            pos->board[7][3] = 'R';
+            pos->board[7][4] = ' ';
+            poss_Q = 1; poss_K = 1;
+        }
+        else {
+            pos->board[0][0] = ' ';
+            pos->board[0][1] = ' ';
+            pos->board[0][2] = 'k';
+            pos->board[0][3] = 'r';
+            pos->board[0][4] = ' ';
+            poss_q = 1; poss_k = 1;
+        }
+        pos->halfmoves_amo++;
+        if (pos->mover == 'W')pos->mover = 'b';
+        else { pos->mover = 'W'; pos->moves_amo++; }
+        return;
+    }
+    //roszady d³ugie
+    st_kord = {s[0]-'0',s[1]-'0'};
+    en_kord = {s[2]-'0',s[3]-'0'};
+    if (move.size() > 5)bicie_kord = {s[4]-'0',s[5] - '0'};
+    typ_figury = pos->board[st_kord.st][st_kord.nd];
+    if (bicie_kord.st >= 0 || typ_figury == 'p' || typ_figury == 'P')pos->halfmoves_amo = -1; 
+    pos->halfmoves_amo++;
+    //rozwa¿enie pó³ruchów (czy ruch pionkiem lub czy bicie)
+    if (st_kord == {0, 0} || en_kord = { 0,0 })poss_q = 1; 
+    if (st_kord == {7, 0} || en_kord = { 7,0 })poss_k = 1;
+    if (st_kord == {7, 7} || en_kord = { 7,7 })poss_K = 1;
+    if (st_kord == {0, 7} || en_kord = { 0,7 })poss_Q = 1;
+    if (typ_figury == 'K') { poss_K = 1; poss_Q = 1; }
+    if (typ_figury == 'k') { poss_k = 1; poss_q = 1; }
+    //sprawdzenie roszad
+    if (abs(st_kord.nd - en_kord.nd) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
+        char sasiad = '';
+        if (w_planszy(en_kord.st - 1, en_kord.nd))sasiad = pos->board[en_kord.st - 1][en_kord.nd];
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { col_enpas = st_kord.st; row_enpas = (st_kord.nd + en_kord.nd) / 2; }
+        if (w_planszy(en_kord.st + 1, en_kord.nd))sasiad = pos->board[en_kord.st + 1][en_kord.nd];
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { col_enpas = st_kord.st; row_enpas = (st_kord.nd + en_kord.nd) / 2; }
+    }
+    //sprawdzenie en-passant
+    if (przemiana != '')typ_figury = przemiana; 
+    // jesli jest promocja to zmien typ figury
+    pos->board[st_kord.st][st_kord.nd] = ' ';
+    if (bicie_kord.st >= 0)pos->board[bicie_kord.st][bicie_kord.nd] = ' ';
+    pos->board[en_kord.st][en_kord.nd] = przemiana;
+    //wykonanie ruchu + zrobienie bicia
+    if (pos->mover == 'W')pos->mover = 'b';
+    else { pos->mover = 'W'; pos->moves_amo++; }
+    //zmiana strony dodanie cyklu
 }
 
 bool position_checked(int a, int b, char color, position* pos) {
