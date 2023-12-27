@@ -1,4 +1,5 @@
 #include "funkcje.h"
+#include "tabelki.h"
 
 void porusz(string ruch, pozycja *poz) {
     //zmiana ruchu
@@ -409,6 +410,7 @@ void wizualizacja(pozycja *poz) {
     cout << "czy mozliwe bicie w przelocie: " << (poz->czy_bicie_w_przelocie ? "TAK " : "NIE ") << (poz->czy_bicie_w_przelocie ? poz->kolumna_bwp : ' ') << (poz->czy_bicie_w_przelocie ? poz->wiersz_bwp : ' ') << '\n';
     cout << "liczba_polowek_ruchow: " << poz->liczba_polowek_ruchow << '\n';
     cout << "liczba_ruchow: " << poz->liczba_ruchow << '\n'; 
+    cout << "ewaluacja: " << ewaluacja_pozycji(poz) << '\n';
 }
 
 void fen_to_chessboard(string fen, pozycja *poz) {
@@ -475,4 +477,90 @@ void fen_to_chessboard(string fen, pozycja *poz) {
         x++;
     }
     poz->liczba_ruchow = stoi(pom);
+}
+
+long double ewaluacja_pozycji(pozycja *poz) {
+    int liczfigury[256] = {};
+    for(int i = 0; i <= 7; i++) {
+        for(int ii = 0; ii <= 7; ii++) {
+            liczfigury[poz->plansza[i][ii]];
+        }
+    }
+    long double wart = 
+    (long double)200 * (liczfigury['K'] - liczfigury['k']) +
+    (long double)9 * (liczfigury['Q'] - liczfigury['q']) +
+    (long double)5 * (liczfigury['R'] - liczfigury['r']) +
+    (long double)3 * (liczfigury['B'] - liczfigury['b']) +
+    (long double)3 * (liczfigury['N'] - liczfigury['n']) +
+    (long double)1 * (liczfigury['P'] - liczfigury['p']);
+    bool czy_endgame_b = 0;
+    bool czy_endgame_c = 0;
+    if(liczfigury['Q'] * 3 + liczfigury['R'] * 3 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 15)
+        czy_endgame_b = 1;
+    if(liczfigury['q'] * 3 + liczfigury['r'] * 3 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
+        czy_endgame_c = 1;
+    for(int i = 0; i < 8; i++) {
+        for(int ii = 0; ii < 8; ii++) {
+            if(poz->plansza[i][ii] == 'K') {
+                if(!czy_endgame_b) {
+                    wart += krol_b_pocz[i][ii] / 100;
+                }
+                else {
+                    wart += krol_b_kon[i][ii] / 100;
+                }
+            }
+            else if(poz->plansza[i][ii] == 'Q') {
+                wart += hetmany_b[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'R') {
+                wart += wieze_b[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'B') {
+                wart += gonce_b[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'N') {
+                wart += skoczki_b[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'P') {
+                if(!czy_endgame_b) {
+                    wart += piony_b_pon[i][ii] / 100;
+                }
+                else {
+                    wart += piony_b_kon[i][ii] / 100;
+                }
+            }
+            else if(poz->plansza[i][ii] == 'k') {
+                if(!czy_endgame_c) {
+                    wart -= krol_c_pocz[i][ii] / 100;
+                }
+                else {
+                    wart -= krol_c_kon[i][ii] / 100;
+                }
+            }
+            else if(poz->plansza[i][ii] == 'q') {
+                wart -= hetmany_c[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'r') {
+                wart -= wieze_c[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'b') {
+                wart -= gonce_c[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'n') {
+                wart -= skoczki_c[i][ii] / 100;
+            }
+            else if(poz->plansza[i][ii] == 'p') {
+                if(!czy_endgame_c) {
+                    wart -= piony_c_pon[i][ii] / 100;
+                }
+                else {
+                    wart -= piony_c_kon[i][ii] / 100;
+                }
+            }
+        }
+    }
+    return wart;
+    //- 0.5 podwojone, zblokowane i izolowane piony
+    //bezpieczenstwo krola  
+    //czy figury sa pod biciem przez słabsze  
 }
