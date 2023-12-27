@@ -21,3 +21,6 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz);
 void fen_to_chessboard(string fen, pozycja *poz);
 void wizualizacja(pozycja *poz);
 long double ewaluacja_pozycji(pozycja *poz);
+bool czy_w_planszy(int i,int j);
+string pole(int a,int b,int c,int d);
+vector <string> mozliwe_ruchy(pozycja *poz);
