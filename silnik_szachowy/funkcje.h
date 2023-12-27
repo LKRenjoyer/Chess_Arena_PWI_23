@@ -20,3 +20,4 @@ void porusz(string ruch, pozycja *poz);
 bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz);
 void fen_to_chessboard(string fen, pozycja *poz);
 void wizualizacja(pozycja *poz);
+long double ewaluacja_pozycji(pozycja *poz);

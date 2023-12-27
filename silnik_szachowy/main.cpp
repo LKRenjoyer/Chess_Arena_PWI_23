@@ -6,6 +6,7 @@ int main() {
     string fen = pozycja_startowa;
     pozycja poz;
     fen_to_chessboard(fen, &poz);
+    wizualizacja(&poz);
     while(true) {
         string ruch;
         cin >> ruch;
