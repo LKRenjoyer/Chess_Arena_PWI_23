@@ -481,6 +481,7 @@ void fen_to_chessboard(string fen, pozycja *poz) {
 
 long double ewaluacja_pozycji(pozycja *poz) {
     int liczfigury[256] = {};
+    int pionyb[8] = {}, pionyc[8] = {};
     for(int i = 0; i <= 7; i++) {
         for(int ii = 0; ii <= 7; ii++) {
             liczfigury[poz->plansza[i][ii]];
@@ -499,9 +500,11 @@ long double ewaluacja_pozycji(pozycja *poz) {
         czy_endgame_b = 1;
     if(liczfigury['q'] * 3 + liczfigury['r'] * 3 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
         czy_endgame_c = 1;
+    pair <int, int> bk, ck; // pozycja bialego i czarnego krola
     for(int i = 0; i < 8; i++) {
         for(int ii = 0; ii < 8; ii++) {
             if(poz->plansza[i][ii] == 'K') {
+                bk = {i, ii};
                 if(!czy_endgame_b) {
                     wart += krol_b_pocz[i][ii] / 100;
                 }
@@ -522,14 +525,20 @@ long double ewaluacja_pozycji(pozycja *poz) {
                 wart += skoczki_b[i][ii] / 100;
             }
             else if(poz->plansza[i][ii] == 'P') {
+                //zblokowane 
+                if(poz->plansza[i + 1][ii] != ' ') {
+                    wart -= 0.2;
+                }
                 if(!czy_endgame_b) {
                     wart += piony_b_pon[i][ii] / 100;
                 }
                 else {
                     wart += piony_b_kon[i][ii] / 100;
                 }
+                pionyb[ii]++;
             }
             else if(poz->plansza[i][ii] == 'k') {
+                ck = {i, ii};
                 if(!czy_endgame_c) {
                     wart -= krol_c_pocz[i][ii] / 100;
                 }
@@ -550,17 +559,72 @@ long double ewaluacja_pozycji(pozycja *poz) {
                 wart -= skoczki_c[i][ii] / 100;
             }
             else if(poz->plansza[i][ii] == 'p') {
+                //zblokowane 
+                if(poz->plansza[i - 1][ii] != ' ') {
+                    wart += 0.2;
+                }
                 if(!czy_endgame_c) {
                     wart -= piony_c_pon[i][ii] / 100;
                 }
                 else {
                     wart -= piony_c_kon[i][ii] / 100;
                 }
+                pionyc[ii]++;
             }
         }
     }
+    //zdublowane piony
+    for(int i = 0; i < 8; i++) {
+        wart -= (long double)max(0, pionyb[i] - 1) * 0,5;
+        wart += (long double)max(0, pionyc[i] - 1) * 0,5;
+    }
+    //izolowane piony
+    for(int i = 1; i < 7; i++) {
+        if(pionyb[i] > 0 && pionyb[i - 1] == 0 && pionyb[i + 1] == 0) {
+            wart -= 0.5;
+        }
+        if(pionyc[i] > 0 && pionyc[i - 1] == 0 && pionyc[i + 1] == 0) {
+            wart += 0.5;
+        }
+    }
+    //bezpieczenstwo krola bialego
+    for(int i = max(0, bk.st - 2); i <= min(7, bk.st + 2); i++) {
+        for(int ii = max(0, bk.nd - 2); ii <= min(7, bk.nd + 2); ii++) {
+            if(poz->plansza[i][ii] == 'q') {
+                wart -= 1.8;
+            }
+            else if(poz->plansza[i][ii] == 'w') {
+                wart -= 1;
+            }
+            else if(poz->plansza[i][ii] == 'b' || poz->plansza[i][ii] == 'n') {
+                wart -= 0.6; 
+            }
+            else if(poz->plansza[i][ii] == 'p') {
+                wart -= 0.2;
+            }
+        }
+    }
+    //bezpieczenstwo krola czarnrgo
+    for(int i = max(0, ck.st - 2); i <= min(7, ck.st + 2); i++) {
+        for(int ii = max(0, ck.nd - 2); ii <= min(7, ck.nd + 2); ii++) {
+            if(poz->plansza[i][ii] == 'Q') {
+                wart += 1.8;
+            }
+            else if(poz->plansza[i][ii] == 'W') {
+                wart += 1;
+            }
+            else if(poz->plansza[i][ii] == 'B' || poz->plansza[i][ii] == 'N') {
+                wart += 0.6; 
+            }
+            else if(poz->plansza[i][ii] == 'P') {
+                wart += 0.2;
+            }
+        }
+    }
+
+    //czy figury sa pod biciem przez słabsze / nie są bronione 
+    //jeśli atakujemy więcej razy niż bronimy to dla nas fajnie jeśli suma się zgadza 
+
+    //dodać sprawdzanie czy pat i czy mat 
     return wart;
-    //- 0.5 podwojone, zblokowane i izolowane piony
-    //bezpieczenstwo krola  
-    //czy figury sa pod biciem przez słabsze  
 }
