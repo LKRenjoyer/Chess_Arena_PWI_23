@@ -628,3 +628,1558 @@ long double ewaluacja_pozycji(pozycja *poz) {
     //dodać sprawdzanie czy pat i czy mat 
     return wart;
 }
+
+bool czy_w_planszy(int i,int j)
+{
+    if (i>=0&&i<=7&&j>=0&&j<=7)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+string pole(int a,int b,int c,int d)
+{
+    string wynik;
+    wynik.push_back(b+'a');
+    wynik.push_back(a+'1');
+    wynik.push_back(d+'a');
+    wynik.push_back(c+'1');
+    return wynik;
+}
+
+vector <string> mozliwe_ruchy(pozycja *poz)
+{
+    vector <string> cos;
+    pozycja poz2=*poz;
+    pair <int,int> white_king;
+    pair <int,int> black_king;
+    for (int i=0;i<8;i++)
+    {
+        for (int j=0;j<8;j++)
+        {
+            if (poz->plansza[i][j]=='k')
+            {
+                black_king=make_pair(i,j);
+            }
+            if (poz->plansza[i][j]=='K')
+            {
+                white_king=make_pair(i,j);
+            }
+        }
+    }
+    if (poz->czyj_ruch=='b')
+    {
+        for (int i=0;i<8;i++)
+        {
+            for (int j=0;j<8;j++)
+            {
+                //ruch króla;
+                if (poz->plansza[i][j]=='k')
+                {
+                    if (czy_w_planszy(i-1,j-1)==1&&(poz->plansza[i-1][j-1]>'z'||poz->plansza[i-1][j-1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j-1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j-1)==1&&(poz->plansza[i+1][j-1]>'z'||poz->plansza[i+1][j-1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j-1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j+1)==1&&(poz->plansza[i-1][j+1]>'z'||poz->plansza[i-1][j+1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j+1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j+1)==1&&(poz->plansza[i+1][j+1]>'z'||poz->plansza[i+1][j+1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j+1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j)==1&&(poz->plansza[i-1][j]>'z'||poz->plansza[i-1][j]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i,j-1)==1&&(poz->plansza[i][j-1]>'z'||poz->plansza[i][j-1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i,j-1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j)==1&&(poz->plansza[i+1][j]>'z'||poz->plansza[i+1][j]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i,j+1)==1&&(poz->plansza[i][j+1]>'z'||poz->plansza[i][j+1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i,j+1,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (poz->czy_k==1)//roszada krótka;
+                    {
+                        if (czy_pole_jest_szachowane(i,j,'w',poz)==0)
+                        {
+                            if (poz->plansza[7][5]==' '&&poz->plansza[7][6]==' '&&czy_pole_jest_szachowane(7,5,'w',poz)==0&&czy_pole_jest_szachowane(7,6,'w',poz)==0)
+                            {
+                                string slowo=pole(i,j,7,6);
+                                cos.push_back(slowo);
+                            }
+                        }
+                    }
+                    if (poz->czy_q==1)//roszada d³uga;
+                    {
+                        if (czy_pole_jest_szachowane(i,j,'w',poz)==0)
+                        {
+                            if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,1,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
+                            {
+                                string slowo=pole(i,j,7,1);
+                                cos.push_back(slowo);
+                            }
+                        }
+                    }
+                }
+                //ruch królowej;
+                if (poz->plansza[i][j]=='q')
+                {
+                    int pom=1;
+                    //sprawdzanie prawej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'z'||poz->plansza[i][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'z'||poz->plansza[i][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie dolnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'z'||poz->plansza[i+pom][j]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie górnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'z'||poz->plansza[i+pom][j]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej górnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'z'||poz->plansza[i+pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'z'||poz->plansza[i+pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie lewej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j-pom)==1&&(poz->plansza[i+pom][j-pom]>'z'||poz->plansza[i+pom][j-pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j-pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j-pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j-pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej górnej przek¹tnej;
+                    while(czy_w_planszy(i-pom,j+pom)==1&&(poz->plansza[i-pom][j+pom]>'z'||poz->plansza[i-pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i-pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                }
+                //ruch wie¿y
+                if (poz->plansza[i][j]=='r')
+                {
+                    int pom=1;
+                    //sprawdzanie prawej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'z'||poz->plansza[i][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'z'||poz->plansza[i][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie dolnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'z'||poz->plansza[i+pom][j]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie górnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'z'||poz->plansza[i+pom][j]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                }
+                //ruch laufra
+                if (poz->plansza[i][j]=='b')
+                {
+                    int pom=-1;
+                    //sprawdzanie lewej górnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'z'||poz->plansza[i+pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'z'||poz->plansza[i+pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie lewej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j-pom)==1&&(poz->plansza[i+pom][j-pom]>'z'||poz->plansza[i+pom][j-pom]<'a'))
+                    {
+                        if (poz->plansza[i+pom][j-pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j-pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j-pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej górnej przek¹tnej;
+                    while(czy_w_planszy(i-pom,j+pom)==1&&(poz->plansza[i-pom][j+pom]>'z'||poz->plansza[i-pom][j+pom]<'a'))
+                    {
+                        if (poz->plansza[i-pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                }
+                //ruch skoczka
+                if (poz->plansza[i][j]=='n')
+                {
+                    if (czy_w_planszy(i-2,j-1)==1&&(poz->plansza[i-2][j-1]>'z'||poz->plansza[i-2][j-1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-2,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"1\n";
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j-2)==1&&(poz->plansza[i-1][j-2]>'z'||poz->plansza[i-1][j-2]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j-2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"2\n";
+                        }
+                    }
+                    if (czy_w_planszy(i-2,j+1)==1&&(poz->plansza[i-2][j+1]>'z'||poz->plansza[i-2][j+1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-2,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"3\n";
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j+2)==1&&(poz->plansza[i-1][j+2]>'z'||poz->plansza[i-1][j+2]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j+2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"4\n";
+                        }
+                    }
+                    if (czy_w_planszy(i+2,j+1)==1&&(poz->plansza[i+2][j+1]>'z'||poz->plansza[i+2][j+1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+2,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"5\n";
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j+2)==1&&(poz->plansza[i+1][j+2]>'z'||poz->plansza[i+1][j+2]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j+2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"6\n";
+                        }
+                    }
+                    if (czy_w_planszy(i+2,j-1)==1&&(poz->plansza[i+2][j-1]>'z'||poz->plansza[i+2][j-1]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+2,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"7\n";
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j-2)==1&&(poz->plansza[i+1][j-2]>'z'||poz->plansza[i+1][j-2]<'a'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j-2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                            //cout<<"8\n";
+                        }
+                    }
+                }
+                if (poz->plansza[i][j]=='p')
+                {
+                    if (i>1)
+                    {
+                        if (czy_w_planszy(i-1,j)==1&&poz->plansza[i-1][j]==' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-1,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                        }
+                        if (i==6&&czy_w_planszy(i-2,j)==1&&czy_w_planszy(i-1,j)==1&&poz->plansza[i-2][j]==' '&&poz->plansza[i-1][j]==' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-2,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                        }
+                        if (czy_w_planszy(i-1,j+1)==1&&poz->plansza[i-1][j+1]>='A'&&poz->plansza[i-1][j+1]<='Z')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-1,j+1);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                        }
+                        if (czy_w_planszy(i-1,j-1)==1&&poz->plansza[i-1][j-1]>='A'&&poz->plansza[i-1][j-1]<='Z')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-1,j-1);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                        }
+                    }
+                    if (i==1)//promocje;
+                    {
+                        if (czy_w_planszy(i-1,j)==1&&poz->plansza[i-1][j]==' ')
+                        {
+                            string slowo=pole(i,j,i-1,j);
+                            slowo+="q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="r";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="b";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="n";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                            }
+                        }
+                        if (czy_w_planszy(i-1,j+1)==1&&poz->plansza[i-1][j+1]>='A'&&poz->plansza[i-1][j+1]<='Z')
+                        {
+                            string slowo=pole(i,j,i-1,j+1);
+                            slowo+="q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="r";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="b";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="n";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                            }
+                        }
+                        if (czy_w_planszy(i-1,j-1)==1&&poz->plansza[i-1][j-1]>='A'&&poz->plansza[i-1][j-1]<='Z')
+                        {
+                            string slowo=pole(i,j,i-1,j-1);
+                            slowo+="q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="r";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="b";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                                slowo+="n";
+                                cos.push_back(slowo);
+                                slowo.pop_back();
+                            }
+                        }
+                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                        {
+                            if (i==(poz->wiersz_bwp)+1&&j==(poz->kolumna_bwp)-1)
+                            {
+                                string slowo=pole(i,j,i-1,j+1);
+                                poz2=*poz;
+                                porusz(slowo,&poz2);
+                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                                {
+                                    cos.push_back(slowo);
+                                }
+                            }
+                            if (i==(poz->wiersz_bwp+1)&&j==(poz->kolumna_bwp)+1)
+                            {
+                                string slowo=pole(i,j,i-1,j-1);
+                                poz2=*poz;
+                                porusz(slowo,&poz2);
+                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
+                                {
+                                    cos.push_back(slowo);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (poz->czyj_ruch=='w')
+    {
+        //cout<<"debug\n";
+        for (int i=0;i<8;i++)
+        {
+            for (int j=0;j<8;j++)
+            {
+                //ruch króla;
+                if (poz->plansza[i][j]=='K')
+                {
+                    if (czy_w_planszy(i-1,j-1)==1&&(poz->plansza[i-1][j-1]>'Z'||poz->plansza[i-1][j-1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j-1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j-1)==1&&(poz->plansza[i+1][j-1]>'Z'||poz->plansza[i+1][j-1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j-1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j+1)==1&&(poz->plansza[i-1][j+1]>'Z'||poz->plansza[i-1][j+1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j+1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j+1)==1&&(poz->plansza[i+1][j+1]>'Z'||poz->plansza[i+1][j+1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j+1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j)==1&&(poz->plansza[i-1][j]>'Z'||poz->plansza[i-1][j]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i-1,j,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i,j-1)==1&&(poz->plansza[i][j-1]>'Z'||poz->plansza[i][j-1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i,j-1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j)==1&&(poz->plansza[i+1][j]>'Z'||poz->plansza[i+1][j]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i+1,j,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i,j+1)==1&&(poz->plansza[i][j+1]>'Z'||poz->plansza[i][j+1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(i,j+1,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (poz->czy_K==1)//roszada krótka;
+                    {
+                        if (czy_pole_jest_szachowane(i,j,'b',poz)==0)
+                        {
+                            if (poz->plansza[0][5]==' '&&poz->plansza[0][6]==' '&&czy_pole_jest_szachowane(0,5,'b',poz)==0&&czy_pole_jest_szachowane(0,6,'b',poz)==0)
+                            {
+                                string slowo=pole(i,j,0,6);
+                                cos.push_back(slowo);
+                            }
+                        }
+                    }
+                    if (poz->czy_Q==1)//roszada d³uga;
+                    {
+                        if (czy_pole_jest_szachowane(i,j,'b',poz)==0)
+                        {
+                            if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,1,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
+                            {
+                                string slowo=pole(i,j,0,1);
+                                cos.push_back(slowo);
+                            }
+                        }
+                    }
+                }
+                //ruch królowej;
+                if (poz->plansza[i][j]=='Q')
+                {
+                    int pom=1;
+                    //sprawdzanie prawej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'Z'||poz->plansza[i][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'Z'||poz->plansza[i][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie dolnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'Z'||poz->plansza[i+pom][j]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie górnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'Z'||poz->plansza[i+pom][j]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej górnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'Z'||poz->plansza[i+pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'Z'||poz->plansza[i+pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie lewej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j-pom)==1&&(poz->plansza[i+pom][j-pom]>'Z'||poz->plansza[i+pom][j-pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j-pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j-pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j-pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej górnej przek¹tnej;
+                    while(czy_w_planszy(i-pom,j+pom)==1&&(poz->plansza[i-pom][j+pom]>'Z'||poz->plansza[i-pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i-pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                }
+                //ruch wie¿y
+                if (poz->plansza[i][j]=='R')
+                {
+                    int pom=1;
+                    //sprawdzanie prawej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'Z'||poz->plansza[i][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie lewej czêci wiersza;
+                    while(czy_w_planszy(i,j+pom)==1&&(poz->plansza[i][j+pom]>'Z'||poz->plansza[i][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie dolnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'Z'||poz->plansza[i+pom][j]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=-1;
+                    //sprawdzanie górnej czêci kolumny;
+                    while(czy_w_planszy(i+pom,j)==1&&(poz->plansza[i+pom][j]>'Z'||poz->plansza[i+pom][j]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                }
+                //ruch laufra
+                if (poz->plansza[i][j]=='B')
+                {
+                    int pom=-1;
+                    //sprawdzanie lewej górnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'Z'||poz->plansza[i+pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom--;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j+pom)==1&&(poz->plansza[i+pom][j+pom]>'Z'||poz->plansza[i+pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie lewej dolnej przek¹tnej;
+                    while(czy_w_planszy(i+pom,j-pom)==1&&(poz->plansza[i+pom][j-pom]>'Z'||poz->plansza[i+pom][j-pom]<'A'))
+                    {
+                        if (poz->plansza[i+pom][j-pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+pom,j-pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+pom,j-pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                    pom=1;
+                    //sprawdzanie prawej górnej przek¹tnej;
+                    while(czy_w_planszy(i-pom,j+pom)==1&&(poz->plansza[i-pom][j+pom]>'Z'||poz->plansza[i-pom][j+pom]<'A'))
+                    {
+                        if (poz->plansza[i-pom][j+pom]!=' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i-pom,j+pom);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                            }
+                            break;
+                        }
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-pom,j+pom);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                        pom++;
+                    }
+                }
+                //ruch skoczka
+                if (poz->plansza[i][j]=='N')
+                {
+                    if (czy_w_planszy(i-2,j-1)==1&&(poz->plansza[i-2][j-1]>'Z'||poz->plansza[i-2][j-1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-2,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j-2)==1&&(poz->plansza[i-1][j-2]>'Z'||poz->plansza[i-1][j-2]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j-2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-2,j+1)==1&&(poz->plansza[i-2][j+1]>'Z'||poz->plansza[i-2][j+1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-2,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i-1,j+2)==1&&(poz->plansza[i-1][j+2]>'Z'||poz->plansza[i-1][j+2]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i-1,j+2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+2,j+1)==1&&(poz->plansza[i+2][j+1]>'Z'||poz->plansza[i+2][j+1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+2,j+1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j+2)==1&&(poz->plansza[i+1][j+2]>'Z'||poz->plansza[i+1][j+2]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j+2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+2,j-1)==1&&(poz->plansza[i+2][j-1]>'Z'||poz->plansza[i+2][j-1]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+2,j-1);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                    if (czy_w_planszy(i+1,j-2)==1&&(poz->plansza[i+1][j-2]>'Z'||poz->plansza[i+1][j-2]<'A'))
+                    {
+                        poz2=*poz;
+                        string slowo=pole(i,j,i+1,j-2);
+                        porusz(slowo,&poz2);
+                        if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                        {
+                            cos.push_back(slowo);
+                        }
+                    }
+                }
+                if (poz->plansza[i][j]=='P')
+                {
+                    if (i<6)
+                    {
+                        if (czy_w_planszy(i+1,j)==1&&poz->plansza[i+1][j]==' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+1,j);
+                            porusz(slowo,&poz2);
+                            //cout<<"rozpatruje pionka\n";
+                            //wizualizacja(&poz2);
+                            //cout<<"\n";
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                //cout<<"nie wyszlo\n";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                            }
+                        }
+                        if (i==1&&czy_w_planszy(i+2,j)==1&&czy_w_planszy(i+1,j)==1&&poz->plansza[i+2][j]==' '&&poz->plansza[i+1][j]==' ')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+2,j);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                            }
+                        }
+                        if (czy_w_planszy(i+1,j+1)==1&&poz->plansza[i+1][j+1]>='a'&&poz->plansza[i+1][j+1]<='z')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+1,j+1);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                            }
+                        }
+                        if (czy_w_planszy(i+1,j-1)==1&&poz->plansza[i+1][j-1]>='a'&&poz->plansza[i+1][j-1]<='z')
+                        {
+                            poz2=*poz;
+                            string slowo=pole(i,j,i+1,j-1);
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                            }
+                        }
+                    }
+                    if (i==6)//promocje;
+                    {
+                        //cout<<"promocje\n";
+                        if (czy_w_planszy(i+1,j)==1&&poz->plansza[i+1][j]==' ')
+                        {
+                            string slowo=pole(i,j,i+1,j);
+                            slowo+="Q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                //cout<<"opcja1\n";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="R";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="B";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="N";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                            }
+                        }
+                        if (czy_w_planszy(i+1,j+1)==1&&poz->plansza[i+1][j+1]>='a'&&poz->plansza[i+1][j+1]<='z')
+                        {
+                            string slowo=pole(i,j,i+1,j+1);
+                            slowo+="Q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                //cout<<"opcja2\n";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="R";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="B";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="N";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                            }
+                        }
+                        if (czy_w_planszy(i+1,j-1)==1&&poz->plansza[i+1][j-1]>='a'&&poz->plansza[i+1][j-1]<='z')
+                        {
+                            string slowo=pole(i,j,i+1,j-1);
+                            slowo+="Q";
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                            {
+                                //cout<<"opcja3\n";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="R";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="B";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                                slowo+="N";
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
+                                slowo.pop_back();
+                            }
+                        }
+                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                        {
+                            if (i==(poz->wiersz_bwp-1)&&j==(poz->kolumna_bwp)-1)
+                            {
+                                string slowo=pole(i,j,i+1,j+1);
+                                poz2=*poz;
+                                porusz(slowo,&poz2);
+                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                                {
+                                    cos.push_back(slowo);
+                                    //cout<<slowo<<"\n";
+                                    //licznik++;
+                                }
+                            }
+                            if (i==(poz->wiersz_bwp)-1&&j==(poz->kolumna_bwp)+1)
+                            {
+                                string slowo=pole(i,j,i+1,j-1);
+                                poz2=*poz;
+                                porusz(slowo,&poz2);
+                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
+                                {
+                                    cos.push_back(slowo);
+                                    //cout<<slowo<<"\n";
+                                    //licznik++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return cos;
+}
