@@ -39,8 +39,8 @@ void porusz(string ruch, pozycja *poz) {
     }
     //zmiana bicia w przelocie
     poz->czy_bicie_w_przelocie = 0;
-    //poz->wiersz_bwp = ' ';
-    //poz->kolumna_bwp = ' ';
+    poz->wiersz_bwp = ' ';
+    poz->kolumna_bwp = ' ';
     if(ruch[1] == '2' && ruch[3] == '4' && poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P') {
         poz->czy_bicie_w_przelocie = 1;
         poz->wiersz_bwp = '3';
@@ -109,13 +109,13 @@ void porusz(string ruch, pozycja *poz) {
             poz->plansza[7][4] = ' ';
         }
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && ruch[3] == poz->wiersz_bwp && ruch[2] == poz->kolumna_bwp){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
         //uwaga na bicia w przelocie bialych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'P';
         poz->plansza[(ruch[3] - '1') - 1][(ruch[2] - 'a')] = ' ';
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && ruch[3] == poz->wiersz_bwp && ruch[2] == poz->kolumna_bwp){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
         //uwaga na bicia w przelocie czarnych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'p';
@@ -126,10 +126,6 @@ void porusz(string ruch, pozycja *poz) {
         //cout << "poruszam figure\n";
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')];
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
-    }
-    if(poz->czy_bicie_w_przelocie == 0) {
-        poz->wiersz_bwp = ' ';
-        poz->kolumna_bwp = ' ';
     }
 }
 
@@ -2339,16 +2335,25 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     return wynik;
 }
 
-/*int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
+int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
 {
     int wynik=hash;
     int x1=pole_w_liczby(ruch[0],ruch[1])[0];
     int y1=pole_w_liczby(ruch[0],ruch[1])[1];
     int x2=pole_w_liczby(ruch[2],ruch[3])[0];
     int y2=pole_w_liczby(ruch[2],ruch[3])[1];
-    //int x3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0];
-    //int y3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1];
+    int x3;
+    int y3;
     wynik^=tab2[0];
+    if (poz->czy_bicie_w_przelocie==1)
+    {
+        x3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0];
+        y3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1];
+        if (x2!=x3||y2!=y3||(poz->plansza[x1][y1]!='P'&&poz->plansza[x1][y1]!='p'))
+        {
+            wynik^=tab2[5+y3];
+        }
+    }
     if (ruch.size()==4)
     {
     	if (poz->czyj_ruch=='w')
@@ -2384,6 +2389,32 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     	    {
     	    	wynik^=tab1[6*64+x1*8+y1];
     	    	wynik^=tab1[6*64+x2*8+y2];
+    	    	if (y2-y1==2)
+    	    	{
+    	    	    wynik^=tab2[1];
+    	    	    wynik^=tab1[8*64+7];
+    	    	    wynik^=tab1[8*64+5];
+    	    	}
+    	    	if (y1-y2==3)
+    	    	{
+    	    	    wynik^=tab2[2];
+    	    	    wynik^=tab1[8*64];
+    	    	    wynik^=tab1[8*64+2];
+    	    	}
+    	    	if (poz->czy_K==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	        wynik^=tab2[1];
+    	    	    }
+    	    	}
+    	    	if (poz->czy_Q==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	    	wynik^=tab2[2];
+    	    	    }
+    	    	}
     	    }
     	    if (poz->plansza[x1][y1]=='H')
     	    {
@@ -2394,6 +2425,14 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     	    {
     	    	wynik^=tab1[8*64+x1*8+y1];
     	    	wynik^=tab1[8*64+x2*8+y2];
+    	    	if (poz->czy_K==1&&x1==0&&y1==7)
+    	    	{
+    	    	    wynik^=tab2[1];
+    	    	}
+    	    	if (poz->czy_Q==1&&x1==0&&y1==0)
+    	    	{
+    	       	    wynik^=tab2[2];
+    	    	}
     	    }
     	    if (poz->plansza[x1][y1]=='B')
     	    {
@@ -2411,12 +2450,240 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     	    	wynik^=tab1[11*64+x2*8+y2];
     	    	if (x2==x1+2)
     	    	{
-    	    	    
+    	    	    wynik^=tab2[5+y1];
+    	    	}
+    	    	if (poz->czy_bicie_w_przelocie==1)
+    	    	{
+    	    	    if (x2==x3&&y2==y3)
+    	    	    {
+    	    	    	wynik^=tab1[5*64+(x3-1)*8+y3];
+    	    	    	wynik^=tab2[5+y3];
+    	    	    }
+    	    	}
+    	    }
+    	}
+    	if (poz->czyj_ruch=='b')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='K')
+      	        {
+    	            wynik^=tab1[6*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='H')
+    	        {
+    	    	    wynik^=tab1[7*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='R')
+    	        {
+    	    	    wynik^=tab1[8*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='B')
+    	        {
+    	    	    wynik^=tab1[9*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='N')
+    	        {
+    	    	    wynik^=tab1[10*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='P')
+    	        {
+    	    	    wynik^=tab1[11*64+x2*8+y2];
+    	        }
+    	    }
+    	    if (poz->plansza[x1][y1]=='k')
+    	    {
+    	    	wynik^=tab1[x1*8+y1];
+    	    	wynik^=tab1[x2*8+y2];
+    	    	if (y2-y1==2)
+    	    	{
+    	    	    wynik^=tab2[3];
+    	    	    wynik^=tab1[2*64+7*8+7];
+    	    	    wynik^=tab1[2*64+7*8+5];
+    	    	}
+    	    	if (y1-y2==3)
+    	    	{
+    	    	    wynik^=tab2[4];
+    	    	    wynik^=tab1[2*64+7*8];
+    	    	    wynik^=tab1[2*64+7*8+2];
+    	    	}
+    	    	if (poz->czy_k==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	        wynik^=tab2[3];
+    	    	    }
+    	    	}
+    	    	if (poz->czy_q==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	    	wynik^=tab2[4];
+    	    	    }
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='h')
+    	    {
+    	    	wynik^=tab1[1*64+x1*8+y1];
+    	    	wynik^=tab1[1*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='r')
+    	    {
+    	    	wynik^=tab1[2*64+x1*8+y1];
+    	    	wynik^=tab1[2*64+x2*8+y2];
+    	    	if (poz->czy_k==1&&x1==7&&y1==7)
+    	    	{
+    	    	    wynik^=tab2[3];
+    	    	}
+    	    	if (poz->czy_q==1&&x1==7&&y1==0)
+    	    	{
+    	       	    wynik^=tab2[4];
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='b')
+    	    {
+    	    	wynik^=tab1[3*64+x1*8+y1];
+    	    	wynik^=tab1[3*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='n')
+    	    {
+    	    	wynik^=tab1[4*64+x1*8+y1];
+    	    	wynik^=tab1[4*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='p')
+    	    {
+    	    	wynik^=tab1[5*64+x1*8+y1];
+    	    	wynik^=tab1[5*64+x2*8+y2];
+    	    	if (x2==x1-2)
+    	    	{
+    	    	    wynik^=tab2[5+y1];
+    	    	}
+    	    	if (poz->czy_bicie_w_przelocie==1)
+    	    	{
+    	    	    if (x2==x3&&y2==y3)
+    	    	    {
+    	    	    	wynik^=tab1[5*64+(x3+1)*8+y3];
+    	    	    	wynik^=tab2[5+y3];
+    	    	    }
     	    	}
     	    }
     	}
     }
-}*/
+    if (ruch.size()==5)
+    {
+    	if (poz->czyj_ruch=='w')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='k')
+      	        {
+    	            wynik^=tab1[x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='h')
+    	        {
+    	    	    wynik^=tab1[1*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='r')
+    	        {
+    	    	    wynik^=tab1[2*64+x2*8+y2];
+    	    	    if (poz->czy_k==1&&x2==7&&y2==7)
+    	    	    {
+    	    	    	wynik^=tab2[3];
+    	    	    }
+    	    	    if (poz->czy_q==1&&x2==7&&y2==0)
+    	    	    {
+    	    	    	wynik^=tab2[4];
+    	    	    }
+    	        }
+    	        if (poz->plansza[x2][y2]=='b')
+    	        {
+    	    	    wynik^=tab1[3*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='n')
+    	        {
+    	    	    wynik^=tab1[4*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='p')
+    	        {
+    	    	    wynik^=tab1[5*64+x2*8+y2];
+    	        }
+    	    }
+    	    wynik^=tab1[11*64+x1*8+y1];
+    	    if (ruch[4]=='Q')
+    	    {
+    	        wynik^=tab1[7*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='R')
+    	    {
+    	        wynik^=tab1[8*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='B')
+    	    {
+    	        wynik^=tab1[9*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='N')
+    	    {
+    	        wynik^=tab1[10*64+x2*8+y2];
+    	    }
+    	}
+    	if (poz->czyj_ruch=='b')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='K')
+      	        {
+    	            wynik^=tab1[6*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='H')
+    	        {
+    	    	    wynik^=tab1[7*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='R')
+    	        {
+    	    	    wynik^=tab1[8*64+x2*8+y2];
+    	    	    if (poz->czy_K==1&&x2==0&&y2==7)
+    	    	    {
+    	    	    	wynik^=tab2[1];
+    	    	    }
+    	    	    if (poz->czy_Q==1&&x2==0&&y2==0)
+    	    	    {
+    	    	    	wynik^=tab2[2];
+    	    	    }
+    	        }
+    	        if (poz->plansza[x2][y2]=='B')
+    	        {
+    	    	    wynik^=tab1[9*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='N')
+    	        {
+    	    	    wynik^=tab1[10*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='P')
+    	        {
+    	    	    wynik^=tab1[11*64+x2*8+y2];
+    	        }
+    	    }
+    	    wynik^=tab1[5*64+x1*8+y1];
+    	    if (ruch[4]=='q')
+    	    {
+    	        wynik^=tab1[1*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='r')
+    	    {
+    	        wynik^=tab1[2*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='b')
+    	    {
+    	        wynik^=tab1[3*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='n')
+    	    {
+    	        wynik^=tab1[4*64+x2*8+y2];
+    	    }
+    	}
+    }
+    return wynik;
+}
 
 /*bool czy_pat(pozycja *poz)
 {
