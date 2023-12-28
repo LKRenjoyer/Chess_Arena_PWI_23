@@ -9,7 +9,7 @@ path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
 pg.init()
 
-screen = pg.display.set_mode((64*8,64*8))
+screen = pg.display.set_mode((64*8,64*8), pg.RESIZABLE)
 
 clock = pg.time.Clock()
 running = True
@@ -21,8 +21,16 @@ with open(path("game.txt"), "r") as f:
 
 current_move = 0
 
-screen.fill("red")
-board.draw(screen)
+def redraw(screen):
+    scrsize = screen.get_size()
+    bsize = min(scrsize)*9//80
+    surface = pg.Surface(scrsize)
+    screen.fill((62,61,57))
+    offsets = ((scrsize[0]-bsize*8)//2, (scrsize[1]-bsize*8)//2)
+    board.draw(surface, bsize)
+    screen.blit(surface, offsets)
+
+redraw(screen)
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -34,7 +42,9 @@ while running:
             elif event.key == pg.K_LEFT:
                 board.pop()
                 current_move-=1
-            board.draw(screen)
+            redraw(screen)
+        elif event.type == pg.WINDOWRESIZED:
+            redraw(screen)
     pg.display.update()
 
     clock.tick(60)
