@@ -460,9 +460,9 @@ void fen_to_chessboard(string fen, pozycja *poz) {
     }
     else {
         poz->czy_bicie_w_przelocie = 1;
-        poz->wiersz_bwp = fen[x];
-        x++;
         poz->kolumna_bwp = fen[x];
+        x++;
+        poz->wiersz_bwp = fen[x];
         x += 2;
     }
     string pom = "";
