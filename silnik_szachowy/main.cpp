@@ -23,6 +23,8 @@ void coss(pozycja poz, int gl) {
 int main() {
     //pom = 5;
     //cin >> pom;
+    long long Zobrist1[12][64];
+    long long Zobrist2[13];
     string fen; //= pozycja_startowa;
     getline(cin, fen);
     pozycja poz;
@@ -30,11 +32,11 @@ int main() {
     //coss(poz, 0);
     //cout << licz;
     vector <string> v = mozliwe_ruchy(&poz);
-    cout << v.size();
-    for(int i = 0; i < v.size(); i++) {
+    cout << v.size() <<"\n";
+    /*for(int i = 0; i < v.size(); i++) {
         cout << v[i] <<'\n';
-    }
-    cout << poz.czy_bicie_w_przelocie << ' ' << poz.wiersz_bwp << ' ' << poz.kolumna_bwp << '\n';
+    }*/
+    //cout << poz.czy_bicie_w_przelocie << ' ' << poz.wiersz_bwp << ' ' << poz.kolumna_bwp << '\n';
     //wizualizacja(&poz);
     
     /*
@@ -50,6 +52,8 @@ int main() {
         //}
     }
     */
-
+    //los1(10000,99999,Zobrist1);
+    //los2(10000,99999,Zobrist2);
+    //cout<<"\n"<<poz.czy_bicie_w_przelocie;
     return 0;
 }
