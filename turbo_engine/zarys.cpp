@@ -126,7 +126,7 @@ void visualize(position* pos){
     cout << "\n"; 
 }
 
-void where(int ind){ 
+void where(int ind){  // funkcja czysto w celu debugu
     for(int i =0; i < ind; i++) 
             cout << ' '; 
     cout << "^\n"; 
@@ -407,7 +407,7 @@ bool position_checked(int a, int b, char color, position* pos) {
     return 0; */  
     return 0;
 } 
-
+string beginnig_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; 
 int main(){  
     string fen = 
     //"rnbqkbnr/pp1ppppp/8/2p5/1P2P3/8/P1PP1PPP/RNBQKBNR b KQkq b3 0 2";  
