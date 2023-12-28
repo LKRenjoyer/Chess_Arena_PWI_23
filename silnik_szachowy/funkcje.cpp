@@ -2194,7 +2194,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-/*void los1(long long a,long long b,long long *tab)
+/*void los1(int a,int b,int *tab)
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<12;i++)
@@ -2206,7 +2206,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
 }*/
 
-/*void los2(long long a,long long b,long long *tab)
+/*void los2(int a,int b,int *tab)
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<13;i++)
@@ -2215,23 +2215,132 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
 }*/
 
-/*long long Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
+//kolejnosc figur w Zobrist1 tabelce
+// k,h,r,b,n,p,K,H,R,B,N,P
+//kolejnosc zdarzen w Zobrist2 tabelce
+// czyj_ruch (jak białych to xor a jak czarnych to unxor), roszady: czy_K, czy_Q, czy_k, czy_q, bwp: dla białych a3,b3,...,h3, dla czarnych a6,b6,...,h6;
+
+int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
 {
+    int wynik=0;
     for (int i=0;i<8;i++)
     {
     	for (int j=0;j<8;j++)
     	{
-    	
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	wynik^=tab1[i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='h')
+    	    {
+    	    	wynik^=tab1[1*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='r')
+    	    {
+    	    	wynik^=tab1[2*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='b')
+    	    {
+    	    	wynik^=tab1[3*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='n')
+    	    {
+    	    	wynik^=tab1[4*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='p')
+    	    {
+    	    	wynik^=tab1[5*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='K')
+    	    {
+    	    	wynik^=tab1[6*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='H')
+    	    {
+    	    	wynik^=tab1[7*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='R')
+    	    {
+    	    	wynik^=tab1[8*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='B')
+    	    {
+    	    	wynik^=tab1[9*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='N')
+    	    {
+    	    	wynik^=tab1[10*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='P')
+    	    {
+    	    	wynik^=tab1[11*64+i*8+j];
+    	    }
     	}
     }
+    if (poz->czyj_ruch=='w')
+    {
+    	wynik^=tab2[0];
+    }
+    if (poz->czy_K==1)
+    {
+    	wynik^=tab2[1];
+    }
+    if (poz->czy_Q==1)
+    {
+    	wynik^=tab2[2];
+    }
+    if (poz->czy_k==1)
+    {
+    	wynik^=tab2[3];
+    }
+    if (poz->czy_q==1)
+    {
+    	wynik^=tab2[4];
+    }
+    if (poz->czy_bicie_w_przelocie==1)
+    {
+    	if (poz->kolumna_bwp=='a')
+    	{
+    	    wynik^=tab2[5];
+    	}
+    	if (poz->kolumna_bwp=='b')
+    	{
+    	    wynik^=tab2[6];
+    	}
+    	if (poz->kolumna_bwp=='c')
+    	{
+    	    wynik^=tab2[7];
+    	}
+    	if (poz->kolumna_bwp=='d')
+    	{
+    	    wynik^=tab2[8];
+    	}
+    	if (poz->kolumna_bwp=='e')
+    	{
+    	    wynik^=tab2[9];
+    	}
+    	if (poz->kolumna_bwp=='f')
+    	{
+    	    wynik^=tab2[10];
+    	}
+    	if (poz->kolumna_bwp=='g')
+    	{
+    	    wynik^=tab2[11];
+    	}
+    	if (poz->kolumna_bwp=='h')
+    	{
+    	    wynik^=tab2[12];
+    	}
+    }
+    return wynik;
 }
 
-long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash,int *tab1,int *tab2)
+/*int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
 {
 
-}
+}*/
 
-bool czy_pat(pozycja *poz)
+/*bool czy_pat(pozycja *poz)
 {
     if (poz->liczba_polowek_ruchow==100)
     {

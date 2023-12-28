@@ -23,8 +23,8 @@ void coss(pozycja poz, int gl) {
 int main() {
     //pom = 5;
     //cin >> pom;
-    long long Zobrist1[12][64];
-    long long Zobrist2[13];
+    int Zobrist1[12][64];
+    int Zobrist2[13];
     string fen; //= pozycja_startowa;
     getline(cin, fen);
     pozycja poz;
