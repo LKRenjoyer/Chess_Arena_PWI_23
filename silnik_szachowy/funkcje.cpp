@@ -781,7 +781,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                     {
                         if (czy_pole_jest_szachowane(i,j,'w',poz)==0)
                         {
-                            if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,1,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
+                            if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
                             {
                                 string slowo=pole(i,j,7,1);
                                 cos.push_back(slowo);
@@ -1520,7 +1520,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                     {
                         if (czy_pole_jest_szachowane(i,j,'b',poz)==0)
                         {
-                            if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,1,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
+                            if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
                             {
                                 string slowo=pole(i,j,0,1);
                                 cos.push_back(slowo);
@@ -2337,7 +2337,81 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
 
 /*int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
 {
-
+    int wynik=hash;
+    int x1=pole_w_liczby(ruch[0],ruch[1])[0];
+    int y1=pole_w_liczby(ruch[0],ruch[1])[1];
+    int x2=pole_w_liczby(ruch[2],ruch[3])[0];
+    int y2=pole_w_liczby(ruch[2],ruch[3])[1];
+    //int x3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0];
+    //int y3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1];
+    wynik^=tab2[0];
+    if (ruch.size()==4)
+    {
+    	if (poz->czyj_ruch=='w')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='k')
+      	        {
+    	            wynik^=tab1[x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='h')
+    	        {
+    	    	    wynik^=tab1[1*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='r')
+    	        {
+    	    	    wynik^=tab1[2*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='b')
+    	        {
+    	    	    wynik^=tab1[3*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='n')
+    	        {
+    	    	    wynik^=tab1[4*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='p')
+    	        {
+    	    	    wynik^=tab1[5*64+x2*8+y2];
+    	        }
+    	    }
+    	    if (poz->plansza[x1][y1]=='K')
+    	    {
+    	    	wynik^=tab1[6*64+x1*8+y1];
+    	    	wynik^=tab1[6*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='H')
+    	    {
+    	    	wynik^=tab1[7*64+x1*8+y1];
+    	    	wynik^=tab1[7*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='R')
+    	    {
+    	    	wynik^=tab1[8*64+x1*8+y1];
+    	    	wynik^=tab1[8*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='B')
+    	    {
+    	    	wynik^=tab1[9*64+x1*8+y1];
+    	    	wynik^=tab1[9*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='N')
+    	    {
+    	    	wynik^=tab1[10*64+x1*8+y1];
+    	    	wynik^=tab1[10*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='P')
+    	    {
+    	    	wynik^=tab1[11*64+x1*8+y1];
+    	    	wynik^=tab1[11*64+x2*8+y2];
+    	    	if (x2==x1+2)
+    	    	{
+    	    	    
+    	    	}
+    	    }
+    	}
+    }
 }*/
 
 /*bool czy_pat(pozycja *poz)
