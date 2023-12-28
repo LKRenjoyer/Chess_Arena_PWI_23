@@ -56,7 +56,7 @@ string fen_from_position(position* pos){
     string ans; int buf = 0;
     ans.reserve(30);   
     for(int i = 0; i <8; i++){ 
-        for(int j = 0; j <7; j++){ 
+        for(int j = 0; j <8; j++){ 
             if(pos->board[i][j] != ' '){
                 if(buf){ 
                     ans += (char)(buf + '0'); 
@@ -168,7 +168,7 @@ position position_from_fen(string fen){
             if(fen[ind] == 'k')pos.poss_k = 1; 
             if(fen[ind++] == 'q')pos.poss_q =1; 
         } 
-        where(ind);  
+        //where(ind);  
     }
     ind++; 
 
@@ -190,7 +190,7 @@ position position_from_fen(string fen){
         pos.row_enpas = '8' - fen[ind];   
         ind++; 
     }  
-    where(ind); 
+    //where(ind); 
     ind++; 
     pos.halfmoves_amo = 0;  
     while(fen[ind] != ' '){ 
@@ -410,9 +410,12 @@ bool position_checked(int a, int b, char color, position* pos) {
 
 int main(){  
     string fen = 
-    "rnbqkbnr/pp1ppppp/8/2p5/1P2P3/8/P1PP1PPP/RNBQKBNR b KQkq b3 0 2"; 
+    //"rnbqkbnr/pp1ppppp/8/2p5/1P2P3/8/P1PP1PPP/RNBQKBNR b KQkq b3 0 2";  
+    "rnbq1rk1/pp1ppp2/5n1b/2p3p1/1PB1PPPp/B4N2/P1PPQ2P/RN2K2R b KQ g3 0 8"; 
     cout << fen << "\n"; 
     position pos; 
     pos = position_from_fen(fen); 
-    visualize(&pos); 
+    //visualize(&pos); 
+    string rekr = fen_from_position(&pos);  
+    cout << rekr << "\n"; 
 }
