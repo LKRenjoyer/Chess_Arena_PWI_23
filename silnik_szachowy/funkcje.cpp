@@ -109,13 +109,13 @@ void porusz(string ruch, pozycja *poz) {
             poz->plansza[7][4] = ' ';
         }
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2]){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
         //uwaga na bicia w przelocie bialych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'P';
         poz->plansza[(ruch[3] - '1') - 1][(ruch[2] - 'a')] = ' ';
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2]){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
         //uwaga na bicia w przelocie czarnych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'p';
@@ -123,6 +123,7 @@ void porusz(string ruch, pozycja *poz) {
     }
     else {
         //porusz figure
+        //cout << "poruszam figure\n";
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')];
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
     }
@@ -410,7 +411,7 @@ void wizualizacja(pozycja *poz) {
     cout << "czy mozliwe bicie w przelocie: " << (poz->czy_bicie_w_przelocie ? "TAK " : "NIE ") << (poz->czy_bicie_w_przelocie ? poz->kolumna_bwp : ' ') << (poz->czy_bicie_w_przelocie ? poz->wiersz_bwp : ' ') << '\n';
     cout << "liczba_polowek_ruchow: " << poz->liczba_polowek_ruchow << '\n';
     cout << "liczba_ruchow: " << poz->liczba_ruchow << '\n'; 
-    cout << "ewaluacja: " << ewaluacja_pozycji(poz) << '\n';
+    cout << "ewaluacja: " << fixed << setprecision(5) << ewaluacja_pozycji(poz) << '\n';
 }
 
 void fen_to_chessboard(string fen, pozycja *poz) {
@@ -459,9 +460,9 @@ void fen_to_chessboard(string fen, pozycja *poz) {
     }
     else {
         poz->czy_bicie_w_przelocie = 1;
-        poz->wiersz_bwp = fen[x];
-        x++;
         poz->kolumna_bwp = fen[x];
+        x++;
+        poz->wiersz_bwp = fen[x];
         x += 2;
     }
     string pom = "";
@@ -484,7 +485,7 @@ long double ewaluacja_pozycji(pozycja *poz) {
     int pionyb[8] = {}, pionyc[8] = {};
     for(int i = 0; i <= 7; i++) {
         for(int ii = 0; ii <= 7; ii++) {
-            liczfigury[poz->plansza[i][ii]];
+            liczfigury[poz->plansza[i][ii]]++;
         }
     }
     long double wart = 
@@ -496,9 +497,9 @@ long double ewaluacja_pozycji(pozycja *poz) {
     (long double)1 * (liczfigury['P'] - liczfigury['p']);
     bool czy_endgame_b = 0;
     bool czy_endgame_c = 0;
-    if(liczfigury['Q'] * 3 + liczfigury['R'] * 3 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 15)
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 15)
         czy_endgame_b = 1;
-    if(liczfigury['q'] * 3 + liczfigury['r'] * 3 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
         czy_endgame_c = 1;
     pair <int, int> bk, ck; // pozycja bialego i czarnego krola
     for(int i = 0; i < 8; i++) {
@@ -527,7 +528,7 @@ long double ewaluacja_pozycji(pozycja *poz) {
             else if(poz->plansza[i][ii] == 'P') {
                 //zblokowane 
                 if(poz->plansza[i + 1][ii] != ' ') {
-                    wart -= 0.2;
+                    wart -= 0.25;
                 }
                 if(!czy_endgame_b) {
                     wart += piony_b_pon[i][ii] / 100;
@@ -561,7 +562,7 @@ long double ewaluacja_pozycji(pozycja *poz) {
             else if(poz->plansza[i][ii] == 'p') {
                 //zblokowane 
                 if(poz->plansza[i - 1][ii] != ' ') {
-                    wart += 0.2;
+                    wart += 0.25;
                 }
                 if(!czy_endgame_c) {
                     wart -= piony_c_pon[i][ii] / 100;
@@ -575,16 +576,16 @@ long double ewaluacja_pozycji(pozycja *poz) {
     }
     //zdublowane piony
     for(int i = 0; i < 8; i++) {
-        wart -= (long double)max(0, pionyb[i] - 1) * 0,5;
-        wart += (long double)max(0, pionyc[i] - 1) * 0,5;
+        wart -= (long double)max(0, pionyb[i] - 1) * 0,25;
+        wart += (long double)max(0, pionyc[i] - 1) * 0,25;
     }
     //izolowane piony
     for(int i = 1; i < 7; i++) {
         if(pionyb[i] > 0 && pionyb[i - 1] == 0 && pionyb[i + 1] == 0) {
-            wart -= 0.5;
+            wart -= 0.25;
         }
         if(pionyc[i] > 0 && pionyc[i - 1] == 0 && pionyc[i + 1] == 0) {
-            wart += 0.5;
+            wart += 0.25;
         }
     }
     //bezpieczenstwo krola bialego
@@ -645,6 +646,14 @@ string pole(int a,int b,int c,int d)
     wynik.push_back(a+'1');
     wynik.push_back(d+'a');
     wynik.push_back(c+'1');
+    return wynik;
+}
+
+vector <int> pole_w_liczby(char bwp1,char bwp2)
+{
+    vector <int> wynik;
+    wynik.push_back(bwp2-'1');
+    wynik.push_back(bwp1-'a');
     return wynik;
 }
 
@@ -1378,27 +1387,27 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                                 slowo.pop_back();
                             }
                         }
-                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    }
+                    if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    {
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]+1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]-1)
                         {
-                            if (i==(poz->wiersz_bwp)+1&&j==(poz->kolumna_bwp)-1)
+                            string slowo=pole(i,j,i-1,j+1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i-1,j+1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                }
+                                cos.push_back(slowo);
                             }
-                            if (i==(poz->wiersz_bwp+1)&&j==(poz->kolumna_bwp)+1)
+                        }
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]+1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]+1)
+                        {
+                            string slowo=pole(i,j,i-1,j-1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i-1,j-1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                }
+                                cos.push_back(slowo);
                             }
                         }
                     }
@@ -2149,31 +2158,32 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                                 slowo.pop_back();
                             }
                         }
-                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    }
+                    if ((poz->czy_bicie_w_przelocie)==1)//bwp;
+                    {
+                        //cout<<"\n"<<pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]<<" "<<pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]<<"\n";
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]-1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]-1)
                         {
-                            if (i==(poz->wiersz_bwp-1)&&j==(poz->kolumna_bwp)-1)
+                            string slowo=pole(i,j,i+1,j+1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i+1,j+1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                    //cout<<slowo<<"\n";
-                                    //licznik++;
-                                }
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
                             }
-                            if (i==(poz->wiersz_bwp)-1&&j==(poz->kolumna_bwp)+1)
+                        }
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]-1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]+1)
+                        {
+                            string slowo=pole(i,j,i+1,j-1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i+1,j-1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                    //cout<<slowo<<"\n";
-                                    //licznik++;
-                                }
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
                             }
                         }
                     }
@@ -2183,3 +2193,49 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
     return cos;
 }
+
+/*void los1(long long a,long long b,long long *tab)
+{
+    mt19937_64 gen(getpid());
+    for (int i=0;i<12;i++)
+    {
+    	for (int j=0;j<64;j++)
+    	{
+    	    *tab[i*64+j]=gen()%(b-a+1)+a;
+    	}
+    }
+}*/
+
+/*void los2(long long a,long long b,long long *tab)
+{
+    mt19937_64 gen(getpid());
+    for (int i=0;i<13;i++)
+    {
+        *tab[i]=gen()%(b-a+1)+a;
+    }
+}*/
+
+/*long long Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
+{
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	
+    	}
+    }
+}
+
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash,int *tab1,int *tab2)
+{
+
+}
+
+bool czy_pat(pozycja *poz)
+{
+    if (poz->liczba_polowek_ruchow==100)
+    {
+        return 1;
+    }
+    return 0;
+}*/

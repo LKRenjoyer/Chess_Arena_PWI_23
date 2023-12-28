@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>    
 
 #define pb push_back
 #define st first
@@ -24,3 +25,9 @@ long double ewaluacja_pozycji(pozycja *poz);
 bool czy_w_planszy(int i,int j);
 string pole(int a,int b,int c,int d);
 vector <string> mozliwe_ruchy(pozycja *poz);
+void los1(long long a,long long b,long long *tab);
+void los2(long long a,long long b,long long *tab);
+vector <int> pole_w_liczby(char bwp1,char bwp2);
+long long Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2);
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash,int *tab1,int *tab2);
+bool czy_pat(pozycja *poz);
