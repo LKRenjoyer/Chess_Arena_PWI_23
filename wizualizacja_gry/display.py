@@ -5,7 +5,7 @@ from board import Board
 import os
 from functools import partial
 
-path = partial(os.path.join, f'{__file__}\\..')
+path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
 pg.init()
 
