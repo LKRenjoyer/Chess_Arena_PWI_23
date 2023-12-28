@@ -4,6 +4,7 @@ string pozycja_startowa = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 
 
 int main() {
     string fen = pozycja_startowa;
+    //getline(cin, fen);
     pozycja poz;
     fen_to_chessboard(fen, &poz);
     wizualizacja(&poz);
