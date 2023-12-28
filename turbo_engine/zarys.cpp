@@ -102,21 +102,34 @@ string fen_from_position(position* pos){
     return ans; 
 } 
 
-void visualize(position* pos){ 
+void visualize(position* pos){  
+    cout << "*--------*\n"; 
     for(int i = 0; i < 8; i++){ 
-        for(int j = 0; j < 8; j++) 
-            cout << pos->board[i][j]; 
-        cout << "\n"; 
-    }
+        cout << '|';  
+        for(int j = 0; j < 8; j++){
+            if(pos->board[i][j] == ' ') 
+                cout << '.'; 
+            else
+                cout << pos->board[i][j]; 
+        }
+        cout << "|\n"; 
+    } 
+    cout << "*--------*\n"; 
     cout << "ruch: " << pos->mover << "\n";  
     cout << "roszada K: " << pos->poss_K << " roszada Q: " << pos->poss_Q << "\n"; 
     cout << "roszada k: " << pos->poss_k << " roszada q: " << pos->poss_q << "\n"; 
-    cout << "enpassant " << (pos->en_passant)? "TAK ":"NIE "; 
-    if(pos->en_passant) cout << pos->row_enpas << " "<< pos->col_enpas << " (" << (char)('a' + pos->col_enpas) << (char)('8' - pos->row_enpas) << ") " << "\n"; 
+    cout << "enpassant " << (pos->en_passant ? "TAK " : "NIE") << " ";
+    if(pos->en_passant) cout << (int)pos->row_enpas << " "<< (int)pos->col_enpas << " (" << (char)('a' + pos->col_enpas) << (char)('8' - pos->row_enpas) << ") " << "\n"; 
     else cout << "\n";   
     cout << "nudy-posuniecia: " << pos->halfmoves_amo << "\n"; 
     cout << "pelne ruchy: " << pos->moves_amo << "\n"; 
     cout << "\n"; 
+}
+
+void where(int ind){ 
+    for(int i =0; i < ind; i++) 
+            cout << ' '; 
+    cout << "^\n"; 
 }
 position position_from_fen(string fen){ 
     position pos; 
@@ -128,21 +141,24 @@ position position_from_fen(string fen){
         while(fen[ind] != endchar){ 
             if(fen[ind] > '9' || fen[ind] < '0') 
                 pos.board[i][wsk++] = fen[ind++]; 
-            else {
-                for(char i = '0'; i < fen[ind]; i++) 
+            else 
+            {
+                for(char j = '0'; j < fen[ind]; j++) 
                     pos.board[i][wsk++] = ' '; 
                 ind++; 
             } 
-        }
-    }
-    ind++; 
+        } 
+        ind++; 
+    } 
+    //where(ind);   
     pos.mover = fen[ind]; 
     if(pos.mover == 'w') 
-        pos.mover == 'W'; 
+        pos.mover = 'W'; 
     ind++; ind++;  // spacja
     pos.poss_K=0; pos.poss_Q = 0; pos.poss_k = 0; pos.poss_q =0;
     if(fen[ind] == '-'){
-        1+2; // nic nie rob
+        1+2; // nic nie rob 
+        ind++; 
     } 
     else 
     { 
@@ -151,22 +167,30 @@ position position_from_fen(string fen){
             if(fen[ind] == 'Q')pos.poss_Q = 1;
             if(fen[ind] == 'k')pos.poss_k = 1; 
             if(fen[ind++] == 'q')pos.poss_q =1; 
-        }
+        } 
+        where(ind);  
     }
     ind++; 
+
     if(fen[ind] == '-'){ 
         pos.en_passant =0; 
         pos.row_enpas = -1; 
-        pos.col_enpas = -1;
+        pos.col_enpas = -1; 
+        ind++; 
     } 
     else 
     { 
         pos.en_passant = 1; 
-        pos.col_enpas = fen[ind] - 'a'; 
+        pos.col_enpas = fen[ind] - 'a';  
+        //for(int i =0; i < ind; i++) 
+        //    cout << ' '; 
+        //cout << "^\n"; 
+        //cout << "|||||| \n" << (int)fen[ind] << "\n||||||| \n";  
         ind++; 
-        pos.row_enpas = '8' - fen[ind];  
+        pos.row_enpas = '8' - fen[ind];   
         ind++; 
-    } 
+    }  
+    where(ind); 
     ind++; 
     pos.halfmoves_amo = 0;  
     while(fen[ind] != ' '){ 
@@ -179,20 +203,6 @@ position position_from_fen(string fen){
         pos.moves_amo *= 10; 
         pos.moves_amo += fen[ind++]-'0'; 
     } 
-    return pos; 
-
-    bool en_passant = 0;
-    char row_enpas = ' ', col_enpas = ' ';
-    int halfmoves_amo = 0, moves_amo = 0;
-};
-
-//
-string fen_from_position(position* pos) {
-    return " ";
-}
-
-position position_from_fen(string fen) {
-    position pos;
     return pos;
 }
 
@@ -201,7 +211,7 @@ ll position_hash(position* pos) {
 }
 
 void make_move(string move, position* pos) {
-    pii st_kord, en_kord, bicie_kord = {-1,-1};
+    /*pii st_kord, en_kord, bicie_kord = {-1,-1};
     char przemiana = ' ';
     char typ_figury=' ';
     char kon = move[move.size() - 1];
@@ -283,11 +293,12 @@ void make_move(string move, position* pos) {
     //wykonanie ruchu + zrobienie bicia
     if (pos->mover == 'W')pos->mover = 'b';
     else { pos->mover = 'W'; pos->moves_amo++; }
-    //zmiana strony dodanie cyklu
+    //zmiana strony dodanie cyklu 
+    */
 }
 
 bool position_checked(int a, int b, char color, position* pos) {
-    int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
+   /* int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
     int y_kon[8] = { -2,-1,1,2,2,1,-1,-2 };
     if (color == 'W') {
         for (int i = 0; i < 8; i++) {            //szach czarnym koniem
@@ -393,5 +404,15 @@ bool position_checked(int a, int b, char color, position* pos) {
             if (pos->board[a + i][b + i] == 'Q' || pos->board[a + i][b + i] == 'B')return 1;
         }
     }
+    return 0; */  
     return 0;
+} 
+
+int main(){  
+    string fen = 
+    "rnbqkbnr/pp1ppppp/8/2p5/1P2P3/8/P1PP1PPP/RNBQKBNR b KQkq b3 0 2"; 
+    cout << fen << "\n"; 
+    position pos; 
+    pos = position_from_fen(fen); 
+    visualize(&pos); 
 }
