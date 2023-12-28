@@ -29,7 +29,7 @@ def run():
     bot = Bot()
 
     # while bot.board.is_stalemate==False and bot.board.is_checkmate==False:
-    while bot.board.is_game_over():
+    while not(bot.board.is_game_over()):
         if bot.tura:
             bot.make_move()
         else:
