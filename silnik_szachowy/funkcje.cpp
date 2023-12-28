@@ -649,6 +649,14 @@ string pole(int a,int b,int c,int d)
     return wynik;
 }
 
+vector <int> pole_w_liczby(char bwp1,char bwp2)
+{
+    vector <int> wynik;
+    wynik.push_back(bwp2-'1');
+    wynik.push_back(bwp1-'a');
+    return wynik;
+}
+
 vector <string> mozliwe_ruchy(pozycja *poz)
 {
     vector <string> cos;
@@ -1379,27 +1387,27 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                                 slowo.pop_back();
                             }
                         }
-                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    }
+                    if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    {
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]+1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]-1)
                         {
-                            if (i==(poz->wiersz_bwp)+1&&j==(poz->kolumna_bwp)-1)
+                            string slowo=pole(i,j,i-1,j+1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i-1,j+1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                }
+                                cos.push_back(slowo);
                             }
-                            if (i==(poz->wiersz_bwp+1)&&j==(poz->kolumna_bwp)+1)
+                        }
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]+1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]+1)
+                        {
+                            string slowo=pole(i,j,i-1,j-1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i-1,j-1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(black_king.st,black_king.nd,'w',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                }
+                                cos.push_back(slowo);
                             }
                         }
                     }
@@ -2150,31 +2158,32 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                                 slowo.pop_back();
                             }
                         }
-                        if (poz->czy_bicie_w_przelocie==1)//bwp;
+                    }
+                    if ((poz->czy_bicie_w_przelocie)==1)//bwp;
+                    {
+                        //cout<<"\n"<<pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]<<" "<<pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]<<"\n";
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]-1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]-1)
                         {
-                            if (i==(poz->wiersz_bwp-1)&&j==(poz->kolumna_bwp)-1)
+                            string slowo=pole(i,j,i+1,j+1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i+1,j+1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                    //cout<<slowo<<"\n";
-                                    //licznik++;
-                                }
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
                             }
-                            if (i==(poz->wiersz_bwp)-1&&j==(poz->kolumna_bwp)+1)
+                        }
+                        if (i==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0]-1&&j==pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1]+1)
+                        {
+                            string slowo=pole(i,j,i+1,j-1);
+                            poz2=*poz;
+                            porusz(slowo,&poz2);
+                            if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
                             {
-                                string slowo=pole(i,j,i+1,j-1);
-                                poz2=*poz;
-                                porusz(slowo,&poz2);
-                                if (czy_pole_jest_szachowane(white_king.st,white_king.nd,'b',&poz2)==0)
-                                {
-                                    cos.push_back(slowo);
-                                    //cout<<slowo<<"\n";
-                                    //licznik++;
-                                }
+                                cos.push_back(slowo);
+                                //cout<<slowo<<"\n";
+                                //licznik++;
                             }
                         }
                     }
@@ -2184,3 +2193,49 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
     return cos;
 }
+
+/*void los1(long long a,long long b,long long *tab)
+{
+    mt19937_64 gen(getpid());
+    for (int i=0;i<12;i++)
+    {
+    	for (int j=0;j<64;j++)
+    	{
+    	    *tab[i*64+j]=gen()%(b-a+1)+a;
+    	}
+    }
+}*/
+
+/*void los2(long long a,long long b,long long *tab)
+{
+    mt19937_64 gen(getpid());
+    for (int i=0;i<13;i++)
+    {
+        *tab[i]=gen()%(b-a+1)+a;
+    }
+}*/
+
+/*long long Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
+{
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	
+    	}
+    }
+}
+
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash,int *tab1,int *tab2)
+{
+
+}
+
+bool czy_pat(pozycja *poz)
+{
+    if (poz->liczba_polowek_ruchow==100)
+    {
+        return 1;
+    }
+    return 0;
+}*/
