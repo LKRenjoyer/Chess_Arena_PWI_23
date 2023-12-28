@@ -23,27 +23,31 @@ class Client:
             msg = self.client.recv(msg_len).decode("utf-8")
             return msg
                 
-czy_bialy = False
+c = Client()
+kolor = c.recv_msg()
+czy_bialy = True if kolor=="biale" else False
 if czy_bialy:
     bot = subprocess.Popen(['python','main.py',"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     bot = subprocess.Popen(['python','main.py',"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
-c = Client()
+print(kolor)
 
-kolor = c.recv_msg()
+
 
 
 def ruch_clienta():
     return c.recv_msg()
 
-if kolor=="bialy":
+if kolor=="biale":
     #wykonaj pierwszy ruch
     wyjscie = bot.stdout.readline().decode('utf-8')
+    # print(wyjscie,"dziabag")
     c.send(wyjscie)
 
 while True:
-    wejscie = f"{ruch_clienta()}\n"
+    wejscie = ruch_clienta()
+    print(wejscie)
     bot.stdin.write(wejscie.encode("utf-8"))
     bot.stdin.flush()
     # print("xd")
