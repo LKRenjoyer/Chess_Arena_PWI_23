@@ -39,8 +39,8 @@ void porusz(string ruch, pozycja *poz) {
     }
     //zmiana bicia w przelocie
     poz->czy_bicie_w_przelocie = 0;
-    poz->wiersz_bwp = ' ';
-    poz->kolumna_bwp = ' ';
+    //poz->wiersz_bwp = ' ';
+    //poz->kolumna_bwp = ' ';
     if(ruch[1] == '2' && ruch[3] == '4' && poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P') {
         poz->czy_bicie_w_przelocie = 1;
         poz->wiersz_bwp = '3';
@@ -109,13 +109,13 @@ void porusz(string ruch, pozycja *poz) {
             poz->plansza[7][4] = ' ';
         }
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && ruch[3] == poz->wiersz_bwp && ruch[2] == poz->kolumna_bwp){
         //uwaga na bicia w przelocie bialych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'P';
         poz->plansza[(ruch[3] - '1') - 1][(ruch[2] - 'a')] = ' ';
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && ruch[3] == poz->wiersz_bwp && ruch[2] == poz->kolumna_bwp){
         //uwaga na bicia w przelocie czarnych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'p';
@@ -126,6 +126,10 @@ void porusz(string ruch, pozycja *poz) {
         //cout << "poruszam figure\n";
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')];
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
+    }
+    if(poz->czy_bicie_w_przelocie == 0) {
+        poz->wiersz_bwp = ' ';
+        poz->kolumna_bwp = ' ';
     }
 }
 
