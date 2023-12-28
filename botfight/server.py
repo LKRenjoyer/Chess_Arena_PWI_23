@@ -4,6 +4,8 @@
 import socket
 import threading
 from server_const import *
+import chess
+import os
 
 kanal1_main = [""]
 kanal2_main = [""]
@@ -14,6 +16,8 @@ gotowy_kanal_1_main = [False]
 gotowy_kanal_2_main = [False]
 gotowy_kanal_3_main = [False]
 gotowy_kanal_4_main = [False]
+
+board = chess.Board()
 
 class Server:
     def __init__(self):
@@ -121,13 +125,49 @@ class Server:
         
         print("Oba boty sie polaczyly")
         
-        while True:
+        while not(board.is_game_over()):
             white_move = self.pull_white_move() #(1)
-            print("ruch białego: ",white_move)
+            white_move = white_move.strip()
+            # print(white_move)
+
+            # print(white_move)
+            if chess.Move.from_uci(white_move) in board.legal_moves:#(2)
+                board.push(chess.Move.from_uci(white_move))
+            else:
+                print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                break
+
+            if board.is_game_over():#(3)
+                print("Koniec gry!")
+                break
+
+            # print("ruch białego: ",white_move)
+            os.system('cls')
+            print(board)
+            print()
+
             kanal4_main[0]=white_move#(4)
             gotowy_kanal_4_main[0]=True
+
             black_move = self.pull_black_move()#(5)
-            print("ruch czarnego: ",black_move)
+            black_move = black_move.strip()
+            # print(black_move)
+            # print("ruch czarnego: ",black_move)
+            os.system('cls')
+            print(board)
+            print()
+
+            if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
+                board.push(chess.Move.from_uci(black_move))
+            else:
+                print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                break
+
+            if board.is_game_over():#(7)
+                print("Koniec gry!")
+                break
+
+
             kanal2_main[0]=black_move#(8)
             gotowy_kanal_2_main[0] = True
 

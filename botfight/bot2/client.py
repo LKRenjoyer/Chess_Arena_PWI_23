@@ -22,6 +22,8 @@ class Client:
             msg_len = int(msg_len)
             msg = self.client.recv(msg_len).decode("utf-8")
             return msg
+        else:
+            return self.recv_msg()
                 
 c = Client()
 kolor = c.recv_msg()
@@ -46,7 +48,7 @@ if kolor=="biale":
     c.send(wyjscie)
 
 while True:
-    wejscie = ruch_clienta()
+    wejscie = f"{ruch_clienta()}\n"
     print(wejscie)
     bot.stdin.write(wejscie.encode("utf-8"))
     bot.stdin.flush()
