@@ -31,11 +31,13 @@ else:
 
 c = Client()
 
+kolor = c.recv_msg()
+
 
 def ruch_clienta():
     return c.recv_msg()
 
-if czy_bialy:
+if kolor=="bialy":
     #wykonaj pierwszy ruch
     wyjscie = bot.stdout.readline().decode('utf-8')
     c.send(wyjscie)

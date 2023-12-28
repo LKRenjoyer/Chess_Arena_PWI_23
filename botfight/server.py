@@ -5,10 +5,15 @@ import socket
 import threading
 from server_const import *
 
+kanal1 = ""
+kanal2 = ""
+
 class Server:
     def __init__(self):
         self.server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.server.bind(ADDR)
+        # self.kanal1 = ""
+        # self.kanal2 = ""
 
     def send_msg_to_client(self,conn,msg):
         msg = msg.encode('utf-8')
@@ -19,8 +24,11 @@ class Server:
         conn.send(msg)
 
     
-    def handle_client(self,conn,addr):
+    def handle_client(self,conn,addr,kanal,kolor):
         active = True
+
+        self.send_msg_to_client(kolor)
+
 
         while active:
             msg_len = conn.recv(64).decode('utf-8')
@@ -37,11 +45,21 @@ class Server:
     
     def run(self):
         self.server.listen()
-        while True:
+        ile_polaczen = 0
+        while ile_polaczen<2:
             conn,addr = self.server.accept()
+            ile_polaczen+=1
             print(f"{addr} wlasnie sie polaczyl")
-            thr = threading.Thread(target=self.handle_client,args=(conn,addr))
+            if ile_polaczen==1:#zmienic na losowe przydzielenie kanalow, bo od tego zalezy czy kto gra czarnymi czy ktos gra bialymi
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1,"biale"))
+            else:
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal2,"czarne"))
             thr.start()
+        
+        
+        
+
 
 s = Server()
+# server_thread = threading.Thread(target=s.run)
 s.run()
