@@ -187,15 +187,10 @@ position position_from_fen(string fen) {
     {
         pos.en_passant = 1;
         pos.col_enpas = fen[ind] - 'a';
-        //for(int i =0; i < ind; i++) 
-        //    cout << ' '; 
-        //cout << "^\n"; 
-        //cout << "|||||| \n" << (int)fen[ind] << "\n||||||| \n";  
         ind++;
         pos.row_enpas = '8' - fen[ind];
         ind++;
     }
-    //where(ind); 
     ind++;
     pos.halfmoves_amo = 0;
     while (fen[ind] != ' ') {
@@ -294,7 +289,7 @@ void make_move(string move, position* pos) {
     // jesli jest promocja to zmien typ figury
     pos->board[st_kord.st][st_kord.nd] = ' ';
     if (bicie_kord.st >= 0)pos->board[bicie_kord.st][bicie_kord.nd] = ' ';
-    pos->board[en_kord.st][en_kord.nd] = przemiana;
+    pos->board[en_kord.st][en_kord.nd] = typ_figury;
     //wykonanie ruchu + zrobienie bicia
     if (pos->mover == 'W')pos->mover = 'b';
     else { pos->mover = 'W'; pos->moves_amo++; }
@@ -413,14 +408,116 @@ bool position_checked(int a, int b, char color, position* pos) {
     return 0;
 } 
 string beginnig_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; 
-int main(){  
-    string fen = 
-    //"rnbqkbnr/pp1ppppp/8/2p5/1P2P3/8/P1PP1PPP/RNBQKBNR b KQkq b3 0 2";  
-    "rnbq1rk1/pp1ppp2/5n1b/2p3p1/1PB1PPPp/B4N2/P1PPQ2P/RN2K2R b KQ g3 0 8"; 
-    cout << fen << "\n"; 
-    position pos; 
-    pos = position_from_fen(fen); 
-    //visualize(&pos); 
-    string rekr = fen_from_position(&pos);
-    cout << rekr << "\n";
+
+// [wiersz, kolumna][wiersz, kolumna]
+string uci_from_our_fromat(string move, position* pos){  
+    string ans = ""; 
+    if(move == "O-O-O"){ 
+        if(pos->mover == 'W') return "e1c1"; 
+        if(pos->mover == 'b') return "e8c8";  
+        return "---"; 
+    } 
+    if(move == "O-O"){ 
+        if(pos->mover == 'W') return "e1g1"; 
+        if(pos->mover == 'b') return "e8g8"; 
+    } 
+    char row, col; 
+    col = 'a' + (move[1] - '0'); 
+    row = '0' + ('8' - move[0]);
+    ans += col; ans += row;   
+    col = 'a' + (move[3] - '0'); 
+    row = '0' + ('8' - move[2]);
+    ans += col; ans += row;  
+    char pom = move.back(); 
+    if(!(pom>='0' && pom <= '9')){ 
+        if((pom >= 'A' && pom <'Z'))
+            pom = pom + 'a' -'A';
+        ans += pom;  
+    } 
+    return ans; 
+} 
+
+char number_sign(int val){ return (char)(val + '0');}
+
+string our_format_from_uci(string uci_move, position* pos){  
+    pii from; pii to; string ans; 
+    char col = uci_move[0]; char row = uci_move[1]; 
+    from.st = ('8' - row); from.nd = col-'a'; 
+    col = uci_move[2]; row = uci_move[3]; 
+    to.st = ('8' - row); to.nd =  col-'a'; 
+
+    if(pos->en_passant != 0 && pos->board[from.st][from.nd] == 'p' || pos->board[from.st][from.nd] == 'P' 
+        && pos->col_enpas == to.nd && pos->row_enpas == to.st && pos->board[to.st][to.nd] == ' ' 
+        && abs(from.st-to.st) == 1 && abs(from.nd-to.nd) == 1){ 
+            pii capture = {pos->row_enpas,pos->col_enpas};
+            if(pos->mover == 'W')  
+                capture.st++; 
+            if(pos->mover == 'b') 
+                capture.st--; 
+            assert((pos->board[capture.st][capture.nd] == 'p' || pos->board[capture.st][capture.nd]=='P') && pos->board[capture.st][capture.nd]!=pos->board[from.st][from.nd] ); 
+            ans+=number_sign(from.st);ans+=number_sign(from.nd); 
+            ans+=number_sign(to.st);ans+=number_sign(to.nd); ans+=number_sign(capture.st); ans+=number_sign(capture.nd); 
+            return ans;  
+    } 
+    // if na promocje  
+    if(sz(uci_move) == 5){ // wtedy i tylko wtedy jest promocja
+        char type = uci_move.back(); 
+        if(pos->mover == 'W') 
+            type = type + 'A' - 'a'; 
+         ans+=number_sign(from.st);ans+=number_sign(from.nd); 
+         ans+=number_sign(to.st);ans+=number_sign(to.nd); 
+        if(pos->board[from.st][from.nd] != ' '){
+            ans+=number_sign(to.st);ans+=number_sign(to.nd);
+        }       
+        ans += type;
+        return ans;  
+    } 
+    // if na roszady
+    if(pos->board[from.st][from.nd] == 'k' || pos->board[from.st][from.nd] == 'K'
+    && abs(from.nd - to.nd) == 2){ 
+        if(to.nd == 6) 
+            return "O-O";  
+        if(to.nd == 2) 
+            return "O-O-O"; 
+        assert(1 == 0); 
+        // roszada error
+    } 
+    ans+=number_sign(from.st);ans+=number_sign(from.nd); 
+    ans+=number_sign(to.st);ans+=number_sign(to.nd);  
+    if(pos->board[to.st][to.nd] !=' '){ 
+        ans+=number_sign(to.st);ans+=number_sign(to.nd);
+    }  
+    return ans; 
+}
+int main(){   
+
+    position pos;  
+    string uci_move; 
+    ifstream read("moj_fen.txt");
+    // Sprawdzanie, czy plik został poprawnie otwarty
+    if (!read.is_open()) {
+        cerr << "Nie można otworzyć pliku moj_fen.txt" << endl;
+        exit(2);
+    } 
+    string basic_fen;
+    int val;
+    // Odczyt pliku i zapisanie do zmiennej basic_fen
+    while ((val = read.get()) != EOF) {
+        basic_fen += static_cast<char>(val);
+    }
+    read.close();  
+    pos = position_from_fen(basic_fen); 
+    int n; cin >> n;  
+    cout << n << "\n"; 
+    for(int i =0; i < n; i++){  
+        cin >> uci_move; 
+        string pom =  uci_from_our_fromat(our_format_from_uci(uci_move, &pos), &pos); 
+        cout << pom << "\n";
+        if(pom != uci_move){  
+            cout << "cos popsules\n"; 
+            cout << uci_move << " " << pom << "\n"; 
+            exit(0); 
+        }    
+    } 
+    exit(0); 
 }
