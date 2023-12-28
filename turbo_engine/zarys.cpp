@@ -303,35 +303,37 @@ void make_move(string move, position* pos) {
 }
 
 bool position_checked(int a, int b, char color, position* pos) {
-    /* int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
+     int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
      int y_kon[8] = { -2,-1,1,2,2,1,-1,-2 };
+     int x_krol[8] = {-1,-1,-1,0,0,1,1,1};
+     int y_krol[8] = {-1,0,1,-1,1,-1,0,1};
      if (color == 'W') {
          for (int i = 0; i < 8; i++) {            //szach czarnym koniem
              int akt_x = a + x_kon[i], akt_y = b + y_kon[i];
-             if (!w_planszy[akt_x][akt_y])continue;
+             if (!w_planszy(akt_x,akt_y))continue;
              if (pos->board[akt_x][akt_y] == 'n')return 1;
          }
          if ((w_planszy(a - 1, b - 1) && pos->board[a - 1][b - 1] == 'p') || (w_planszy(a - 1, b + 1) && pos->board[a - 1][b + 1] == 'p'))return 1; //szach czarnym pionem
          //lewo
-         for (int i = a; i >= 0; i--) {
+         for (int i = a-1; i >= 0; i--) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'r' || pos->board[i][b] == 'q')return 1;
              break;
          }
          //prawo
-         for (int i = a; i < 8; i++) {
+         for (int i = a+1; i < 8; i++) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'r' || pos->board[i][b] == 'q')return 1;
              break;
          }
          //g�ra
-         for (int i = b; i >= 0; i--) {
+         for (int i = b-1; i >= 0; i--) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'r' || pos->board[a][i] == 'q')return 1;
              break;
          }
          //d�
-         for (int i = b; i < 8; i++) {
+         for (int i = b+1; i < 8; i++) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'r' || pos->board[a][i] == 'q')return 1;
              break;
@@ -356,34 +358,39 @@ bool position_checked(int a, int b, char color, position* pos) {
              if (pos->board[a + i][b + i] == ' ')continue;
              if (pos->board[a + i][b + i] == 'q' || pos->board[a + i][b + i] == 'b')return 1;
          }
+         //szach krol
+         for (int i = 0; i < 8; i++) {
+             int akt_x = a + x_krol[i],akt_y=b+y_krol[i];
+             if (pos->board[akt_x][akt_y] == 'k')return 1;
+         }
      }
      if (color == 'b') {
          for (int i = 0; i < 8; i++) {            //szach bia�ym koniem
              int akt_x = a + x_kon[i], akt_y = b + y_kon[i];
-             if (!w_planszy[akt_x][akt_y])continue;
+             if (!w_planszy(akt_x,akt_y))continue;
              if (pos->board[akt_x][akt_y] == 'N')return 1;
          }
          if ((w_planszy(a + 1, b - 1) && pos->board[a + 1][b - 1] == 'P') || (w_planszy(a + 1, b + 1) && pos->board[a + 1][b + 1] == 'P'))return 1; //szach bia�ym pionem
          //lewo
-         for (int i = a; i >= 0; i--) {
+         for (int i = a-1; i >= 0; i--) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'R' || pos->board[i][b] == 'Q')return 1;
              break;
          }
          //prawo
-         for (int i = a; i < 8; i++) {
+         for (int i = a+1; i < 8; i++) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'R' || pos->board[i][b] == 'Q')return 1;
              break;
          }
          //g�ra
-         for (int i = b; i >= 0; i--) {
+         for (int i = b-1; i >= 0; i--) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'R' || pos->board[a][i] == 'Q')return 1;
              break;
          }
          //d�
-         for (int i = b; i < 8; i++) {
+         for (int i = b+1; i < 8; i++) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'R' || pos->board[a][i] == 'Q')return 1;
              break;
@@ -407,9 +414,14 @@ bool position_checked(int a, int b, char color, position* pos) {
          for (int i = i; a + i < 8 && b + i < 8; i++) {
              if (pos->board[a + i][b + i] == ' ')continue;
              if (pos->board[a + i][b + i] == 'Q' || pos->board[a + i][b + i] == 'B')return 1;
+         //szach krol    
+             for (int i = 0; i < 8; i++) {
+                 int akt_x = a + x_krol[i], akt_y = b + y_krol[i];
+                 if (pos->board[akt_x][akt_y] == 'K')return 1;
+             }
          }
      }
-     return 0; */
+     
     return 0;
 }
 
