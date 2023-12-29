@@ -42,6 +42,7 @@ bool pair_comp(pii para, int f, int s) {
 bool w_planszy(int a, int b) {
     return a >= 0 && a < 8 && b >= 0 && b < 8;
 }
+
 string number_text(int x) {
     if (x == 0)
         return "0";
@@ -214,12 +215,7 @@ ll position_hash(position* pos) {
     return 0;
 }
 
-bool pair_comp(pii para, int f, int s) {
-    return para.st == f && para.nd == s;
-}
-bool w_planszy(int a, int b) {
-    return a >= 0 && a < 8 && b >= 0 && b < 8;
-}
+
 
 void make_move(string move, position* pos) {
     pii st_kord = { 0,0 }, en_kord = { 0,0 }, bicie_kord = { -1,-1 };
@@ -282,13 +278,13 @@ void make_move(string move, position* pos) {
     pos->halfmoves_amo++;
     //rozwa�enie p�ruch�w (czy ruch pionkiem lub czy bicie)
     if (pair_comp(st_kord, 0, 0) || pair_comp(en_kord, 0, 0))pos->poss_q = 0;
-    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_k = 0;
+    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_Q = 0;
     if (pair_comp(st_kord, 7, 7) || pair_comp(en_kord, 7, 7))pos->poss_K = 0;
-    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_Q = 0;
+    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_k = 0;
     if (typ_figury == 'K') { pos->poss_K = 0; pos->poss_Q = 0; }
     if (typ_figury == 'k') { pos->poss_k = 0; pos->poss_q = 0; }
     //sprawdzenie roszad
-    pos->en_passant = 0;
+    pos->en_passant=0;
     if (abs(st_kord.st - en_kord.st) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
         char sasiad = ' ';
         if (w_planszy(en_kord.nd - 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd-1];
@@ -497,12 +493,13 @@ string our_format_from_uci(string uci_move, position* pos){
         return ans;  
     } 
     // if na roszady
-    if(pos->board[from.st][from.nd] == 'k' || pos->board[from.st][from.nd] == 'K'
+    if( (pos->board[from.st][from.nd] == 'k' || pos->board[from.st][from.nd] == 'K')
     && abs(from.nd - to.nd) == 2){ 
         if(to.nd == 6) 
             return "O-O";  
         if(to.nd == 2) 
-            return "O-O-O"; 
+            return "O-O-O";  
+        cout << from.st << " " << from.nd << " " << from.st << " " << to.nd << "\n"; 
         assert(1 == 0); 
         // roszada error
     } 
@@ -898,7 +895,6 @@ vector<string> possible_moves(position* pos, char color) {
 }
 
 
-
 int main(){   
     position pos;     
     ifstream read("moj_fen");
@@ -920,20 +916,24 @@ int main(){
     //cout << basic_fen << "\n"; 
     pos = position_from_fen(basic_fen);  
     //visualize(&pos); 
- 
-    //exit(0); 
-    string uci_move; 
-    cin >> uci_move; 
-    if(uci_move[0] == '0'){ 
-        cout << 0; 
-        exit(0); 
-    }  
-    pos = position_from_fen(basic_fen);  
-    //visualize(&pos); 
-    cout << uci_move << "\n"; 
-    string my_move = our_format_from_uci(uci_move, &pos); 
-    make_move(my_move, &pos);
+    int n; cin >> n;  
+    cout << n << "\n";   
+    string uci_move, my_move; string trash; 
+    for(int i = 0; i < n; i++){ 
+        cin >> uci_move; 
+        //getline(cin, trash);
+        //getline(cin, trash); 
+        if(uci_move[0] == '0'){ 
+            cout << 0; 
+            exit(0); 
+        }  
+        //pos = position_from_fen(basic_fen);  
+        //visualize(&pos); 
+        cout << uci_move << "\n"; 
+        my_move = our_format_from_uci(uci_move, &pos); 
+        make_move(my_move, &pos);    
+        //visualize(&pos); 
+    }
+    cout << fen_from_position(&pos) << "\n";
     //visualize(&pos);  
-    //visualize(&pos); 
-    cout << fen_from_position(&pos) << "\n"; 
 }
