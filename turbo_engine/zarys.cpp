@@ -284,12 +284,13 @@ void make_move(string move, position* pos) {
     if (typ_figury == 'K') { pos->poss_K = 0; pos->poss_Q = 0; }
     if (typ_figury == 'k') { pos->poss_k = 0; pos->poss_q = 0; }
     //sprawdzenie roszad
+    pos->en_passant = 0;
     if (abs(st_kord.st - en_kord.st) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
         char sasiad = ' ';
         if (w_planszy(en_kord.nd - 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd-1];
-        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->en_passant = 1;  pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
         if (w_planszy(en_kord.nd + 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd+1];
-        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->en_passant = 1; pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
     }
     //sprawdzenie en-passant
     if (przemiana != ' ')typ_figury = przemiana;

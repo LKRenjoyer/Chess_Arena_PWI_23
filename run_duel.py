@@ -5,28 +5,34 @@
 
 import sys
 import subprocess
+import argparse
+
+parser = argparse.ArgumentParser(description='Główna program do runowania botów')
+parser.add_argument('bot1', type=str, help='Nazwa pierwszego bota')
+parser.add_argument('bot2', type=str, help='Nazwa drugiego bota')
+parser.add_argument("-pvp", action='store_true', help='Player vs Player')
+parser.add_argument("-pve", action='store_true', help='Player vs Entity')
+parser.add_argument("-eve", action='store_true', help='Entity vs Entity')
 
 if len(sys.argv)<3:
-    print("Bots' names not passed")
-    exit(1)
+    raise AttributeError("Bots' names not passed")
 
-names = sys.argv[1:3]
+args = parser.parse_args()
 
-if len(sys.argv)>3:
-    flags = sys.argv[3:]
-else:
-    flags = []
+if args.eve or (not args.pvp and not args.pvp and not args.pve):
+    server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
+    client1 = subprocess.Popen(['python','boty/client.py',args.bot1],stdout=subprocess.PIPE)
+    client2 = subprocess.Popen(['python','boty/client.py',args.bot2],stdout=subprocess.PIPE)
+    visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
 
-
-server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
-# client1 = subprocess.Popen(['python','boty/client.py',names[0]],stdout=subprocess.PIPE)
-client2 = subprocess.Popen(['python','boty/client.py',names[1]],stdout=subprocess.PIPE)
-visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
-
-while True:
-    move = server.stdout.readline().decode('utf-8').strip()
-    print(move)
-    print(move, file=visualization.stdin, flush=True)
+    while True:
+        move = server.stdout.readline().decode('utf-8').strip()
+        print(move)
+        print(move, file=visualization.stdin, flush=True)
+elif(args.pvp):
+    server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
+    client1 = subprocess.Popen(['python','boty/client.py',args.bot1,'--player'],stdout=subprocess.PIPE)
+    # client2 = subprocess.Popen(['python','boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
 
 
 
