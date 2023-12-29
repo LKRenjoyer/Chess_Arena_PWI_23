@@ -232,14 +232,14 @@ void make_move(string move, position* pos) {
             pos->board[7][5] = 'R';
             pos->board[7][6] = 'K';
             pos->board[7][7] = ' ';
-            pos->poss_Q = 1; pos->poss_K = 1;
+            pos->poss_Q = 0; pos->poss_K = 0;
         }
         else {
             pos->board[0][4] = ' ';
             pos->board[0][5] = 'r';
             pos->board[0][6] = 'k';
             pos->board[0][7] = ' ';
-            pos->poss_q = 1; pos->poss_k = 1;
+            pos->poss_q = 0; pos->poss_k = 0;
         }
         pos->halfmoves_amo++;
         if (pos->mover == 'W')pos->mover = 'b';
@@ -254,7 +254,7 @@ void make_move(string move, position* pos) {
             pos->board[7][2] = 'K';
             pos->board[7][3] = 'R';
             pos->board[7][4] = ' ';
-            pos->poss_Q = 1; pos->poss_K = 1;
+            pos->poss_Q = 0; pos->poss_K = 0;
         }
         else {
             pos->board[0][0] = ' ';
@@ -262,7 +262,7 @@ void make_move(string move, position* pos) {
             pos->board[0][2] = 'k';
             pos->board[0][3] = 'r';
             pos->board[0][4] = ' ';
-            pos->poss_q = 1; pos->poss_k = 1;
+            pos->poss_q = 0; pos->poss_k = 0;
         }
         pos->halfmoves_amo++;
         if (pos->mover == 'W')pos->mover = 'b';
