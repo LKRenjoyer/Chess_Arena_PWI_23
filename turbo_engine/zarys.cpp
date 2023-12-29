@@ -278,13 +278,13 @@ void make_move(string move, position* pos) {
     pos->halfmoves_amo++;
     //rozwa�enie p�ruch�w (czy ruch pionkiem lub czy bicie)
     if (pair_comp(st_kord, 0, 0) || pair_comp(en_kord, 0, 0))pos->poss_q = 0;
-    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_k = 0;
+    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_Q = 0;
     if (pair_comp(st_kord, 7, 7) || pair_comp(en_kord, 7, 7))pos->poss_K = 0;
-    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_Q = 0;
+    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_k = 0;
     if (typ_figury == 'K') { pos->poss_K = 0; pos->poss_Q = 0; }
     if (typ_figury == 'k') { pos->poss_k = 0; pos->poss_q = 0; }
     //sprawdzenie roszad
-    pos->en_passant = 0;
+    pos->en_passant=0;
     if (abs(st_kord.st - en_kord.st) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
         char sasiad = ' ';
         if (w_planszy(en_kord.nd - 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd-1];
