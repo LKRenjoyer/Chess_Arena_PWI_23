@@ -11,7 +11,6 @@ import os
 from functools import partial
 import threading
 import sys
-import time
 
 path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
@@ -70,20 +69,25 @@ def conv_to_uci(pos1, pos2):
     return "".join(chr(p[0]+ord('a'))+str(8-p[1]) for p in (pos1, pos2))
 
 def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje go
-    try: #promocja
-        board.push_uci(move+'q')
-        board.pop()
-        promotion_box.update(board.size, ('dl')[board.turn])
-        redraw(screen,True)
-        return True
-        # print(move,flush=True)
-    except (IllegalMoveError, ValueError):
-        try:
-            board.push_uci(move)
-            print(move,flush=True)
-        except (IllegalMoveError, ValueError):
-            pass
+    try:
+        board.push_uci(move+'p') #to nie powinno działać, ale naprawia błąd z roszadą
+        print(move,flush=True)
         return False
+    except (IllegalMoveError, ValueError):
+        try: #promocja
+            board.push_uci(move+'q')
+            board.pop()
+            promotion_box.update(board.size, ('dl')[board.turn])
+            redraw(screen,True)
+            return True
+            # print(move,flush=True)
+        except (IllegalMoveError, ValueError):
+            try:
+                board.push_uci(move)
+                print(move,flush=True)
+            except (IllegalMoveError, ValueError):
+                pass
+            return False
 
 last_move = None
 move_promotes = False
