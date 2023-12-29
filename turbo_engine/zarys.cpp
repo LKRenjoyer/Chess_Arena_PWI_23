@@ -284,12 +284,12 @@ void make_move(string move, position* pos) {
     if (typ_figury == 'K') { pos->poss_K = 0; pos->poss_Q = 0; }
     if (typ_figury == 'k') { pos->poss_k = 0; pos->poss_q = 0; }
     //sprawdzenie roszad
-    if (abs(st_kord.nd - en_kord.nd) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
+    if (abs(st_kord.st - en_kord.st) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
         char sasiad = ' ';
-        if (w_planszy(en_kord.st - 1, en_kord.nd))sasiad = pos->board[en_kord.st - 1][en_kord.nd];
-        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.st; pos->row_enpas = (st_kord.nd + en_kord.nd) / 2; }
-        if (w_planszy(en_kord.st + 1, en_kord.nd))sasiad = pos->board[en_kord.st + 1][en_kord.nd];
-        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.st; pos->row_enpas = (st_kord.nd + en_kord.nd) / 2; }
+        if (w_planszy(en_kord.nd - 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd-1];
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
+        if (w_planszy(en_kord.nd + 1, en_kord.st))sasiad = pos->board[en_kord.st][en_kord.nd+1];
+        if ((sasiad == 'p' || sasiad == 'P') && sasiad != typ_figury) { pos->col_enpas = st_kord.nd; pos->row_enpas = (st_kord.st + en_kord.st) / 2; }
     }
     //sprawdzenie en-passant
     if (przemiana != ' ')typ_figury = przemiana;
@@ -554,8 +554,13 @@ vector<string> possible_moves(position* pos, char color) {
                         if (attacked == ' ')moves.pb(daj_ruch(i, j, akt_x, akt_y, -1, -1, 'X'));
                         if ('a' <= attacked && attacked <= 'z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
                     }
-                    if (pos->poss_K && pos->board[7][5] == ' ' && pos->board[7][6] == ' ')moves.pb("O-O");
-                    if (pos->poss_Q && pos->board[7][1] == ' ' && pos->board[7][2] == ' ' && pos->board[7][3] == ' ')moves.pb("O-O-O");
+                    if (pos->poss_K && pos->board[7][5] == ' ' && pos->board[7][6] == ' ') { 
+                        if(position_checked(7, 4, 'W', pos) == 0 && position_checked(7, 5, 'W', pos) == 0 && position_checked(7, 6, 'W', pos) == 0 )
+                        moves.pb("O-O"); 
+                    }
+                    if (pos->poss_Q && pos->board[7][1] == ' ' && pos->board[7][2] == ' ' && pos->board[7][3] == ' ') { 
+                        if(position_checked(7,4,'W',pos)==0&&position_checked(7,3,'W',pos)==0&&position_checked(7,2,'W',pos)==0)
+                        moves.pb("O-O-O"); }
                 }
                 if (pos->board[i][j] == 'Q') {
                     //gora
@@ -719,8 +724,14 @@ vector<string> possible_moves(position* pos, char color) {
                         if (attacked == ' ')moves.pb(daj_ruch(i, j, akt_x, akt_y, -1, -1, 'X'));
                         if ('A' <= attacked && attacked <= 'Z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
                     }
-                    if (pos->poss_K && pos->board[0][5] == ' ' && pos->board[0][6] == ' ')moves.pb("O-O");
-                    if (pos->poss_Q && pos->board[0][1] == ' ' && pos->board[0][2] == ' ' && pos->board[0][3] == ' ')moves.pb("O-O-O");
+                    if (pos->poss_K && pos->board[0][5] == ' ' && pos->board[0][6] == ' ') {
+                        if (position_checked(0, 4, 'b', pos) == 0 && position_checked(0, 5, 'b', pos) == 0 && position_checked(0, 6, 'b', pos) == 0)
+                            moves.pb("O-O");
+                    }
+                    if (pos->poss_Q && pos->board[0][1] == ' ' && pos->board[0][2] == ' ' && pos->board[0][3] == ' ') {
+                        if (position_checked(0, 4, 'b', pos) == 0 && position_checked(0, 5, 'b', pos) == 0 && position_checked(0, 6, 'b', pos) == 0)
+                            moves.pb("O-O-O");
+                    }
                 }
                 if (pos->board[i][j] == 'q') {
                     //gora
@@ -875,6 +886,7 @@ vector<string> possible_moves(position* pos, char color) {
     }
     vector<string> legal_moves = {};
     for (auto i : moves) {
+        if (i[0] == 'O')continue;
         if (czy_szach(color, pos, i) == 0)legal_moves.pb(i);
     }
     return legal_moves;

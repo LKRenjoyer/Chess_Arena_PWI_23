@@ -1,6 +1,9 @@
 import subprocess
 import socket
 from client_const import *
+import sys
+import os
+from functools import partial
 
 
 class Client:
@@ -28,10 +31,15 @@ class Client:
 c = Client()
 kolor = c.recv_msg()
 czy_bialy = True if kolor=="biale" else False
+
+# curr_path = os.path.abspath(sys.argv[0])
+merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
+path = merge_path(sys.argv[1], "main.py")
+
 if czy_bialy:
-    bot = subprocess.Popen(['python','main.py',"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
-    bot = subprocess.Popen(['python','main.py',"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    bot = subprocess.Popen(['python',path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 print(kolor)
 
@@ -44,16 +52,17 @@ def ruch_clienta():
 if kolor=="biale":
     #wykonaj pierwszy ruch
     wyjscie = bot.stdout.readline().decode('utf-8')
+    print(f"moj ruch: {wyjscie}")
     c.send(wyjscie)
 
 while True:
     wejscie = f"{ruch_clienta()}\n"
-    print(wejscie)
+    print(f"ruch przeciwnika: {wejscie.strip()}")
     bot.stdin.write(wejscie.encode("utf-8"))
     bot.stdin.flush()
     # print("xd")
     wyjscie = bot.stdout.readline().decode('utf-8')
-    print(f"ruch bota {wyjscie}")
+    print(f"moj ruch: {wyjscie}")
     c.send(wyjscie)
     
 
