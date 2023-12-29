@@ -42,6 +42,7 @@ bool pair_comp(pii para, int f, int s) {
 bool w_planszy(int a, int b) {
     return a >= 0 && a < 8 && b >= 0 && b < 8;
 }
+
 string number_text(int x) {
     if (x == 0)
         return "0";
@@ -214,12 +215,7 @@ ll position_hash(position* pos) {
     return 0;
 }
 
-bool pair_comp(pii para, int f, int s) {
-    return para.st == f && para.nd == s;
-}
-bool w_planszy(int a, int b) {
-    return a >= 0 && a < 8 && b >= 0 && b < 8;
-}
+
 
 void make_move(string move, position* pos) {
     pii st_kord = { 0,0 }, en_kord = { 0,0 }, bicie_kord = { -1,-1 };
@@ -885,7 +881,6 @@ vector<string> possible_moves(position* pos, char color) {
 }
 
 
-
 int main(){   
     position pos;     
     ifstream read("moj_fen");
@@ -921,6 +916,6 @@ int main(){
     string my_move = our_format_from_uci(uci_move, &pos); 
     make_move(my_move, &pos);
     //visualize(&pos);  
-    //visualize(&pos); 
+     
     cout << fen_from_position(&pos) << "\n"; 
 }
