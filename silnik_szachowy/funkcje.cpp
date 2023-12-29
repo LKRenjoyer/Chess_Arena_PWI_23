@@ -2685,11 +2685,104 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     return wynik;
 }
 
-/*bool czy_pat(pozycja *poz)
+bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int *tab1,int *tab2)
 {
     if (poz->liczba_polowek_ruchow==100)
     {
         return 1;
     }
+    if (poz->czyj_ruch=='w'&&Zobrist_hash_start(poz,tab1,tab2)==hash1)
+    {
+    	licznik1++;
+    	if (licznik1==3)
+    	{
+    	    return 1;
+    	}
+    }
+    else if (poz->czyj_ruch=='w')
+    {
+        licznik1=1;
+        hash1=Zobrist_hash_start(poz,tab1,tab2);
+    }
+    if (poz->czyj_ruch=='b'&&Zobrist_hash_start(poz,tab1,tab2)==hash2)
+    {
+    	licznik2++;
+    	if (licznik2==3)
+    	{
+    	    return 1;
+    	}
+    }
+    else if (poz->czyj_ruch=='b')
+    {
+        licznik2=1;
+        hash2=Zobrist_hash_start(poz,tab1,tab2);
+    }
+    int x1,x2,y1,y2;
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x2=i;
+    	    	y2=j;
+    	    }
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x1=i;
+    	    	y1=j;
+    	    }
+    	}
+    }
+    if (poz->czyj_ruch=='w'&&czy_pole_jest_szachowane(x1,y1,'b',poz)==0)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    if (poz->czyj_ruch=='b'&&czy_pole_jest_szachowane(x2,y2,'w',poz)==0)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
     return 0;
-}*/
+}
+
+bool czy_mat(pozycja *poz)
+{
+    int x1,x2,y1,y2;
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x2=i;
+    	    	y2=j;
+    	    }
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x1=i;
+    	    	y1=j;
+    	    }
+    	}
+    }
+    if (poz->czyj_ruch=='w'&&czy_pole_jest_szachowane(x1,y1,'b',poz)==1)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    if (poz->czyj_ruch=='b'&&czy_pole_jest_szachowane(x2,y2,'w',poz)==1)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    return 0;
+}

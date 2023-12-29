@@ -31,3 +31,4 @@ vector <int> pole_w_liczby(char bwp1,char bwp2);
 int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2);
 int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2);
 bool czy_pat(pozycja *poz);
+bool czy_mat(pozycja *poz);
