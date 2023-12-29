@@ -52,16 +52,17 @@ def ruch_clienta():
 if kolor=="biale":
     #wykonaj pierwszy ruch
     wyjscie = bot.stdout.readline().decode('utf-8')
+    print(f"moj ruch: {wyjscie}")
     c.send(wyjscie)
 
 while True:
     wejscie = f"{ruch_clienta()}\n"
-    print(wejscie)
+    print(f"ruch przeciwnika: {wejscie.strip()}")
     bot.stdin.write(wejscie.encode("utf-8"))
     bot.stdin.flush()
     # print("xd")
     wyjscie = bot.stdout.readline().decode('utf-8')
-    print(f"ruch bota {wyjscie}")
+    print(f"moj ruch: {wyjscie}")
     c.send(wyjscie)
     
 
