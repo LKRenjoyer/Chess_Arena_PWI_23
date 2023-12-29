@@ -4,12 +4,14 @@ import io
 with redirect_stdout(io.StringIO()):
     import pygame as pg
 
-from chess import STARTING_BOARD_FEN, IllegalMoveError
+from chess import STARTING_FEN, IllegalMoveError
 from board import Board
+from promotion_box import Promotion_Box
 import os
 from functools import partial
 import threading
 import sys
+import time
 
 path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,10 +22,12 @@ screen = pg.display.set_mode((64*8,64*8), pg.RESIZABLE)
 clock = pg.time.Clock()
 running = True
 
-board = Board(STARTING_BOARD_FEN)
+board = Board(STARTING_FEN)
 
 # with open(path("game.txt"), "r") as f:
 #     game = f.read().splitlines()
+
+promotion_box = Promotion_Box(0,'l') 
 
 current_move = 0
 
@@ -42,6 +46,7 @@ def redraw(screen, update=True):
         offsets[1] = (scrsize[1]-bsize*8)//2
         board.draw(surface)
         screen.blit(surface, offsets)
+        promotion_box.draw(screen)
         pg.display.update()
 
 def get_move():
@@ -61,8 +66,27 @@ on_piece_cursor = pg.cursors.broken_x
 drag_cursor = pg.cursors.diamond
 start_pos = None
 
-def conv_to_uci(pos1, pos2): #należy dodać promocję
+def conv_to_uci(pos1, pos2):
     return "".join(chr(p[0]+ord('a'))+str(8-p[1]) for p in (pos1, pos2))
+
+def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje go
+    try: #promocja
+        board.push_uci(move+'q')
+        board.pop()
+        promotion_box.update(board.size, ('dl')[board.turn])
+        redraw(screen,True)
+        return True
+        # print(move,flush=True)
+    except (IllegalMoveError, ValueError):
+        try:
+            board.push_uci(move)
+            print(move,flush=True)
+        except (IllegalMoveError, ValueError):
+            pass
+        return False
+
+last_move = None
+move_promotes = False
 
 while running:
     for event in pg.event.get():
@@ -72,16 +96,27 @@ while running:
             sys.exit(7)
         elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
-                for sprite in board.piece_sprites:
-                    pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
-                    if sprite.rect.collidepoint(pos):
-                        clicked = sprite
-                        pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
-                        clicked.rect.update(pos, clicked.rect.size)
-                        start_pos = ((event.pos[0]-offsets[0])//board.size, (event.pos[1]-offsets[1])//board.size)
-                        redraw(screen, False)
-                        pg.mouse.set_cursor(*pg.cursors.diamond)
-                        break
+                if move_promotes:
+                    promoted_piece = promotion_box.check_clicked(event.pos)
+                    if promoted_piece is not None:
+                        promotion_box.update(0,'l')
+                        last_move = last_move+promoted_piece
+                        board.push_uci(last_move)
+                        print(last_move, flush=True)
+                        redraw(screen)
+                        promoted_piece = None
+                        move_promotes = False
+                else:  
+                    for sprite in board.piece_sprites:
+                        pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
+                        if sprite.rect.collidepoint(pos):
+                            clicked = sprite
+                            pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
+                            clicked.rect.update(pos, clicked.rect.size)
+                            start_pos = ((event.pos[0]-offsets[0])//board.size, (event.pos[1]-offsets[1])//board.size)
+                            redraw(screen, False)
+                            pg.mouse.set_cursor(*pg.cursors.diamond)
+                            break
                     
         elif event.type == pg.MOUSEBUTTONUP:
             if event.button == 1:
@@ -90,11 +125,8 @@ while running:
                     dest = (pos[0]//board.size,pos[1]//board.size)
                     clicked.rect.update((dest[0]*board.size, dest[1]*board.size), clicked.rect.size)
                     move = conv_to_uci(start_pos, dest)
-                    try:
-                        board.push_uci(move)
-                        print(move,flush=True)
-                    except (IllegalMoveError, ValueError):
-                        pass
+                    last_move = move
+                    move_promotes = try_move(board, move)
                     redraw(screen, True)
                 if not cursor_on_piece:
                     pg.mouse.set_cursor(*pg.cursors.arrow)
