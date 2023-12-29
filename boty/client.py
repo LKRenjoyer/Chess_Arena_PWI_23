@@ -4,6 +4,7 @@ from client_const import *
 import sys
 import os
 from functools import partial
+import argparse
 
 
 class Client:
@@ -27,19 +28,34 @@ class Client:
             return msg
         else:
             return self.recv_msg()
+        
+parser = argparse.ArgumentParser(description='Główna program do runowania botów')
+parser.add_argument('name', type=str, help='Nazwa bota')
+parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
+
+args = parser.parse_args()
                 
 c = Client()
 kolor = c.recv_msg()
 czy_bialy = True if kolor=="biale" else False
 
 # curr_path = os.path.abspath(sys.argv[0])
-merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
-path = merge_path(sys.argv[1], "main.py")
-
-if czy_bialy:
-    bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+if args.player:
+    # merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
+    # path = merge_path(args.name, "main.py")
+    path = "wizualizacja_gry/display.py"
+    if czy_bialy:
+        bot = subprocess.Popen(['python',path,"w",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    else:
+        bot = subprocess.Popen(['python',path,"b",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
-    bot = subprocess.Popen(['python',path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
+    path = merge_path(args.name, "main.py")
+    if czy_bialy:
+        bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    else:
+        bot = subprocess.Popen(['python',path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+
 
 print(kolor)
 

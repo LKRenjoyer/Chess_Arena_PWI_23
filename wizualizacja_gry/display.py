@@ -1,5 +1,9 @@
-import pygame as pg
-from pieces import *
+from contextlib import redirect_stdout
+import io
+
+with redirect_stdout(io.StringIO()):
+    import pygame as pg
+
 from chess import STARTING_BOARD_FEN, IllegalMoveError
 from board import Board
 import os
@@ -86,7 +90,9 @@ while running:
                     move = conv_to_uci(start_pos, dest)
                     try:
                         board.push_uci(move)
-                        print(move)
+                        print(move,flush=True)
+                        with open("xd.txt",'w') as f:
+                            f.write(move)
                     except (IllegalMoveError, ValueError):
                         pass
                     redraw(screen, True)
