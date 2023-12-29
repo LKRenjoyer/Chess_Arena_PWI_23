@@ -110,7 +110,7 @@ class Server:
         while ile_polaczen<2:
             conn,addr = self.server.accept()
             ile_polaczen+=1
-            print(f"{addr} wlasnie sie polaczyl")
+            # print(f"{addr} wlasnie sie polaczyl")
             if ile_polaczen==1:#zmienic na losowe przydzielenie kanalow, bo od tego zalezy czy kto gra czarnymi czy ktos gra bialymi
                 thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,"biale",gotowy_kanal_1_main,gotowy_kanal_2_main))
             else:
@@ -126,7 +126,7 @@ class Server:
         #     sprawdź czy gra się nie skończyła (7)
         #     wyślij ten ruch do białego (8)
         
-        print("Oba boty sie polaczyly")
+        # print("Oba boty sie polaczyly")
         
         while not(board.is_game_over()):
             white_move = self.pull_white_move() #(1)
@@ -137,11 +137,11 @@ class Server:
             if chess.Move.from_uci(white_move) in board.legal_moves:#(2)
                 board.push(chess.Move.from_uci(white_move))
             else:
-                print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                # print("Nie legalny ruch!!! Rogrywka przerwana :(")
                 break
 
             if board.is_game_over():#(3)
-                print("Koniec gry!")
+                # print("Koniec gry!")
                 break
 
             # print("ruch białego: ",white_move)
@@ -163,11 +163,11 @@ class Server:
             if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
                 board.push(chess.Move.from_uci(black_move))
             else:
-                print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                # print("Nie legalny ruch!!! Rogrywka przerwana :(")
                 break
 
             if board.is_game_over():#(7)
-                print("Koniec gry!")
+                # print("Koniec gry!")
                 break
 
 

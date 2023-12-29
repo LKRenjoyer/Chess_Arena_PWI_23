@@ -25,6 +25,7 @@ visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'])
 
 while True:
     move = server.stdout.readline().decode('utf-8').strip()
+    print(move)
 
 
 
