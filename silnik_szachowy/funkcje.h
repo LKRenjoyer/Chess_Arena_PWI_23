@@ -8,7 +8,15 @@
 #define st first
 #define nd second
 
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+
 using namespace std;
+
+extern bool czy_jestesmy_bialymi;
+extern string najlepszy_ruch;
+extern int glebokoscstartowa;
 
 struct pozycja {
     char plansza[8][8] = {};
@@ -34,3 +42,4 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2);
 int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2);
 bool czy_pat(pozycja *poz);
 bool czy_mat(pozycja *poz);
+long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu);

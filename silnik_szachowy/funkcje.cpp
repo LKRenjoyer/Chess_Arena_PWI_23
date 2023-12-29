@@ -387,24 +387,22 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz) {//sprawdz
 
 void wizualizacja(pozycja *poz) {
     cout << '\n';
-    cout << '*';
-    for(int i = 0; i < 16; i++) {
-        cout << '-';
-    }
-    cout << '*' << '\n';
+    
     for(int i = 7; i >= 0; i--) {
+        cout << ANSI_COLOR_GREEN << i + 1 << ANSI_COLOR_RESET;
         cout << '|';
         for(int ii = 0; ii < 8; ii++) {
-            cout << poz->plansza[i][ii] << ' ';
+            if(poz->plansza[i][ii] >= 'a' && poz->plansza[i][ii] <= 'z')
+                cout << ANSI_COLOR_RED << poz->plansza[i][ii] << ANSI_COLOR_RESET << '|';
+            else if(poz->plansza[i][ii] >= 'A' && poz->plansza[i][ii] <= 'Z')
+                cout << poz->plansza[i][ii] << '|';
+            else
+                cout << " |";
         }
-        cout << '|';
         cout << '\n';
     }
-    cout << '*';
-    for(int i = 0; i < 16; i++) {
-        cout << '-';
-    }
-    cout << '*' << '\n';
+    cout << ANSI_COLOR_GREEN << "  A B C D E F G H\n" << ANSI_COLOR_RESET;
+   
     cout << '\n';
     cout << "czyj ruch: " << poz->czyj_ruch << '\n';
     cout << "możliwe roszady: " << (poz->czy_K ? "K" : "") << (poz->czy_Q ? "Q" : "") << (poz->czy_k ? "k" : "") << (poz->czy_q ? "q" : "") << '\n';
@@ -623,11 +621,9 @@ long double ewaluacja_pozycji(pozycja *poz) {
         }
     }
 
-    //czy figury sa pod biciem przez słabsze / nie są bronione 
-    //jeśli atakujemy więcej razy niż bronimy to dla nas fajnie jeśli suma się zgadza 
-
     //dodać sprawdzanie czy pat i czy mat 
-    return wart;
+
+    return -wart;
 }
 
 bool czy_w_planszy(int i,int j)
@@ -2785,4 +2781,80 @@ bool czy_mat(pozycja *poz)
     	}
     }
     return 0;
+}
+
+//alphabeta(stan_pocz, gl_docelowa, −10000, 10000, 1);
+
+long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu) {
+    //cout << glebokosc << endl;
+    if(glebokosc == 0) {//lub pat/mat dodać!!!
+        //jak mat czy pat to koniec
+
+        //wpp
+        return ewaluacja_pozycji(&stan);
+        //sprawdzamy czy jak zejdziemy glebiej to zmieni sie ewaluacja o min 1.81 !!!
+        /*
+        long double akt_wart = ewaluacja_pozycji(&stan);
+        vector <string> ruchy = mozliwe_ruchy(&stan);
+        if(czy_maksymalizujemy_na_ruchu) {
+            for(int i = 0; i < ruchy.size(); i++) {
+                pozycja stan_2 = stan;
+                porusz(ruchy[i], &stan_2);
+                long double nowa_wart = ewaluacja_pozycji(&stan_2);
+                if(nowa_wart - akt_wart >= 4.81) {
+                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 0);
+                }
+            }
+        }
+        else {
+            for(int i = 0; i < ruchy.size(); i++) {
+                pozycja stan_2 = stan;
+                porusz(ruchy[i], &stan_2);
+                long double nowa_wart = ewaluacja_pozycji(&stan_2);
+                if(nowa_wart - akt_wart <= -4.81) {
+                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 1);
+                }
+            }
+        }
+        return akt_wart;
+        */
+    }
+    long double wart;
+    vector <string> ruchy = mozliwe_ruchy(&stan);
+    if(czy_maksymalizujemy_na_ruchu) {
+        wart = -10000;
+        for(int i = 0; i < ruchy.size(); i++) {
+            pozycja stan_2 = stan;
+            porusz(ruchy[i], &stan_2);
+            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 0);
+            if(wart2 > wart) {
+                wart = wart2;
+                if(glebokosc == glebokoscstartowa) {
+                    najlepszy_ruch = ruchy[i];
+                }
+            }
+            if(wart >= beta)
+                break;
+            alpha = max(alpha, wart);
+        }
+    }
+    else {
+        wart = 10000;
+        for(int i = 0; i < ruchy.size(); i++) {
+            pozycja stan_2 = stan;
+            porusz(ruchy[i], &stan_2);
+            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1);
+            if(wart2 < wart) {
+                wart = wart2;
+                if(glebokosc == glebokoscstartowa) {
+                    najlepszy_ruch = ruchy[i];
+                }
+            }
+            wart = min(wart, alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1));
+            if(wart <= alpha)
+                break;
+            beta = min(beta, wart);
+        }
+    }
+    return wart;
 }
