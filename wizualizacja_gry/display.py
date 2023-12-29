@@ -46,7 +46,6 @@ def redraw(screen, update=True):
         board.draw(surface)
         screen.blit(surface, offsets)
         promotion_box.draw(screen)
-        pg.display.update()
 
 def get_move():
     while running:
@@ -163,7 +162,7 @@ while running:
         #     redraw(screen)
         elif event.type == pg.WINDOWRESIZED:
             redraw(screen)
-
-    clock.tick(60)
+    pg.display.update()
+    clock.tick()
 
 pg.quit()
