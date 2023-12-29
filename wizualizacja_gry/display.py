@@ -22,24 +22,27 @@ running = True
 
 board = Board(STARTING_BOARD_FEN)
 
-with open(path("game.txt"), "r") as f:
-    game = f.read().splitlines()
+# with open(path("game.txt"), "r") as f:
+#     game = f.read().splitlines()
 
 current_move = 0
 
 offsets = [0,0]
+
+lock = threading.Lock()
 def redraw(screen, update=True):
-    scrsize = screen.get_size()
-    bsize = min(scrsize)*9//80
-    if update:
-        board.update(bsize)
-    surface = pg.Surface(scrsize)
-    screen.fill((62,61,57))
-    offsets[0] = (scrsize[0]-bsize*8)//2
-    offsets[1] = (scrsize[1]-bsize*8)//2
-    board.draw(surface)
-    screen.blit(surface, offsets)
-    pg.display.update()
+    with lock:
+        screen.fill((62,61,57))
+        scrsize = screen.get_size()
+        bsize = min(scrsize)*9//80
+        if update:
+            board.update(bsize)
+        surface = pg.Surface(scrsize)
+        offsets[0] = (scrsize[0]-bsize*8)//2
+        offsets[1] = (scrsize[1]-bsize*8)//2
+        board.draw(surface)
+        screen.blit(surface, offsets)
+        pg.display.update()
 
 def get_move():
     while running:
@@ -75,9 +78,8 @@ while running:
                         clicked = sprite
                         pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                         clicked.rect.update(pos, clicked.rect.size)
-                        pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
-                        start_pos = (pos[0]//board.size, pos[1]//board.size)
-                        redraw(screen, update=False)
+                        start_pos = ((event.pos[0]-offsets[0])//board.size, (event.pos[1]-offsets[1])//board.size)
+                        redraw(screen, False)
                         pg.mouse.set_cursor(*pg.cursors.diamond)
                         break
                     
@@ -91,8 +93,6 @@ while running:
                     try:
                         board.push_uci(move)
                         print(move,flush=True)
-                        with open("xd.txt",'w') as f:
-                            f.write(move)
                     except (IllegalMoveError, ValueError):
                         pass
                     redraw(screen, True)
@@ -113,7 +113,6 @@ while running:
                     if cursor_on_piece and clicked is None:
                         pg.mouse.set_cursor(*pg.cursors.arrow)
                         cursor_on_piece = False
-            # print(event)
             if clicked is not None:
                 pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                 clicked.rect.update(pos, clicked.rect.size)
