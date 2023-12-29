@@ -781,7 +781,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                     {
                         if (czy_pole_jest_szachowane(i,j,'w',poz)==0)
                         {
-                            if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,1,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
+                            if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
                             {
                                 string slowo=pole(i,j,7,1);
                                 cos.push_back(slowo);
@@ -1520,7 +1520,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                     {
                         if (czy_pole_jest_szachowane(i,j,'b',poz)==0)
                         {
-                            if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,1,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
+                            if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
                             {
                                 string slowo=pole(i,j,0,1);
                                 cos.push_back(slowo);
@@ -2194,7 +2194,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-/*void los1(long long a,long long b,long long *tab)
+/*void los1(int a,int b,int *tab)
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<12;i++)
@@ -2206,7 +2206,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
 }*/
 
-/*void los2(long long a,long long b,long long *tab)
+/*void los2(int a,int b,int *tab)
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<13;i++)
@@ -2215,23 +2215,477 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     }
 }*/
 
-/*long long Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
+//kolejnosc figur w Zobrist1 tabelce
+// k,h,r,b,n,p,K,H,R,B,N,P
+//kolejnosc zdarzen w Zobrist2 tabelce
+// czyj_ruch (jak białych to xor a jak czarnych to unxor), roszady: czy_K, czy_Q, czy_k, czy_q, bwp: dla białych a3,b3,...,h3, dla czarnych a6,b6,...,h6;
+
+int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
 {
+    int wynik=0;
     for (int i=0;i<8;i++)
     {
     	for (int j=0;j<8;j++)
     	{
-    	
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	wynik^=tab1[i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='h')
+    	    {
+    	    	wynik^=tab1[1*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='r')
+    	    {
+    	    	wynik^=tab1[2*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='b')
+    	    {
+    	    	wynik^=tab1[3*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='n')
+    	    {
+    	    	wynik^=tab1[4*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='p')
+    	    {
+    	    	wynik^=tab1[5*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='K')
+    	    {
+    	    	wynik^=tab1[6*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='H')
+    	    {
+    	    	wynik^=tab1[7*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='R')
+    	    {
+    	    	wynik^=tab1[8*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='B')
+    	    {
+    	    	wynik^=tab1[9*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='N')
+    	    {
+    	    	wynik^=tab1[10*64+i*8+j];
+    	    }
+    	    if (poz->plansza[i][j]=='P')
+    	    {
+    	    	wynik^=tab1[11*64+i*8+j];
+    	    }
     	}
     }
+    if (poz->czyj_ruch=='w')
+    {
+    	wynik^=tab2[0];
+    }
+    if (poz->czy_K==1)
+    {
+    	wynik^=tab2[1];
+    }
+    if (poz->czy_Q==1)
+    {
+    	wynik^=tab2[2];
+    }
+    if (poz->czy_k==1)
+    {
+    	wynik^=tab2[3];
+    }
+    if (poz->czy_q==1)
+    {
+    	wynik^=tab2[4];
+    }
+    if (poz->czy_bicie_w_przelocie==1)
+    {
+    	if (poz->kolumna_bwp=='a')
+    	{
+    	    wynik^=tab2[5];
+    	}
+    	if (poz->kolumna_bwp=='b')
+    	{
+    	    wynik^=tab2[6];
+    	}
+    	if (poz->kolumna_bwp=='c')
+    	{
+    	    wynik^=tab2[7];
+    	}
+    	if (poz->kolumna_bwp=='d')
+    	{
+    	    wynik^=tab2[8];
+    	}
+    	if (poz->kolumna_bwp=='e')
+    	{
+    	    wynik^=tab2[9];
+    	}
+    	if (poz->kolumna_bwp=='f')
+    	{
+    	    wynik^=tab2[10];
+    	}
+    	if (poz->kolumna_bwp=='g')
+    	{
+    	    wynik^=tab2[11];
+    	}
+    	if (poz->kolumna_bwp=='h')
+    	{
+    	    wynik^=tab2[12];
+    	}
+    }
+    return wynik;
 }
 
-long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash,int *tab1,int *tab2)
+int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
 {
-
+    int wynik=hash;
+    int x1=pole_w_liczby(ruch[0],ruch[1])[0];
+    int y1=pole_w_liczby(ruch[0],ruch[1])[1];
+    int x2=pole_w_liczby(ruch[2],ruch[3])[0];
+    int y2=pole_w_liczby(ruch[2],ruch[3])[1];
+    int x3;
+    int y3;
+    wynik^=tab2[0];
+    if (poz->czy_bicie_w_przelocie==1)
+    {
+        x3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[0];
+        y3=pole_w_liczby(poz->kolumna_bwp,poz->wiersz_bwp)[1];
+        if (x2!=x3||y2!=y3||(poz->plansza[x1][y1]!='P'&&poz->plansza[x1][y1]!='p'))
+        {
+            wynik^=tab2[5+y3];
+        }
+    }
+    if (ruch.size()==4)
+    {
+    	if (poz->czyj_ruch=='w')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='k')
+      	        {
+    	            wynik^=tab1[x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='h')
+    	        {
+    	    	    wynik^=tab1[1*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='r')
+    	        {
+    	    	    wynik^=tab1[2*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='b')
+    	        {
+    	    	    wynik^=tab1[3*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='n')
+    	        {
+    	    	    wynik^=tab1[4*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='p')
+    	        {
+    	    	    wynik^=tab1[5*64+x2*8+y2];
+    	        }
+    	    }
+    	    if (poz->plansza[x1][y1]=='K')
+    	    {
+    	    	wynik^=tab1[6*64+x1*8+y1];
+    	    	wynik^=tab1[6*64+x2*8+y2];
+    	    	if (y2-y1==2)
+    	    	{
+    	    	    wynik^=tab2[1];
+    	    	    wynik^=tab1[8*64+7];
+    	    	    wynik^=tab1[8*64+5];
+    	    	}
+    	    	if (y1-y2==3)
+    	    	{
+    	    	    wynik^=tab2[2];
+    	    	    wynik^=tab1[8*64];
+    	    	    wynik^=tab1[8*64+2];
+    	    	}
+    	    	if (poz->czy_K==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	        wynik^=tab2[1];
+    	    	    }
+    	    	}
+    	    	if (poz->czy_Q==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	    	wynik^=tab2[2];
+    	    	    }
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='H')
+    	    {
+    	    	wynik^=tab1[7*64+x1*8+y1];
+    	    	wynik^=tab1[7*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='R')
+    	    {
+    	    	wynik^=tab1[8*64+x1*8+y1];
+    	    	wynik^=tab1[8*64+x2*8+y2];
+    	    	if (poz->czy_K==1&&x1==0&&y1==7)
+    	    	{
+    	    	    wynik^=tab2[1];
+    	    	}
+    	    	if (poz->czy_Q==1&&x1==0&&y1==0)
+    	    	{
+    	       	    wynik^=tab2[2];
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='B')
+    	    {
+    	    	wynik^=tab1[9*64+x1*8+y1];
+    	    	wynik^=tab1[9*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='N')
+    	    {
+    	    	wynik^=tab1[10*64+x1*8+y1];
+    	    	wynik^=tab1[10*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='P')
+    	    {
+    	    	wynik^=tab1[11*64+x1*8+y1];
+    	    	wynik^=tab1[11*64+x2*8+y2];
+    	    	if (x2==x1+2)
+    	    	{
+    	    	    wynik^=tab2[5+y1];
+    	    	}
+    	    	if (poz->czy_bicie_w_przelocie==1)
+    	    	{
+    	    	    if (x2==x3&&y2==y3)
+    	    	    {
+    	    	    	wynik^=tab1[5*64+(x3-1)*8+y3];
+    	    	    	wynik^=tab2[5+y3];
+    	    	    }
+    	    	}
+    	    }
+    	}
+    	if (poz->czyj_ruch=='b')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='K')
+      	        {
+    	            wynik^=tab1[6*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='H')
+    	        {
+    	    	    wynik^=tab1[7*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='R')
+    	        {
+    	    	    wynik^=tab1[8*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='B')
+    	        {
+    	    	    wynik^=tab1[9*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='N')
+    	        {
+    	    	    wynik^=tab1[10*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='P')
+    	        {
+    	    	    wynik^=tab1[11*64+x2*8+y2];
+    	        }
+    	    }
+    	    if (poz->plansza[x1][y1]=='k')
+    	    {
+    	    	wynik^=tab1[x1*8+y1];
+    	    	wynik^=tab1[x2*8+y2];
+    	    	if (y2-y1==2)
+    	    	{
+    	    	    wynik^=tab2[3];
+    	    	    wynik^=tab1[2*64+7*8+7];
+    	    	    wynik^=tab1[2*64+7*8+5];
+    	    	}
+    	    	if (y1-y2==3)
+    	    	{
+    	    	    wynik^=tab2[4];
+    	    	    wynik^=tab1[2*64+7*8];
+    	    	    wynik^=tab1[2*64+7*8+2];
+    	    	}
+    	    	if (poz->czy_k==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	        wynik^=tab2[3];
+    	    	    }
+    	    	}
+    	    	if (poz->czy_q==1)
+    	    	{
+    	    	    if (y2-y1!=2&&y1-y2!=3)
+    	    	    {
+    	    	    	wynik^=tab2[4];
+    	    	    }
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='h')
+    	    {
+    	    	wynik^=tab1[1*64+x1*8+y1];
+    	    	wynik^=tab1[1*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='r')
+    	    {
+    	    	wynik^=tab1[2*64+x1*8+y1];
+    	    	wynik^=tab1[2*64+x2*8+y2];
+    	    	if (poz->czy_k==1&&x1==7&&y1==7)
+    	    	{
+    	    	    wynik^=tab2[3];
+    	    	}
+    	    	if (poz->czy_q==1&&x1==7&&y1==0)
+    	    	{
+    	       	    wynik^=tab2[4];
+    	    	}
+    	    }
+    	    if (poz->plansza[x1][y1]=='b')
+    	    {
+    	    	wynik^=tab1[3*64+x1*8+y1];
+    	    	wynik^=tab1[3*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='n')
+    	    {
+    	    	wynik^=tab1[4*64+x1*8+y1];
+    	    	wynik^=tab1[4*64+x2*8+y2];
+    	    }
+    	    if (poz->plansza[x1][y1]=='p')
+    	    {
+    	    	wynik^=tab1[5*64+x1*8+y1];
+    	    	wynik^=tab1[5*64+x2*8+y2];
+    	    	if (x2==x1-2)
+    	    	{
+    	    	    wynik^=tab2[5+y1];
+    	    	}
+    	    	if (poz->czy_bicie_w_przelocie==1)
+    	    	{
+    	    	    if (x2==x3&&y2==y3)
+    	    	    {
+    	    	    	wynik^=tab1[5*64+(x3+1)*8+y3];
+    	    	    	wynik^=tab2[5+y3];
+    	    	    }
+    	    	}
+    	    }
+    	}
+    }
+    if (ruch.size()==5)
+    {
+    	if (poz->czyj_ruch=='w')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='k')
+      	        {
+    	            wynik^=tab1[x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='h')
+    	        {
+    	    	    wynik^=tab1[1*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='r')
+    	        {
+    	    	    wynik^=tab1[2*64+x2*8+y2];
+    	    	    if (poz->czy_k==1&&x2==7&&y2==7)
+    	    	    {
+    	    	    	wynik^=tab2[3];
+    	    	    }
+    	    	    if (poz->czy_q==1&&x2==7&&y2==0)
+    	    	    {
+    	    	    	wynik^=tab2[4];
+    	    	    }
+    	        }
+    	        if (poz->plansza[x2][y2]=='b')
+    	        {
+    	    	    wynik^=tab1[3*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='n')
+    	        {
+    	    	    wynik^=tab1[4*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='p')
+    	        {
+    	    	    wynik^=tab1[5*64+x2*8+y2];
+    	        }
+    	    }
+    	    wynik^=tab1[11*64+x1*8+y1];
+    	    if (ruch[4]=='Q')
+    	    {
+    	        wynik^=tab1[7*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='R')
+    	    {
+    	        wynik^=tab1[8*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='B')
+    	    {
+    	        wynik^=tab1[9*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='N')
+    	    {
+    	        wynik^=tab1[10*64+x2*8+y2];
+    	    }
+    	}
+    	if (poz->czyj_ruch=='b')
+    	{
+    	    if (poz->plansza[x2][y2]!=' ')
+    	    {
+    	    	if (poz->plansza[x2][y2]=='K')
+      	        {
+    	            wynik^=tab1[6*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='H')
+    	        {
+    	    	    wynik^=tab1[7*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='R')
+    	        {
+    	    	    wynik^=tab1[8*64+x2*8+y2];
+    	    	    if (poz->czy_K==1&&x2==0&&y2==7)
+    	    	    {
+    	    	    	wynik^=tab2[1];
+    	    	    }
+    	    	    if (poz->czy_Q==1&&x2==0&&y2==0)
+    	    	    {
+    	    	    	wynik^=tab2[2];
+    	    	    }
+    	        }
+    	        if (poz->plansza[x2][y2]=='B')
+    	        {
+    	    	    wynik^=tab1[9*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='N')
+    	        {
+    	    	    wynik^=tab1[10*64+x2*8+y2];
+    	        }
+    	        if (poz->plansza[x2][y2]=='P')
+    	        {
+    	    	    wynik^=tab1[11*64+x2*8+y2];
+    	        }
+    	    }
+    	    wynik^=tab1[5*64+x1*8+y1];
+    	    if (ruch[4]=='q')
+    	    {
+    	        wynik^=tab1[1*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='r')
+    	    {
+    	        wynik^=tab1[2*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='b')
+    	    {
+    	        wynik^=tab1[3*64+x2*8+y2];
+    	    }
+    	    if (ruch[4]=='n')
+    	    {
+    	        wynik^=tab1[4*64+x2*8+y2];
+    	    }
+    	}
+    }
+    return wynik;
 }
 
-bool czy_pat(pozycja *poz)
+/*bool czy_pat(pozycja *poz)
 {
     if (poz->liczba_polowek_ruchow==100)
     {

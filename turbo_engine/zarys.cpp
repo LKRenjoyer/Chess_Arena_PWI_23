@@ -51,12 +51,6 @@ string number_text(int x) {
     }
     return ans;
 }
-bool pair_comp(pii para, int f, int s) {
-    return para.st == f && para.nd == s;
-}
-bool w_planszy(int a, int b) {
-    return a >= 0 && a < 8 && b >= 0 && b < 8;
-}
 string fen_from_position(position* pos) {
     string ans; int buf = 0;
     ans.reserve(30);
@@ -270,12 +264,12 @@ void make_move(string move, position* pos) {
     if (bicie_kord.st >= 0 || typ_figury == 'p' || typ_figury == 'P')pos->halfmoves_amo = -1;
     pos->halfmoves_amo++;
     //rozwa�enie p�ruch�w (czy ruch pionkiem lub czy bicie)
-    if (pair_comp(st_kord, 0, 0) || pair_comp(en_kord, 0, 0))pos->poss_q = 1;
-    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_k = 1;
-    if (pair_comp(st_kord, 7, 7) || pair_comp(en_kord, 7, 7))pos->poss_K = 1;
-    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_Q = 1;
-    if (typ_figury == 'K') { pos->poss_K = 1; pos->poss_Q = 1; }
-    if (typ_figury == 'k') { pos->poss_k = 1; pos->poss_q = 1; }
+    if (pair_comp(st_kord, 0, 0) || pair_comp(en_kord, 0, 0))pos->poss_q = 0;
+    if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_k = 0;
+    if (pair_comp(st_kord, 7, 7) || pair_comp(en_kord, 7, 7))pos->poss_K = 0;
+    if (pair_comp(st_kord, 0, 7) || pair_comp(en_kord, 0, 7))pos->poss_Q = 0;
+    if (typ_figury == 'K') { pos->poss_K = 0; pos->poss_Q = 0; }
+    if (typ_figury == 'k') { pos->poss_k = 0; pos->poss_q = 0; }
     //sprawdzenie roszad
     if (abs(st_kord.nd - en_kord.nd) == 2 && (typ_figury == 'p' || typ_figury == 'P')) {
         char sasiad = ' ';
@@ -297,36 +291,44 @@ void make_move(string move, position* pos) {
 
 }
 
+bool pair_comp(pii para, int f, int s) {
+    return para.st == f && para.nd == s;
+}
+bool w_planszy(int a, int b) {
+    return a >= 0 && a < 8 && b >= 0 && b < 8;
+}
 bool position_checked(int a, int b, char color, position* pos) {
-    /* int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
+     int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
      int y_kon[8] = { -2,-1,1,2,2,1,-1,-2 };
+     int x_krol[8] = {-1,-1,-1,0,0,1,1,1};
+     int y_krol[8] = {-1,0,1,-1,1,-1,0,1};
      if (color == 'W') {
          for (int i = 0; i < 8; i++) {            //szach czarnym koniem
              int akt_x = a + x_kon[i], akt_y = b + y_kon[i];
-             if (!w_planszy[akt_x][akt_y])continue;
+             if (!w_planszy(akt_x,akt_y))continue;
              if (pos->board[akt_x][akt_y] == 'n')return 1;
          }
          if ((w_planszy(a - 1, b - 1) && pos->board[a - 1][b - 1] == 'p') || (w_planszy(a - 1, b + 1) && pos->board[a - 1][b + 1] == 'p'))return 1; //szach czarnym pionem
          //lewo
-         for (int i = a; i >= 0; i--) {
+         for (int i = a-1; i >= 0; i--) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'r' || pos->board[i][b] == 'q')return 1;
              break;
          }
          //prawo
-         for (int i = a; i < 8; i++) {
+         for (int i = a+1; i < 8; i++) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'r' || pos->board[i][b] == 'q')return 1;
              break;
          }
          //g�ra
-         for (int i = b; i >= 0; i--) {
+         for (int i = b-1; i >= 0; i--) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'r' || pos->board[a][i] == 'q')return 1;
              break;
          }
          //d�
-         for (int i = b; i < 8; i++) {
+         for (int i = b+1; i < 8; i++) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'r' || pos->board[a][i] == 'q')return 1;
              break;
@@ -351,34 +353,39 @@ bool position_checked(int a, int b, char color, position* pos) {
              if (pos->board[a + i][b + i] == ' ')continue;
              if (pos->board[a + i][b + i] == 'q' || pos->board[a + i][b + i] == 'b')return 1;
          }
+         //szach krol
+         for (int i = 0; i < 8; i++) {
+             int akt_x = a + x_krol[i],akt_y=b+y_krol[i];
+             if (pos->board[akt_x][akt_y] == 'k')return 1;
+         }
      }
      if (color == 'b') {
          for (int i = 0; i < 8; i++) {            //szach bia�ym koniem
              int akt_x = a + x_kon[i], akt_y = b + y_kon[i];
-             if (!w_planszy[akt_x][akt_y])continue;
+             if (!w_planszy(akt_x,akt_y))continue;
              if (pos->board[akt_x][akt_y] == 'N')return 1;
          }
          if ((w_planszy(a + 1, b - 1) && pos->board[a + 1][b - 1] == 'P') || (w_planszy(a + 1, b + 1) && pos->board[a + 1][b + 1] == 'P'))return 1; //szach bia�ym pionem
          //lewo
-         for (int i = a; i >= 0; i--) {
+         for (int i = a-1; i >= 0; i--) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'R' || pos->board[i][b] == 'Q')return 1;
              break;
          }
          //prawo
-         for (int i = a; i < 8; i++) {
+         for (int i = a+1; i < 8; i++) {
              if (pos->board[i][b] == ' ')continue;
              if (pos->board[i][b] == 'R' || pos->board[i][b] == 'Q')return 1;
              break;
          }
          //g�ra
-         for (int i = b; i >= 0; i--) {
+         for (int i = b-1; i >= 0; i--) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'R' || pos->board[a][i] == 'Q')return 1;
              break;
          }
          //d�
-         for (int i = b; i < 8; i++) {
+         for (int i = b+1; i < 8; i++) {
              if (pos->board[a][i] == ' ')continue;
              if (pos->board[a][i] == 'R' || pos->board[a][i] == 'Q')return 1;
              break;
@@ -402,9 +409,14 @@ bool position_checked(int a, int b, char color, position* pos) {
          for (int i = i; a + i < 8 && b + i < 8; i++) {
              if (pos->board[a + i][b + i] == ' ')continue;
              if (pos->board[a + i][b + i] == 'Q' || pos->board[a + i][b + i] == 'B')return 1;
+         //szach krol    
+             for (int i = 0; i < 8; i++) {
+                 int akt_x = a + x_krol[i], akt_y = b + y_krol[i];
+                 if (pos->board[akt_x][akt_y] == 'K')return 1;
+             }
          }
      }
-     return 0; */
+     
     return 0;
 } 
 string beginnig_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; 
@@ -489,8 +501,197 @@ string our_format_from_uci(string uci_move, position* pos){
     }  
     return ans; 
 }
-int main(){   
+string daj_ruch(int st_x, int st_y, int en_x, int en_y, int bicie_x, int bicie_y, char promocja) {
+    string ruch = ""; 
+    ruch.pb(st_x + '0');
+    ruch.pb(st_y + '0');
+    ruch.pb(en_x + '0');
+    ruch.pb(en_y + '0');
+    if (bicie_x >= 0) {
+        ruch.pb(bicie_x + '0');
+        ruch.pb(bicie_x + '0');
+    }
+    if (promocja != 'X')ruch.pb(promocja);
+    return ruch;
+}
+/*vector<string> possible_moves(position* pos,char color) {
+    vector<string> moves = {};
+    int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
+    int y_kon[8] = { -2,-1,1,2,2,1,-1,-2 };
+    int x_krol[8] = { -1,-1,-1,0,0,1,1,1 };
+    int y_krol[8] = { -1,0,1,-1,1,-1,0,1 };
+    if (color == 'W') {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (pos->board[i][j] == 'K') {
+                    for (int z = 0; z < 8; z++) {
+                        int akt_x = i + x_krol[z], akt_y = j + y_krol[z];
+                        if (!w_planszy(akt_x, akt_y))continue;
+                        char attacked = pos->board[akt_x][akt_y];
+                        if (attacked == ' ')moves.pb(daj_ruch(i, j, akt_x, akt_y, -1, -1, 'X'));
+                        if ('a' <= attacked && attacked <= 'z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
+                    }
+                    if (pos->poss_K&&pos->board[7][5]==' '&&pos->board[7][6]==' ')moves.pb("O-O");
+                    if (pos->poss_Q&&pos->board[7][1]==' '&&pos->board[7][2]==' '&&pos->board[3][7]==' ')moves.pb("O-O-O");
+                    }
+                }
+                if (pos->board[i][j] == 'Q') {
+                    //gora
+                    for (int z = i - 1; z >= 0; z--) {
+                        if ('A' <= pos->board[z][j] && pos->board[z][j] <= 'Z')break;
+                        if ('a' <= pos->board[z][j] && pos->board[z][j] <= 'z') { moves.pb(daj_ruch(i, j, z, j, z, j, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, z, j, -1, -1, 'X'));
+                    }
+                    //dol
+                    for (int z = i + 1; z < 8; z++) {
+                        if ('A' <= pos->board[z][j] && pos->board[z][j] <= 'Z')break;
+                        if ('a' <= pos->board[z][j] && pos->board[z][j] <= 'z') { moves.pb(daj_ruch(i, j, z, j, z, j, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, z, j, -1, -1, 'X'));
+                    }
+                    //lewo
+                    for (int z = j - 1; z >= 0; z--) {
+                        if ('A' <= pos->board[i][z] && pos->board[i][z] <= 'Z')break;
+                        if ('a' <= pos->board[i][z] && pos->board[i][z] <= 'z') { moves.pb(daj_ruch(i, j, i, z, i, z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i, z, -1, -1, 'X'));
+                    }
+                    //prawo
+                    for (int z = j + 1; z < 8; z++) {
+                        if ('A' <= pos->board[i][z] && pos->board[i][z] <= 'Z')break;
+                        if ('a' <= pos->board[i][z] && pos->board[i][z] <= 'z') { moves.pb(daj_ruch(i, j, i, z, i, z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i, z, -1, -1, 'X'));
+                    }
+                    //lewo gora
+                    for (int z = 1; i - z >= 0 && j - z >= 0; z++) {
+                        if ('A' <= pos->board[i - z][j - z] && pos->board[i - z][j - z] <= 'Z')break;
+                        if ('a' <= pos->board[i - z][j - z] && pos->board[i - z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i - z, j - z, i - z, j - z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i - z, j - z, -1, -1, 'X'));
+                    }
+                    //prawo dol
+                    for (int z = 1; i + z < 8 && j + z < 8; z++) {
+                        if ('A' <= pos->board[i + z][j + z] && pos->board[i + z][j + z] <= 'Z')break;
+                        if ('a' <= pos->board[i + z][j + z] && pos->board[i + z][j + z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j + z, i + z, j + z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i + z, j + z, -1, -1, 'X'));
+                    }
+                    //prawo gora
+                    for (int z = 1; i - z >= 0 && j + z < 8; z++) {
+                        if ('A' <= pos->board[i - z][j + z] && pos->board[i - z][j + z] <= 'Z')break;
+                        if ('a' <= pos->board[i - z][j + z] && pos->board[i - z][j + z] <= 'z') { moves.pb(daj_ruch(i, j, i - z, j + z, i - z, j + z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i - z, j + z, -1, -1, 'X'));
 
+                    }
+                    //lewo dol
+                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                        if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z')break;
+                        if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
+
+                    }
+                }
+                if (pos->board[i][j] == 'R') {
+                    //gora
+                    for (int z = i - 1; z >= 0; z--) {
+                        if ('A' <= pos->board[z][j] && pos->board[z][j] <= 'Z')break;
+                        if ('a' <= pos->board[z][j] && pos->board[z][j] <= 'z') { moves.pb(daj_ruch(i, j, z, j, z, j, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, z, j, -1, -1, 'X'));
+                    }
+                    //dol
+                    for (int z = i + 1; z < 8; z++) {
+                        if ('A' <= pos->board[z][j] && pos->board[z][j] <= 'Z')break;
+                        if ('a' <= pos->board[z][j] && pos->board[z][j] <= 'z') { moves.pb(daj_ruch(i, j, z, j, z, j, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, z, j, -1, -1, 'X'));
+                    }
+                    //lewo
+                    for (int z = j - 1; z >= 0; z--) {
+                        if ('A' <= pos->board[i][z] && pos->board[i][z] <= 'Z')break;
+                        if ('a' <= pos->board[i][z] && pos->board[i][z] <= 'z') { moves.pb(daj_ruch(i, j, i, z, i, z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i, z, -1, -1, 'X'));
+                    }
+                    //prawo
+                    for (int z = j + 1; z < 8; z++) {
+                        if ('A' <= pos->board[i][z] && pos->board[i][z] <= 'Z')break;
+                        if ('a' <= pos->board[i][z] && pos->board[i][z] <= 'z') { moves.pb(daj_ruch(i, j, i, z, i, z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i, z, -1, -1, 'X'));
+                    }
+                }
+                if (pos->board[i][j] == 'B') {
+                    //lewo gora
+                    for (int z = 1; i - z >= 0 && j - z >= 0; z++) {
+                        if ('A' <= pos->board[i - z][j - z] && pos->board[i - z][j - z] <= 'Z')break;
+                        if ('a' <= pos->board[i - z][j - z] && pos->board[i - z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i - z, j - z, i - z, j - z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i - z, j - z, -1, -1, 'X'));
+                    }
+                    //prawo dol
+                    for (int z = 1; i + z < 8 && j + z < 8; z++) {
+                        if ('A' <= pos->board[i + z][j + z] && pos->board[i + z][j + z] <= 'Z')break;
+                        if ('a' <= pos->board[i + z][j + z] && pos->board[i + z][j + z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j + z, i + z, j + z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i + z, j + z, -1, -1, 'X'));
+                    }
+                    //prawo gora
+                    for (int z = 1; i - z >= 0 && j + z < 8; z++) {
+                        if ('A' <= pos->board[i - z][j + z] && pos->board[i - z][j + z] <= 'Z')break;
+                        if ('a' <= pos->board[i - z][j + z] && pos->board[i - z][j + z] <= 'z') { moves.pb(daj_ruch(i, j, i - z, j + z, i - z, j + z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i - z, j + z, -1, -1, 'X'));
+
+                    }
+                    //lewo dol
+                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                        if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z')break;
+                        if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
+                        moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
+
+                    }
+                }
+                if (pos->board[i][j] == 'N') {
+                    for (int z = 0; z < 8; z++) {
+                        int akt_x = i + x_kon[z], akt_y = j + y_kon[z];
+                        if (!w_planszy(akt_x, akt_y))continue;
+                        char attacked = pos->board[akt_x][akt_y];
+                        if (attacked == ' ')moves.pb(daj_ruch(i, j, akt_x, akt_y, -1, -1, 'X'));
+                        if ('a' <= attacked && attacked <= 'z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
+                    }
+                }
+                if (pos->board[i][j] == 'P') {
+                    //promocje
+                    if (i == 1) {
+                        if (pos->board[i - 1][j] == ' ') {
+                            moves.pb(daj_ruch(i, j, i - 1, j, -1, -1, 'H'));
+                            moves.pb(daj_ruch(i, j, i - 1, j, -1, -1, 'R'));
+                            moves.pb(daj_ruch(i, j, i - 1, j, -1, -1, 'N'));
+                            moves.pb(daj_ruch(i, j, i - 1, j, -1, -1, 'B'));
+                        }
+                        if (j > 0 && 'a' <= pos->board[i - 1][j - 1]] && pos->board[i - 1][j - 1] <= 'z') {
+                            moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'H'));
+                            moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'R'));
+                            moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'N'));
+                            moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'B'));
+                        }
+                        if (j < 7 && 'a' <= pos->board[i - 1][j + 1]] && pos->board[i - 1][j + 1] <= 'z') {
+                            moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'H'));
+                            moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'R'));
+                            moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'N'));
+                            moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'B'));
+                        }
+                        continue;
+                    }
+                    //dodatkowy ruch o dwa pola
+                    if (i == 6 && pos->board[i - 1][j] == ' ' && pos->board[i - 2][j] == ' ')moves.pb(daj_ruch(i, j, i - 2, j, -1, -1, 'X'));
+                    //ruch zwykly
+                    if (pos->board[i - 1][j] == ' ')moves.pb(daj_ruch(i, j, i - 1, j, -1, -1, 'X'));
+                    //bicie zwykle
+                    if (j > 0 && 'a' <= pos->board[i - 1][j - 1] && pos->board[i - 1][j - 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'X'));
+                    if (j < 7 && 'a' <= pos->board[i - 1][j + 1] && pos->board[i - 1][j + 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'X'));
+                    //en passant
+                    if (i == 3 && abs(j - (pos->col_enpas - '0')) == 1)moves.pb(daj_ruch(i, j, i - 1, pos->col_enpas, i, pos->row_enpas, 'X'));
+                }
+        }
+    }
+            
+   
+} */
+
+
+
+int main(){   
     position pos;  
     string uci_move; 
     ifstream read("moj_fen.txt");

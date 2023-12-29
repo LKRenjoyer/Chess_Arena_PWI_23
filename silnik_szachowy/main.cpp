@@ -23,8 +23,8 @@ void coss(pozycja poz, int gl) {
 int main() {
     //pom = 5;
     //cin >> pom;
-    long long Zobrist1[12][64];
-    long long Zobrist2[13];
+    int Zobrist1[12][64];
+    int Zobrist2[13];
     string fen; //= pozycja_startowa;
     getline(cin, fen);
     pozycja poz;
@@ -52,8 +52,8 @@ int main() {
         //}
     }
     */
-    //los1(10000,99999,Zobrist1);
-    //los2(10000,99999,Zobrist2);
+    //los1(10000000,99999999,Zobrist1);
+    //los2(10000000,99999999,Zobrist2);
     //cout<<"\n"<<poz.czy_bicie_w_przelocie;
     return 0;
 }
