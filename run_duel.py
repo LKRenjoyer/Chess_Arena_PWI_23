@@ -6,6 +6,7 @@
 import sys
 import subprocess
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('bot1', type=str, help='Nazwa pierwszego bota')
@@ -31,8 +32,12 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
         print(move, file=visualization.stdin, flush=True)
 elif(args.pvp):
     server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
-    client1 = subprocess.Popen(['python','boty/client.py',args.bot1,'--player'],stdout=subprocess.PIPE)
-    # client2 = subprocess.Popen(['python','boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
+    client = subprocess.Popen(['python','boty/client.py',args.bot1],stdout=subprocess.PIPE)
+    time.sleep(1)
+    player = subprocess.Popen(['python','boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
+    # visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
+    while True:
+        pass
 
 
 
