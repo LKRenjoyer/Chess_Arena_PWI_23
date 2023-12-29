@@ -4,6 +4,15 @@ from functools import partial
 
 path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
+class Tile(pg.sprite.Sprite):
+    def __init__(self, x, y, size, color):
+        pg.sprite.Sprite.__init__(self)
+        self.image=pg.Surface((size,size))
+        self.rect = self.image.get_rect()
+        pg.draw.rect(self.image, color, self.rect)
+        self.rect.x = x*size
+        self.rect.y = y*size
+
 class Piece(pg.sprite.Sprite):
     def __init__(self, piece, x, y, size):
         pg.sprite.Sprite.__init__(self)
