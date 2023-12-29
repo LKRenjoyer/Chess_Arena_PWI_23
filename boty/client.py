@@ -45,16 +45,16 @@ if args.player:
     # path = merge_path(args.name, "main.py")
     path = "wizualizacja_gry/display.py"
     if czy_bialy:
-        bot = subprocess.Popen(['python',path,"w",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable, path,"w",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
-        bot = subprocess.Popen(['python',path,"b",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"b",'--player'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
     path = merge_path(args.name, "main.py")
     if czy_bialy:
-        bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
-        bot = subprocess.Popen(['python',path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 
 print(kolor)

@@ -21,22 +21,22 @@ if len(sys.argv)<3:
 args = parser.parse_args()
 
 if args.eve or (not args.pvp and not args.pvp and not args.pve):
-    server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
-    client1 = subprocess.Popen(['python','boty/client.py',args.bot1],stdout=subprocess.PIPE)
-    client2 = subprocess.Popen(['python','boty/client.py',args.bot2],stdout=subprocess.PIPE)
-    visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
+    server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
+    client1 = subprocess.Popen([sys.executable,'boty/client.py',args.bot1],stdout=subprocess.PIPE)
+    client2 = subprocess.Popen([sys.executable,'boty/client.py',args.bot2],stdout=subprocess.PIPE)
+    visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
 
     while True:
         move = server.stdout.readline().decode('utf-8').strip()
         print(move)
         print(move, file=visualization.stdin, flush=True)
 elif(args.pve):
-    server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
-    client = subprocess.Popen(['python','boty/client.py',args.bot1],stdout=subprocess.PIPE)
+    server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
+    client = subprocess.Popen([sys.executable,'boty/client.py',args.bot1],stdout=subprocess.PIPE)
     time.sleep(1)
-    player = subprocess.Popen(['python','boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
+    player = subprocess.Popen([sys.executable,'boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
     # time.sleep(0.5)
-    # visualization = subprocess.Popen(['python','wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
+    # visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
     # while True:
     #     move = server.stdout.readline().decode('utf-8').strip()
     #     print(move)
@@ -44,8 +44,8 @@ elif(args.pve):
     while True:
         pass
 elif(args.pvp):
-    server = subprocess.Popen(['python','server/main.py'],stdout=subprocess.PIPE)
-    player = subprocess.Popen(['python','boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
+    server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
+    player = subprocess.Popen([sys.executable,'boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
     while True:
         pass
 
