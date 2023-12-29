@@ -133,7 +133,7 @@ class Server:
             white_move = white_move.strip()
             # print(white_move)
 
-            # print(white_move)
+            print(white_move)
             if chess.Move.from_uci(white_move) in board.legal_moves:#(2)
                 board.push(chess.Move.from_uci(white_move))
             else:
@@ -146,19 +146,19 @@ class Server:
 
             # print("ruch białego: ",white_move)
             # os.system('cls')
-            print(board)
-            print()
+            # print(board)
+            # print()
 
             kanal4_main[0]=white_move#(4)
             gotowy_kanal_4_main[0]=True
 
             black_move = self.pull_black_move()#(5)
             black_move = black_move.strip()
-            # print(black_move)
+            print(black_move)
             # print("ruch czarnego: ",black_move)
             # os.system('cls')
-            print(board)
-            print()
+            # print(board)
+            # print()
 
             if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
                 board.push(chess.Move.from_uci(black_move))
