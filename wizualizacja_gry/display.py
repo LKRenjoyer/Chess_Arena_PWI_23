@@ -90,7 +90,9 @@ while running:
                     move = conv_to_uci(start_pos, dest)
                     try:
                         board.push_uci(move)
-                        print(move)
+                        print(move,flush=True)
+                        with open("xd.txt",'w') as f:
+                            f.write(move)
                     except (IllegalMoveError, ValueError):
                         pass
                     redraw(screen, True)
