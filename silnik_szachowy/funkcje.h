@@ -1,12 +1,22 @@
 #include <iostream>
 #include <vector>
-#include <iomanip>    
+#include <iomanip>
+#include <random>   
+#include <unistd.h>
 
 #define pb push_back
 #define st first
 #define nd second
 
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+
 using namespace std;
+
+extern bool czy_jestesmy_bialymi;
+extern string najlepszy_ruch;
+extern int glebokoscstartowa;
 
 struct pozycja {
     char plansza[8][8] = {};
@@ -25,9 +35,11 @@ long double ewaluacja_pozycji(pozycja *poz);
 bool czy_w_planszy(int i,int j);
 string pole(int a,int b,int c,int d);
 vector <string> mozliwe_ruchy(pozycja *poz);
-void los1(int a,int b,int *tab);
-void los2(int a,int b,int *tab);
+void los1(int a,int b,int tab[12][64]);
+void los2(int a,int b,int tab[13]);
 vector <int> pole_w_liczby(char bwp1,char bwp2);
 int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2);
 int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2);
 bool czy_pat(pozycja *poz);
+bool czy_mat(pozycja *poz);
+long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu);

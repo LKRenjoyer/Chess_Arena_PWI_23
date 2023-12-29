@@ -387,24 +387,22 @@ bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz) {//sprawdz
 
 void wizualizacja(pozycja *poz) {
     cout << '\n';
-    cout << '*';
-    for(int i = 0; i < 16; i++) {
-        cout << '-';
-    }
-    cout << '*' << '\n';
+    
     for(int i = 7; i >= 0; i--) {
+        cout << ANSI_COLOR_GREEN << i + 1 << ANSI_COLOR_RESET;
         cout << '|';
         for(int ii = 0; ii < 8; ii++) {
-            cout << poz->plansza[i][ii] << ' ';
+            if(poz->plansza[i][ii] >= 'a' && poz->plansza[i][ii] <= 'z')
+                cout << ANSI_COLOR_RED << poz->plansza[i][ii] << ANSI_COLOR_RESET << '|';
+            else if(poz->plansza[i][ii] >= 'A' && poz->plansza[i][ii] <= 'Z')
+                cout << poz->plansza[i][ii] << '|';
+            else
+                cout << " |";
         }
-        cout << '|';
         cout << '\n';
     }
-    cout << '*';
-    for(int i = 0; i < 16; i++) {
-        cout << '-';
-    }
-    cout << '*' << '\n';
+    cout << ANSI_COLOR_GREEN << "  A B C D E F G H\n" << ANSI_COLOR_RESET;
+   
     cout << '\n';
     cout << "czyj ruch: " << poz->czyj_ruch << '\n';
     cout << "możliwe roszady: " << (poz->czy_K ? "K" : "") << (poz->czy_Q ? "Q" : "") << (poz->czy_k ? "k" : "") << (poz->czy_q ? "q" : "") << '\n';
@@ -623,11 +621,9 @@ long double ewaluacja_pozycji(pozycja *poz) {
         }
     }
 
-    //czy figury sa pod biciem przez słabsze / nie są bronione 
-    //jeśli atakujemy więcej razy niż bronimy to dla nas fajnie jeśli suma się zgadza 
-
     //dodać sprawdzanie czy pat i czy mat 
-    return wart;
+
+    return -wart;
 }
 
 bool czy_w_planszy(int i,int j)
@@ -2194,26 +2190,26 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-/*void los1(int a,int b,int *tab)
+void los1(int a,int b,int tab[12][64])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<12;i++)
     {
     	for (int j=0;j<64;j++)
     	{
-    	    *tab[i*64+j]=gen()%(b-a+1)+a;
+    	    tab[i][j]=gen()%(b-a+1)+a;
     	}
     }
-}*/
+}
 
-/*void los2(int a,int b,int *tab)
+void los2(int a,int b,int tab[13])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<13;i++)
     {
-        *tab[i]=gen()%(b-a+1)+a;
+        tab[i]=gen()%(b-a+1)+a;
     }
-}*/
+}
 
 //kolejnosc figur w Zobrist1 tabelce
 // k,h,r,b,n,p,K,H,R,B,N,P
@@ -2685,11 +2681,180 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     return wynik;
 }
 
-/*bool czy_pat(pozycja *poz)
+bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int *tab1,int *tab2)
 {
     if (poz->liczba_polowek_ruchow==100)
     {
         return 1;
     }
+    if (poz->czyj_ruch=='w'&&Zobrist_hash_start(poz,tab1,tab2)==hash1)
+    {
+    	licznik1++;
+    	if (licznik1==3)
+    	{
+    	    return 1;
+    	}
+    }
+    else if (poz->czyj_ruch=='w')
+    {
+        licznik1=1;
+        hash1=Zobrist_hash_start(poz,tab1,tab2);
+    }
+    if (poz->czyj_ruch=='b'&&Zobrist_hash_start(poz,tab1,tab2)==hash2)
+    {
+    	licznik2++;
+    	if (licznik2==3)
+    	{
+    	    return 1;
+    	}
+    }
+    else if (poz->czyj_ruch=='b')
+    {
+        licznik2=1;
+        hash2=Zobrist_hash_start(poz,tab1,tab2);
+    }
+    int x1,x2,y1,y2;
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x2=i;
+    	    	y2=j;
+    	    }
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x1=i;
+    	    	y1=j;
+    	    }
+    	}
+    }
+    if (poz->czyj_ruch=='w'&&czy_pole_jest_szachowane(x1,y1,'b',poz)==0)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    if (poz->czyj_ruch=='b'&&czy_pole_jest_szachowane(x2,y2,'w',poz)==0)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
     return 0;
-}*/
+}
+
+bool czy_mat(pozycja *poz)
+{
+    int x1,x2,y1,y2;
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x2=i;
+    	    	y2=j;
+    	    }
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	x1=i;
+    	    	y1=j;
+    	    }
+    	}
+    }
+    if (poz->czyj_ruch=='w'&&czy_pole_jest_szachowane(x1,y1,'b',poz)==1)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    if (poz->czyj_ruch=='b'&&czy_pole_jest_szachowane(x2,y2,'w',poz)==1)
+    {
+    	if(mozliwe_ruchy(poz).size()==0)
+    	{
+    	    return 1;
+    	}
+    }
+    return 0;
+}
+
+//alphabeta(stan_pocz, gl_docelowa, −10000, 10000, 1);
+
+long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu) {
+    //cout << glebokosc << endl;
+    if(glebokosc == 0) {//lub pat/mat dodać!!!
+        //jak mat czy pat to koniec
+
+        //wpp
+        return ewaluacja_pozycji(&stan);
+        //sprawdzamy czy jak zejdziemy glebiej to zmieni sie ewaluacja o min 1.81 !!!
+        /*
+        long double akt_wart = ewaluacja_pozycji(&stan);
+        vector <string> ruchy = mozliwe_ruchy(&stan);
+        if(czy_maksymalizujemy_na_ruchu) {
+            for(int i = 0; i < ruchy.size(); i++) {
+                pozycja stan_2 = stan;
+                porusz(ruchy[i], &stan_2);
+                long double nowa_wart = ewaluacja_pozycji(&stan_2);
+                if(nowa_wart - akt_wart >= 4.81) {
+                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 0);
+                }
+            }
+        }
+        else {
+            for(int i = 0; i < ruchy.size(); i++) {
+                pozycja stan_2 = stan;
+                porusz(ruchy[i], &stan_2);
+                long double nowa_wart = ewaluacja_pozycji(&stan_2);
+                if(nowa_wart - akt_wart <= -4.81) {
+                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 1);
+                }
+            }
+        }
+        return akt_wart;
+        */
+    }
+    long double wart;
+    vector <string> ruchy = mozliwe_ruchy(&stan);
+    if(czy_maksymalizujemy_na_ruchu) {
+        wart = -10000;
+        for(int i = 0; i < ruchy.size(); i++) {
+            pozycja stan_2 = stan;
+            porusz(ruchy[i], &stan_2);
+            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 0);
+            if(wart2 > wart) {
+                wart = wart2;
+                if(glebokosc == glebokoscstartowa) {
+                    najlepszy_ruch = ruchy[i];
+                }
+            }
+            if(wart >= beta)
+                break;
+            alpha = max(alpha, wart);
+        }
+    }
+    else {
+        wart = 10000;
+        for(int i = 0; i < ruchy.size(); i++) {
+            pozycja stan_2 = stan;
+            porusz(ruchy[i], &stan_2);
+            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1);
+            if(wart2 < wart) {
+                wart = wart2;
+                if(glebokosc == glebokoscstartowa) {
+                    najlepszy_ruch = ruchy[i];
+                }
+            }
+            wart = min(wart, alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1));
+            if(wart <= alpha)
+                break;
+            beta = min(beta, wart);
+        }
+    }
+    return wart;
+}
