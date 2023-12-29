@@ -192,22 +192,33 @@ position position_from_fen(string fen) {
         ind++;
     }
     ind++;
+    //where(ind); 
     pos.halfmoves_amo = 0;
-    while (fen[ind] != ' ') {
+    while (fen[ind] >= '0' && fen[ind] <= '9') {
         pos.halfmoves_amo *= 10;
         pos.halfmoves_amo += fen[ind++] - '0';
     }
-    fen += ' '; ind++;
-    pos.moves_amo = 0;
-    while (fen[ind] != ' ') {
+    //where(ind); 
+    fen += " "; ind++;
+    pos.moves_amo = 0; 
+    //where(ind); 
+    while (fen[ind] >= '0' && fen[ind] <= '9') {
         pos.moves_amo *= 10;
         pos.moves_amo += fen[ind++] - '0';
     }
+    //where(ind); 
     return pos;
 }
 
 ll position_hash(position* pos) {
     return 0;
+}
+
+bool pair_comp(pii para, int f, int s) {
+    return para.st == f && para.nd == s;
+}
+bool w_planszy(int a, int b) {
+    return a >= 0 && a < 8 && b >= 0 && b < 8;
 }
 
 void make_move(string move, position* pos) {
@@ -296,7 +307,6 @@ void make_move(string move, position* pos) {
     //zmiana strony dodanie cyklu 
 
 }
-
 
 bool position_checked(int a, int b, char color, position* pos) {
      int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
@@ -877,33 +887,40 @@ vector<string> possible_moves(position* pos, char color) {
 
 
 int main(){   
-    position pos;  
-    string uci_move; 
-    ifstream read("moj_fen.txt");
+    position pos;     
+    ifstream read("moj_fen");
+
     // Sprawdzanie, czy plik został poprawnie otwarty
     if (!read.is_open()) {
         cerr << "Nie można otworzyć pliku moj_fen.txt" << endl;
         exit(2);
     } 
     string basic_fen;
+
     int val;
     // Odczyt pliku i zapisanie do zmiennej basic_fen
     while ((val = read.get()) != EOF) {
         basic_fen += static_cast<char>(val);
     }
-    read.close();  
-    pos = position_from_fen(basic_fen); 
-    int n; cin >> n;  
-    cout << n << "\n"; 
-    for(int i =0; i < n; i++){  
-        cin >> uci_move; 
-        string pom =  uci_from_our_fromat(our_format_from_uci(uci_move, &pos), &pos); 
-        cout << pom << "\n";
-        if(pom != uci_move){  
-            cout << "cos popsules\n"; 
-            cout << uci_move << " " << pom << "\n"; 
-            exit(0); 
-        }    
-    } 
-    exit(0); 
+    read.close();  // Zamykanie pliku
+    //cout << basic_fen;
+    //cout << basic_fen << "\n"; 
+    pos = position_from_fen(basic_fen);  
+    //visualize(&pos); 
+ 
+    //exit(0); 
+    string uci_move; 
+    cin >> uci_move; 
+    if(uci_move[0] == '0'){ 
+        cout << 0; 
+        exit(0); 
+    }  
+    pos = position_from_fen(basic_fen);  
+    //visualize(&pos); 
+    cout << uci_move << "\n"; 
+    string my_move = our_format_from_uci(uci_move, &pos); 
+    make_move(my_move, &pos);
+    //visualize(&pos);  
+    //visualize(&pos); 
+    cout << fen_from_position(&pos) << "\n"; 
 }
