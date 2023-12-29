@@ -145,10 +145,10 @@ while running:
                         pg.mouse.set_cursor(*pg.cursors.broken_x)
                         cursor_on_piece=True
                     break
-                else:
-                    if cursor_on_piece and clicked is None:
-                        pg.mouse.set_cursor(*pg.cursors.arrow)
-                        cursor_on_piece = False
+            else:
+                if cursor_on_piece and clicked is None:
+                    pg.mouse.set_cursor(*pg.cursors.arrow)
+                    cursor_on_piece = False
             if clicked is not None:
                 pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                 clicked.rect.update(pos, clicked.rect.size)
