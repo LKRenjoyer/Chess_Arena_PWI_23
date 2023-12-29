@@ -1,7 +1,7 @@
 import socket
 
 PORT = 5050
-SERVER = "192.168.1.81"
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER,PORT)
 DISCONNEcT_MSG = "tego nikt nigdy nie wpisze :("
 

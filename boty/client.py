@@ -1,6 +1,8 @@
 import subprocess
 import socket
 from client_const import *
+import sys
+import os
 
 
 class Client:
@@ -28,10 +30,14 @@ class Client:
 c = Client()
 kolor = c.recv_msg()
 czy_bialy = True if kolor=="biale" else False
+
+# curr_path = os.path.abspath(sys.argv[0])
+path = f"boty/{sys.argv[1]}/main.py"
+
 if czy_bialy:
-    bot = subprocess.Popen(['python','main.py',"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
-    bot = subprocess.Popen(['python','main.py',"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    bot = subprocess.Popen(['python',path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 print(kolor)
 
