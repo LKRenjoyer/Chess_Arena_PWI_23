@@ -932,7 +932,7 @@ int main(){
         cout << uci_move << "\n"; 
         my_move = our_format_from_uci(uci_move, &pos); 
         make_move(my_move, &pos);    
-        //visualize(&pos); 
+        visualize(&pos); 
     }
     cout << fen_from_position(&pos) << "\n";
     //visualize(&pos);  
