@@ -3,6 +3,7 @@ import socket
 from client_const import *
 import sys
 import os
+from functools import partial
 
 
 class Client:
@@ -32,7 +33,8 @@ kolor = c.recv_msg()
 czy_bialy = True if kolor=="biale" else False
 
 # curr_path = os.path.abspath(sys.argv[0])
-path = f"boty/{sys.argv[1]}/main.py"
+merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
+path = merge_path(sys.argv[1], "main.py")
 
 if czy_bialy:
     bot = subprocess.Popen(['python',path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
