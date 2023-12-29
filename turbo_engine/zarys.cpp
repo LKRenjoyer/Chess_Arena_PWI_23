@@ -493,12 +493,13 @@ string our_format_from_uci(string uci_move, position* pos){
         return ans;  
     } 
     // if na roszady
-    if(pos->board[from.st][from.nd] == 'k' || pos->board[from.st][from.nd] == 'K'
+    if( (pos->board[from.st][from.nd] == 'k' || pos->board[from.st][from.nd] == 'K')
     && abs(from.nd - to.nd) == 2){ 
         if(to.nd == 6) 
             return "O-O";  
         if(to.nd == 2) 
-            return "O-O-O"; 
+            return "O-O-O";  
+        cout << from.st << " " << from.nd << " " << from.st << " " << to.nd << "\n"; 
         assert(1 == 0); 
         // roszada error
     } 
@@ -915,20 +916,24 @@ int main(){
     //cout << basic_fen << "\n"; 
     pos = position_from_fen(basic_fen);  
     //visualize(&pos); 
- 
-    //exit(0); 
-    string uci_move; 
-    cin >> uci_move; 
-    if(uci_move[0] == '0'){ 
-        cout << 0; 
-        exit(0); 
-    }  
-    pos = position_from_fen(basic_fen);  
-    //visualize(&pos); 
-    cout << uci_move << "\n"; 
-    string my_move = our_format_from_uci(uci_move, &pos); 
-    make_move(my_move, &pos);
+    int n; cin >> n;  
+    cout << n << "\n";   
+    string uci_move, my_move; string trash; 
+    for(int i = 0; i < n; i++){ 
+        cin >> uci_move; 
+        //getline(cin, trash);
+        //getline(cin, trash); 
+        if(uci_move[0] == '0'){ 
+            cout << 0; 
+            exit(0); 
+        }  
+        //pos = position_from_fen(basic_fen);  
+        //visualize(&pos); 
+        cout << uci_move << "\n"; 
+        my_move = our_format_from_uci(uci_move, &pos); 
+        make_move(my_move, &pos);    
+        //visualize(&pos); 
+    }
+    cout << fen_from_position(&pos) << "\n";
     //visualize(&pos);  
-     
-    cout << fen_from_position(&pos) << "\n"; 
 }
