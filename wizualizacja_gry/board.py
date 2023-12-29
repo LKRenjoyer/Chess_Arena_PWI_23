@@ -11,7 +11,7 @@ class Board(chess.Board):
 
     def update_tiles(self, size):
         self.tiles = pg.sprite.Group()
-        tile_colors = ((184,135,98),(237,214,176))
+        tile_colors = ((237,214,176),(184,135,98))
         for i in range(8):
             for j in range(8):
                 self.tiles.add(Tile(i,j, size, tile_colors[(i+j)%2]))

@@ -1,5 +1,9 @@
-import pygame as pg
-from pieces import *
+from contextlib import redirect_stdout
+import io
+
+with redirect_stdout(io.StringIO()):
+    import pygame as pg
+
 from chess import STARTING_BOARD_FEN, IllegalMoveError
 from board import Board
 import os
