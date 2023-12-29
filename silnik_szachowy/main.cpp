@@ -52,8 +52,8 @@ int main() {
         //}
     }
     */
-    //los1(10000000,99999999,Zobrist1);
-    //los2(10000000,99999999,Zobrist2);
+    los1(10000000,99999999,Zobrist1);
+    los2(10000000,99999999,Zobrist2);
     //cout<<"\n"<<poz.czy_bicie_w_przelocie;
     return 0;
 }

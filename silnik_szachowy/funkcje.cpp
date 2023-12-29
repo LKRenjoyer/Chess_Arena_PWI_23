@@ -2194,26 +2194,26 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-/*void los1(int a,int b,int *tab)
+void los1(int a,int b,int tab[12][64])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<12;i++)
     {
     	for (int j=0;j<64;j++)
     	{
-    	    *tab[i*64+j]=gen()%(b-a+1)+a;
+    	    tab[i][j]=gen()%(b-a+1)+a;
     	}
     }
-}*/
+}
 
-/*void los2(int a,int b,int *tab)
+void los2(int a,int b,int tab[13])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<13;i++)
     {
-        *tab[i]=gen()%(b-a+1)+a;
+        tab[i]=gen()%(b-a+1)+a;
     }
-}*/
+}
 
 //kolejnosc figur w Zobrist1 tabelce
 // k,h,r,b,n,p,K,H,R,B,N,P
