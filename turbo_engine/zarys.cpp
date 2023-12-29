@@ -466,7 +466,7 @@ string our_format_from_uci(string uci_move, position* pos){
     col = uci_move[2]; row = uci_move[3]; 
     to.st = ('8' - row); to.nd =  col-'a'; 
 
-    if( (pos->en_passant != 0 && pos->board[from.st][from.nd] == 'p' || pos->board[from.st][from.nd] == 'P') 
+    if( pos->en_passant != 0 && (pos->board[from.st][from.nd] == 'p' || pos->board[from.st][from.nd] == 'P') 
         && pos->col_enpas == to.nd && pos->row_enpas == to.st && pos->board[to.st][to.nd] == ' ' 
         && abs(from.st-to.st) == 1 && abs(from.nd-to.nd) == 1){ 
             pii capture = {pos->row_enpas,pos->col_enpas};
@@ -898,47 +898,21 @@ vector<string> possible_moves(position* pos, char color) {
 int main(){    
     
     position pos;    
-    //pos = position_from_fen("rnbqkb1r/ppppppp1/5n2/8/6Pp/N3PP2/PPPPN2P/R1BQKB1R b KQkq g3 0 5"); 
-    //cout << our_format_from_uci("c7c5", &pos); 
-    //exit(0);   
-    ifstream read("moj_fen");
-
-    // Sprawdzanie, czy plik został poprawnie otwarty
-    if (!read.is_open()) {
-        cerr << "Nie można otworzyć pliku moj_fen.txt" << endl;
-        exit(2);
-    } 
     string basic_fen;
-
-    int val;
-    // Odczyt pliku i zapisanie do zmiennej basic_fen
-    while ((val = read.get()) != EOF) {
-        basic_fen += static_cast<char>(val);
-    }
-    read.close();  // Zamykanie pliku
-    //cout << basic_fen;
-    //cout << basic_fen << "\n"; 
+    getline(cin, basic_fen);  
+    //basic_fen = beginnig_fen; 
+    int val; 
     pos = position_from_fen(basic_fen);  
-    //visualize(&pos); 
-    int n; cin >> n;  
-    cout << n << "\n";   
-    string uci_move, my_move; string trash; 
-    for(int i = 0; i < n; i++){ 
-        cin >> uci_move; 
-        //getline(cin, trash);
-        //getline(cin, trash); 
-        if(uci_move[0] == '0'){ 
-            cout << 0; 
-            exit(0); 
-        }  
-        //pos = position_from_fen(basic_fen);  
-        //visualize(&pos); 
-        cout << uci_move << "\n"; 
-        my_move = our_format_from_uci(uci_move, &pos); 
-        make_move(my_move, &pos);    
-        //visualize(&pos); 
-        //cout << fen_from_position(&pos) << "\n";
-    }
-    cout << fen_from_position(&pos) << "\n";
-    //visualize(&pos);  
+    vector<string> moves = possible_moves(&pos, pos.mover);     
+    // cout << sz(moves) << "\n"; 
+    // for(auto x : moves)     
+    //     cout << x << "\n";   
+    vector<string> uci_moves; 
+    for(auto x : moves){ 
+        uci_moves.pb(uci_from_our_fromat(x, &pos)); 
+    } 
+    sort(all(uci_moves));   
+    cout << sz(uci_moves) << "\n";
+    for(auto x : uci_moves) 
+        cout <<  x << "\n"; 
 }
