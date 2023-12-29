@@ -2231,47 +2231,47 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     	    {
     	    	wynik^=tab1[i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='h')
+    	    else if (poz->plansza[i][j]=='h')
     	    {
     	    	wynik^=tab1[1*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='r')
+    	    else if (poz->plansza[i][j]=='r')
     	    {
     	    	wynik^=tab1[2*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='b')
+    	    else if (poz->plansza[i][j]=='b')
     	    {
     	    	wynik^=tab1[3*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='n')
+    	    else if (poz->plansza[i][j]=='n')
     	    {
     	    	wynik^=tab1[4*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='p')
+    	    else if (poz->plansza[i][j]=='p')
     	    {
     	    	wynik^=tab1[5*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='K')
+    	    else if (poz->plansza[i][j]=='K')
     	    {
     	    	wynik^=tab1[6*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='H')
+    	    else if (poz->plansza[i][j]=='H')
     	    {
     	    	wynik^=tab1[7*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='R')
+    	    else if (poz->plansza[i][j]=='R')
     	    {
     	    	wynik^=tab1[8*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='B')
+    	    else if (poz->plansza[i][j]=='B')
     	    {
     	    	wynik^=tab1[9*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='N')
+    	    else if (poz->plansza[i][j]=='N')
     	    {
     	    	wynik^=tab1[10*64+i*8+j];
     	    }
-    	    if (poz->plansza[i][j]=='P')
+    	    else if (poz->plansza[i][j]=='P')
     	    {
     	    	wynik^=tab1[11*64+i*8+j];
     	    }
@@ -2303,31 +2303,31 @@ int Zobrist_hash_start(pozycja *poz,int *tab1,int *tab2)
     	{
     	    wynik^=tab2[5];
     	}
-    	if (poz->kolumna_bwp=='b')
+    	else if (poz->kolumna_bwp=='b')
     	{
     	    wynik^=tab2[6];
     	}
-    	if (poz->kolumna_bwp=='c')
+    	else if (poz->kolumna_bwp=='c')
     	{
     	    wynik^=tab2[7];
     	}
-    	if (poz->kolumna_bwp=='d')
+    	else if (poz->kolumna_bwp=='d')
     	{
     	    wynik^=tab2[8];
     	}
-    	if (poz->kolumna_bwp=='e')
+    	else if (poz->kolumna_bwp=='e')
     	{
     	    wynik^=tab2[9];
     	}
-    	if (poz->kolumna_bwp=='f')
+    	else if (poz->kolumna_bwp=='f')
     	{
     	    wynik^=tab2[10];
     	}
-    	if (poz->kolumna_bwp=='g')
+    	else if (poz->kolumna_bwp=='g')
     	{
     	    wynik^=tab2[11];
     	}
-    	if (poz->kolumna_bwp=='h')
+    	else if (poz->kolumna_bwp=='h')
     	{
     	    wynik^=tab2[12];
     	}
@@ -2364,23 +2364,23 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
       	        {
     	            wynik^=tab1[x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='h')
+    	        else if (poz->plansza[x2][y2]=='h')
     	        {
     	    	    wynik^=tab1[1*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='r')
+    	        else if (poz->plansza[x2][y2]=='r')
     	        {
     	    	    wynik^=tab1[2*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='b')
+    	        else if (poz->plansza[x2][y2]=='b')
     	        {
     	    	    wynik^=tab1[3*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='n')
+    	        else if (poz->plansza[x2][y2]=='n')
     	        {
     	    	    wynik^=tab1[4*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='p')
+    	        else if (poz->plansza[x2][y2]=='p')
     	        {
     	    	    wynik^=tab1[5*64+x2*8+y2];
     	        }
@@ -2416,12 +2416,12 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    	    }
     	    	}
     	    }
-    	    if (poz->plansza[x1][y1]=='H')
+    	    else if (poz->plansza[x1][y1]=='H')
     	    {
     	    	wynik^=tab1[7*64+x1*8+y1];
     	    	wynik^=tab1[7*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='R')
+    	    else if (poz->plansza[x1][y1]=='R')
     	    {
     	    	wynik^=tab1[8*64+x1*8+y1];
     	    	wynik^=tab1[8*64+x2*8+y2];
@@ -2434,17 +2434,17 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	       	    wynik^=tab2[2];
     	    	}
     	    }
-    	    if (poz->plansza[x1][y1]=='B')
+    	    else if (poz->plansza[x1][y1]=='B')
     	    {
     	    	wynik^=tab1[9*64+x1*8+y1];
     	    	wynik^=tab1[9*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='N')
+    	    else if (poz->plansza[x1][y1]=='N')
     	    {
     	    	wynik^=tab1[10*64+x1*8+y1];
     	    	wynik^=tab1[10*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='P')
+    	    else if (poz->plansza[x1][y1]=='P')
     	    {
     	    	wynik^=tab1[11*64+x1*8+y1];
     	    	wynik^=tab1[11*64+x2*8+y2];
@@ -2470,23 +2470,23 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
       	        {
     	            wynik^=tab1[6*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='H')
+    	        else if (poz->plansza[x2][y2]=='H')
     	        {
     	    	    wynik^=tab1[7*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='R')
+    	        else if (poz->plansza[x2][y2]=='R')
     	        {
     	    	    wynik^=tab1[8*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='B')
+    	        else if (poz->plansza[x2][y2]=='B')
     	        {
     	    	    wynik^=tab1[9*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='N')
+    	        else if (poz->plansza[x2][y2]=='N')
     	        {
     	    	    wynik^=tab1[10*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='P')
+    	        else if (poz->plansza[x2][y2]=='P')
     	        {
     	    	    wynik^=tab1[11*64+x2*8+y2];
     	        }
@@ -2522,12 +2522,12 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    	    }
     	    	}
     	    }
-    	    if (poz->plansza[x1][y1]=='h')
+    	    else if (poz->plansza[x1][y1]=='h')
     	    {
     	    	wynik^=tab1[1*64+x1*8+y1];
     	    	wynik^=tab1[1*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='r')
+    	    else if (poz->plansza[x1][y1]=='r')
     	    {
     	    	wynik^=tab1[2*64+x1*8+y1];
     	    	wynik^=tab1[2*64+x2*8+y2];
@@ -2540,17 +2540,17 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	       	    wynik^=tab2[4];
     	    	}
     	    }
-    	    if (poz->plansza[x1][y1]=='b')
+    	    else if (poz->plansza[x1][y1]=='b')
     	    {
     	    	wynik^=tab1[3*64+x1*8+y1];
     	    	wynik^=tab1[3*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='n')
+    	    else if (poz->plansza[x1][y1]=='n')
     	    {
     	    	wynik^=tab1[4*64+x1*8+y1];
     	    	wynik^=tab1[4*64+x2*8+y2];
     	    }
-    	    if (poz->plansza[x1][y1]=='p')
+    	    else if (poz->plansza[x1][y1]=='p')
     	    {
     	    	wynik^=tab1[5*64+x1*8+y1];
     	    	wynik^=tab1[5*64+x2*8+y2];
@@ -2579,11 +2579,11 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
       	        {
     	            wynik^=tab1[x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='h')
+    	        else if (poz->plansza[x2][y2]=='h')
     	        {
     	    	    wynik^=tab1[1*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='r')
+    	        else if (poz->plansza[x2][y2]=='r')
     	        {
     	    	    wynik^=tab1[2*64+x2*8+y2];
     	    	    if (poz->czy_k==1&&x2==7&&y2==7)
@@ -2595,15 +2595,15 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    	    	wynik^=tab2[4];
     	    	    }
     	        }
-    	        if (poz->plansza[x2][y2]=='b')
+    	        else if (poz->plansza[x2][y2]=='b')
     	        {
     	    	    wynik^=tab1[3*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='n')
+    	        else if (poz->plansza[x2][y2]=='n')
     	        {
     	    	    wynik^=tab1[4*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='p')
+    	        else if (poz->plansza[x2][y2]=='p')
     	        {
     	    	    wynik^=tab1[5*64+x2*8+y2];
     	        }
@@ -2613,15 +2613,15 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    {
     	        wynik^=tab1[7*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='R')
+    	    else if (ruch[4]=='R')
     	    {
     	        wynik^=tab1[8*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='B')
+    	    else if (ruch[4]=='B')
     	    {
     	        wynik^=tab1[9*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='N')
+    	    else if (ruch[4]=='N')
     	    {
     	        wynik^=tab1[10*64+x2*8+y2];
     	    }
@@ -2634,11 +2634,11 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
       	        {
     	            wynik^=tab1[6*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='H')
+    	        else if (poz->plansza[x2][y2]=='H')
     	        {
     	    	    wynik^=tab1[7*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='R')
+    	        else if (poz->plansza[x2][y2]=='R')
     	        {
     	    	    wynik^=tab1[8*64+x2*8+y2];
     	    	    if (poz->czy_K==1&&x2==0&&y2==7)
@@ -2650,15 +2650,15 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    	    	wynik^=tab2[2];
     	    	    }
     	        }
-    	        if (poz->plansza[x2][y2]=='B')
+    	        else if (poz->plansza[x2][y2]=='B')
     	        {
     	    	    wynik^=tab1[9*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='N')
+    	        else if (poz->plansza[x2][y2]=='N')
     	        {
     	    	    wynik^=tab1[10*64+x2*8+y2];
     	        }
-    	        if (poz->plansza[x2][y2]=='P')
+    	        else if (poz->plansza[x2][y2]=='P')
     	        {
     	    	    wynik^=tab1[11*64+x2*8+y2];
     	        }
@@ -2668,15 +2668,15 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int *tab1,int *tab2)
     	    {
     	        wynik^=tab1[1*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='r')
+    	    else if (ruch[4]=='r')
     	    {
     	        wynik^=tab1[2*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='b')
+    	    else if (ruch[4]=='b')
     	    {
     	        wynik^=tab1[3*64+x2*8+y2];
     	    }
-    	    if (ruch[4]=='n')
+    	    else if (ruch[4]=='n')
     	    {
     	        wynik^=tab1[4*64+x2*8+y2];
     	    }
