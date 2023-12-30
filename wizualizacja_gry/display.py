@@ -103,7 +103,6 @@ last_move = None
 move_promotes = False
 
 while running:
-    # print(board.flipped)
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -114,9 +113,7 @@ while running:
                 if move_promotes:
                     promoted_piece = promotion_box.get_clicked_piece(event.pos)
                     if promoted_piece is not None:
-                        print(board.flipped)
                         board = old_board
-                        print(board.flipped)
                         old_board = None
                         promotion_box.update(-1,'l')
                         if promoted_piece != 'x':

@@ -8,7 +8,7 @@ import subprocess
 import argparse
 import time
 
-parser = argparse.ArgumentParser(description='Główna program do runowania botów')
+parser = argparse.ArgumentParser(description='Główny program do runowania botów')
 parser.add_argument('bot1', type=str, help='Nazwa pierwszego bota')
 parser.add_argument('bot2', type=str, help='Nazwa drugiego bota')
 parser.add_argument("-pvp", action='store_true', help='Player vs Player')
@@ -48,12 +48,5 @@ elif(args.pvp):
     player = subprocess.Popen([sys.executable,'boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
     while True:
         pass
-
-
-
-
-
-
-
 
 
