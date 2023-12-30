@@ -15,6 +15,7 @@ parser.add_argument('bot2', type=str, help='Nazwa drugiego bota')
 parser.add_argument("-pvp", action='store_true', help='Player vs Player')
 parser.add_argument("-pve", action='store_true', help='Player vs Entity')
 parser.add_argument("-eve", action='store_true', help='Entity vs Entity')
+parser.add_argument("-nv", action='store_true', help='Włącz walkę potów bez wizualizacji')
 
 if len(sys.argv)<3:
     raise AttributeError("Bots' names not passed")
@@ -25,16 +26,19 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
     client1 = subprocess.Popen([sys.executable,'boty/client.py',args.bot1],stdout=subprocess.PIPE)
     client2 = subprocess.Popen([sys.executable,'boty/client.py',args.bot2],stdout=subprocess.PIPE)
-    visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
+    if not(args.nv):
+        visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
 
     while True:
         move = server.stdout.readline().decode('utf-8').strip()
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
             # print(DISCONNEcT_MSG, file=visualization.stdin, flush=True)
-            # print(move)
+            print(move)
             break
-        print(move, file=visualization.stdin, flush=True)
+
+        if not(args.nv):
+            print(move, file=visualization.stdin, flush=True)
 
 elif(args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
