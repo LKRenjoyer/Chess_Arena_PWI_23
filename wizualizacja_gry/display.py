@@ -63,7 +63,10 @@ opponent_moved=False
 def get_move():
     while running:
         global opponent_moved
-        move = input()
+        try:
+            move = input()
+        except EOFError:
+            break
         opponent_moved = True
         board.push_uci(move)
 

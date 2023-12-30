@@ -34,8 +34,8 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
             # print(DISCONNEcT_MSG, file=visualization.stdin, flush=True)
             # print(move)
             break
-        print(move)
         print(move, file=visualization.stdin, flush=True)
+
 elif(args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
     client = subprocess.Popen([sys.executable,'boty/client.py',args.bot1],stdout=subprocess.PIPE)

@@ -226,7 +226,7 @@ class Server:
                 self.settrue()
                 break
         
-        # self.server.close()
+        self.server.close()
 
 
         
