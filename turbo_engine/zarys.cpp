@@ -711,7 +711,7 @@ vector<string> possible_moves(position* pos, char color) {
                     if (j > 0 && 'a' <= pos->board[i - 1][j - 1] && pos->board[i - 1][j - 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'X'));
                     if (j < 7 && 'a' <= pos->board[i - 1][j + 1] && pos->board[i - 1][j + 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'X'));
                     //en passant
-                    if (i == 3 && abs(j - (pos->col_enpas - '0')) == 1)moves.pb(daj_ruch(i, j, i - 1, pos->col_enpas, i, pos->col_enpas, 'X'));
+                    if (i == 3 && abs(j - int(pos->col_enpas)) == 1)moves.pb(daj_ruch(i, j, i - 1, pos->col_enpas, i, pos->col_enpas, 'X'));
                 }
             }
         }
@@ -882,7 +882,7 @@ vector<string> possible_moves(position* pos, char color) {
                     if (j > 0 && 'A' <= pos->board[i + 1][j - 1] && pos->board[i + 1][j - 1] <= 'Z')moves.pb(daj_ruch(i, j, i + 1, j - 1, i + 1, j - 1, 'X'));
                     if (j < 7 && 'A' <= pos->board[i + 1][j + 1] && pos->board[i + 1][j + 1] <= 'Z')moves.pb(daj_ruch(i, j, i + 1, j + 1, i + 1, j + 1, 'X'));
                     //en passant
-                    if (i == 4 && abs(j - (pos->col_enpas - '0')) == 1)moves.pb(daj_ruch(i, j, i + 1, pos->col_enpas, i, pos->col_enpas, 'X'));
+                    if (i == 4 && abs(j - int(pos->col_enpas)) == 1)moves.pb(daj_ruch(i, j, i + 1, pos->col_enpas, i, pos->col_enpas, 'X'));
                 }
             }
         }
