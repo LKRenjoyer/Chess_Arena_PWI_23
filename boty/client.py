@@ -63,7 +63,7 @@ else:
         bot = subprocess.Popen([sys.executable,path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 
-print(kolor)
+print(kolor,flush=True)
 
 
 
@@ -83,7 +83,7 @@ if kolor=="biale":
         c.send(wyjscie)
         c.send(DISCONNEcT_MSG)
         exit(0)
-    print(f"moj ruch: {wyjscie}")
+    print(f"moj ruch: {wyjscie}",flush=True)
     c.send(wyjscie)
 
 while not(board.is_game_over()):
@@ -98,7 +98,7 @@ while not(board.is_game_over()):
         bot.stdin.flush()
         # c.send(DISCONNEcT_MSG)
         exit(0)
-    print(f"ruch przeciwnika: {wejscie.strip()}")
+    print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
     bot.stdin.write(wejscie.encode("utf-8"))
     bot.stdin.flush()
     # print("xd")
@@ -112,7 +112,7 @@ while not(board.is_game_over()):
         c.send(wyjscie)
         # c.send(DISCONNEcT_MSG)
         exit(0)
-    print(f"moj ruch: {wyjscie}")
+    print(f"moj ruch: {wyjscie}",flush=True)
     c.send(wyjscie)
     
 

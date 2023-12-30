@@ -8,9 +8,7 @@ class Bot:
         self.tura = False if sys.argv[1]=='b' else True #True - moja tura, False - tura przeciwnika
 
     def make_move(self):
-        move = None
-        while move==None:
-            move = random.choice(list(move.uci() for move in self.board.legal_moves))
+        move = next(iter(self.board.legal_moves)).uci()
         print(move,flush=True)
         self.board.push(chess.Move.from_uci(move))
         self.tura = False

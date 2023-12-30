@@ -179,8 +179,8 @@ class Server:
                 board.push(chess.Move.from_uci(white_move))
             else:
                 # print("Nie legalny ruch!!! Rogrywka przerwana :(")
-                print("Wygrywa:",name2[0])
-                print(DISCONNEcT_MSG)
+                print("Wygrywa:",name2[0],flush=True)
+                print(DISCONNEcT_MSG,flush=True)
                 self.settrue()
                 break
 
@@ -217,8 +217,8 @@ class Server:
                 board.push(chess.Move.from_uci(black_move))
             else:
                 # print("Nie legalny ruch!!! Rogrywka przerwana :(")
-                print("Wygrywa:",name1[0])
-                print(DISCONNEcT_MSG)
+                print("Wygrywa:",name1[0],flush=True)
+                print(DISCONNEcT_MSG,flush=True)
                 self.settrue()
                 break
 
@@ -229,8 +229,8 @@ class Server:
                 kanal2_main[0]=black_move
                 self.send_msg_to_client(bialy_conn,kanal2_main[0])             
 
-                print(self.eval_res(board.result()))
-                print(DISCONNEcT_MSG)
+                print(self.eval_res(board.result()),flush=True)
+                print(DISCONNEcT_MSG,flush=True)
                 self.settrue()
                 break
 

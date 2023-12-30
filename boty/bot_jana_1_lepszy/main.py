@@ -30,7 +30,7 @@ class Bot:
                     move = random.choice(list(move.uci() for move in l_moves if self.board.piece_at(move.from_square).symbol().lower()=='p'))
                 except IndexError:
                     move = random.choice(list(move.uci() for move in l_moves))
-        print(move)
+        print(move,flush=True)
         self.board.push(chess.Move.from_uci(move))
         self.tura = False
             
