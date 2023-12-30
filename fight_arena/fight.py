@@ -1,6 +1,8 @@
 import subprocess
 import chess 
 import random
+import sys
+
 def run_bot(bot_command):
     return subprocess.Popen(bot_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
 #proces.kill / terminate
@@ -38,8 +40,8 @@ def is_threefold_repetition(s):
 
 def main():
     # Uruchamianie dwóch botów
-    botA = run_bot(["python3", "botA.py"])
-    botB = run_bot(["python3", "botB.py"])
+    botA = run_bot([sys.executable, "botA.py"])
+    botB = run_bot([sys.executable, "botB.py"])
     global null_move
     # Przykładowy stan początkowy
     initial_position = "FEN: r1bqkbnr/1ppppp2/2n3p1/p6p/4P2P/P1P5/1P1P1PP1/RNBQKBNR w KQkq - 0 5\n"
