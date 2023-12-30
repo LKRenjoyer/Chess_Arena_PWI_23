@@ -12,6 +12,10 @@ from functools import partial
 import threading
 import sys
 from argparse import ArgumentParser
+import signal
+
+def kill():
+    os.kill(os.getpid(), signal.SIGTERM)
 
 parser = ArgumentParser(description="program do wizualizacji gry między botami/graczami")
 
@@ -122,6 +126,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
             pg.quit()
+            kill()
             sys.exit(7)
         elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
