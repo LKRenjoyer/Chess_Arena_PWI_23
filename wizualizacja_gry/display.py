@@ -47,11 +47,13 @@ def redraw(screen, update=True):
         screen.blit(surface, offsets)
         promotion_box.draw(screen)
 
+opponent_moved=False
 def get_move():
     while running:
+        global opponent_moved
         move = input()
+        opponent_moved = True
         board.push_uci(move)
-        redraw(screen)
 
 threading.Thread(target=get_move).start()
 
@@ -77,7 +79,7 @@ def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje 
             board.push_uci(move+'q')
             board.pop()
             promotion_box.update(board.size, ('dl')[board.turn])
-            redraw(screen,True)
+            # redraw(screen,True)
             return True
             # print(move,flush=True)
         except (IllegalMoveError, ValueError):
@@ -106,7 +108,7 @@ while running:
                         last_move = last_move+promoted_piece
                         board.push_uci(last_move)
                         print(last_move, flush=True)
-                        redraw(screen)
+                        # redraw(screen)
                         promoted_piece = None
                         move_promotes = False
                 else:  
@@ -151,7 +153,7 @@ while running:
             if clicked is not None:
                 pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                 clicked.rect.update(pos, clicked.rect.size)
-            redraw(screen, False)
+            # redraw(screen, False)
         # elif event.type == pg.KEYDOWN:
         #     if event.key == pg.K_RIGHT:
         #         board.push_uci(game[current_move])
@@ -161,7 +163,12 @@ while running:
         #         current_move-=1
         #     redraw(screen)
         elif event.type == pg.WINDOWRESIZED:
-            redraw(screen)
+            redraw(screen,True)
+    if opponent_moved:
+        redraw(screen,True)
+        opponent_moved = False
+    else:
+        redraw(screen, False)
     pg.display.update()
     clock.tick()
 
