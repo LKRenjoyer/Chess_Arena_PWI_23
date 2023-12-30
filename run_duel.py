@@ -7,6 +7,7 @@ import sys
 import subprocess
 import argparse
 import time
+from server.server_const import *
 
 parser = argparse.ArgumentParser(description='Główny program do runowania botów')
 parser.add_argument('bot1', type=str, help='Nazwa pierwszego bota')
@@ -28,6 +29,10 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 
     while True:
         move = server.stdout.readline().decode('utf-8').strip()
+        if len(move)>5:
+            koniec = server.stdout.readline().decode('utf-8').strip()
+            # print(move)
+            break
         print(move)
         print(move, file=visualization.stdin, flush=True)
 elif(args.pve):

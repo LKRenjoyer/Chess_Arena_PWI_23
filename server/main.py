@@ -7,6 +7,8 @@ from server_const import *
 import chess
 import os
 import functools
+import random
+import time
 
 kanal1_main = [""]
 kanal2_main = [""]
@@ -17,6 +19,9 @@ gotowy_kanal_1_main = [False]
 gotowy_kanal_2_main = [False]
 gotowy_kanal_3_main = [False]
 gotowy_kanal_4_main = [False]
+name1 = [""]
+name2 = [""]
+koniec = [False]
 
 board = chess.Board()
 
@@ -43,14 +48,23 @@ class Server:
             msg_len = int(msg_len)
             msg = conn.recv(msg_len).decode("utf-8")
             return msg
-        else:
-            return self.recv_msg_from_client(conn)
+        # else:
+        #     return self.recv_msg_from_client(conn)
+        
+    def settrue(self):
+        # koniec[0]=True
+        # gotowy_kanal_1_main[0] = True
+        # gotowy_kanal_2_main[0] = True
+        # gotowy_kanal_3_main[0] = True
+        # gotowy_kanal_4_main[0] = True
+        pass
             
     
-    def handle_client(self,conn,addr,kanal1,kanal2,kolor,gotowy_kanal_1,gotowy_kanal_2): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
+    def handle_client(self,conn,addr,kanal1,kanal2,kolor,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
         active = True                                                               #
 
         self.send_msg_to_client(conn,kolor)
+        nazwa[0] = self.recv_msg_from_client(conn)
 
 
         if kolor == "biale":
@@ -63,17 +77,27 @@ class Server:
         while active:
             if wykonaj_ruch:
                 # print(kanal1[0],"otrzymano",kolor)
-                kanal1[0] = self.recv_msg_from_client(conn)
+                wiadomosc = self.recv_msg_from_client(conn)
+                if wiadomosc==DISCONNEcT_MSG:
+                    active=False
+                    break
+                kanal1[0] = wiadomosc
                 gotowy_kanal_1[0]=True
                 wykonaj_ruch = not wykonaj_ruch
             else:
                 while gotowy_kanal_2[0]==False:
                     pass
 
+                if koniec_th[0]:
+                    active=False
+                    break
+
                 self.send_msg_to_client(conn,kanal2[0])             
 
                 gotowy_kanal_2[0]=False
                 wykonaj_ruch = not wykonaj_ruch
+        
+        conn.close()
 
 
         # while active:
@@ -87,11 +111,13 @@ class Server:
         #             active = False
         #             print(f"{addr} sie rozlaczyl")
             
-        conn.close()
 
     def pull_white_move(self):
         while gotowy_kanal_1_main[0] == False:
             pass
+
+        if koniec[0]:
+            return ""
         
         gotowy_kanal_1_main[0] = False
         return kanal1_main[0]
@@ -100,22 +126,35 @@ class Server:
     def pull_black_move(self):
         while gotowy_kanal_3_main[0] == False:
             pass
+
+        if koniec[0]:
+            return ""
         
         gotowy_kanal_3_main[0] = False
         return kanal3_main[0]
     
+    def eval_res(self,res):
+        if res=='1-0':
+            return f"Wygrywa: {name1[0]}"
+        elif res=='0-1':
+            return f"Wygrywa: {name2[0]}"
+        else:
+            return "Remis obu graczy"
+    
     def run(self):
         self.server.listen()
         ile_polaczen = 0
+        kto_bialy=random.randint(1,2)
         while ile_polaczen<2:
             conn,addr = self.server.accept()
             ile_polaczen+=1
             # print(f"{addr} wlasnie sie polaczyl")
-            if ile_polaczen==1:#zmienic na losowe przydzielenie kanalow, bo od tego zalezy czy kto gra czarnymi czy ktos gra bialymi
-                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,"biale",gotowy_kanal_1_main,gotowy_kanal_2_main))
+            if ile_polaczen==kto_bialy:
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,"biale",gotowy_kanal_1_main,gotowy_kanal_2_main,name1,koniec))
             else:
-                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,"czarne",gotowy_kanal_3_main,gotowy_kanal_4_main))
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,"czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
             thr.start()
+
         # dopoki prawda(gra się nie skończyła):
         #     zapytaj białego o ruch (1)
         #     sprawdź legalność ruchu (to do zaimplemetowania później) (2)
@@ -138,11 +177,11 @@ class Server:
                 board.push(chess.Move.from_uci(white_move))
             else:
                 # print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                print("Wygrywa:",name2[0])
+                print(DISCONNEcT_MSG)
+                self.settrue()
                 break
 
-            if board.is_game_over():#(3)
-                # print("Koniec gry!")
-                break
 
             # print("ruch białego: ",white_move)
             # os.system('cls')
@@ -151,6 +190,13 @@ class Server:
 
             kanal4_main[0]=white_move#(4)
             gotowy_kanal_4_main[0]=True
+            if board.is_game_over():#(3)
+                # print("Koniec gry!")
+                # time.sleep(5)
+                print(self.eval_res(board.result()))
+                print(DISCONNEcT_MSG)
+                self.settrue()
+                break
 
             black_move = self.pull_black_move()#(5)
             black_move = black_move.strip()
@@ -164,15 +210,23 @@ class Server:
                 board.push(chess.Move.from_uci(black_move))
             else:
                 # print("Nie legalny ruch!!! Rogrywka przerwana :(")
-                break
-
-            if board.is_game_over():#(7)
-                # print("Koniec gry!")
+                print("Wygrywa:",name1[0])
+                print(DISCONNEcT_MSG)
+                self.settrue()
                 break
 
 
             kanal2_main[0]=black_move#(8)
             gotowy_kanal_2_main[0] = True
+            if board.is_game_over():#(7)
+                # print("Koniec gry!")
+                # time.sleep(5)
+                print(self.eval_res(board.result()))
+                print(DISCONNEcT_MSG)
+                self.settrue()
+                break
+        
+        # self.server.close()
 
 
         

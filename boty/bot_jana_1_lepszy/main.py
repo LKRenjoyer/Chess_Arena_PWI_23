@@ -7,7 +7,6 @@ class Bot:
     def __init__(self):
         self.board = chess.Board()
         self.tura = False if sys.argv[1]=='b' else True #True - moja tura, False - tura przeciwnika
-        self.licznik = 2
 
     def check_stalemate(self, move):
         self.board.push(move)
