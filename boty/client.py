@@ -96,7 +96,7 @@ while not(board.is_game_over()):
     if board.is_game_over():
         bot.stdin.write(wejscie.encode("utf-8"))
         bot.stdin.flush()
-        c.send(DISCONNEcT_MSG)
+        # c.send(DISCONNEcT_MSG)
         exit(0)
     print(f"ruch przeciwnika: {wejscie.strip()}")
     bot.stdin.write(wejscie.encode("utf-8"))
@@ -110,7 +110,7 @@ while not(board.is_game_over()):
         exit(0)
     if board.is_game_over():
         c.send(wyjscie)
-        c.send(DISCONNEcT_MSG)
+        # c.send(DISCONNEcT_MSG)
         exit(0)
     print(f"moj ruch: {wyjscie}")
     c.send(wyjscie)
