@@ -10,6 +10,14 @@ global_dict = {}
 global null_move 
 null_move = "a1a1\n"
 
+
+def is_valid_uci_move(move_str):
+    try:
+        move = chess.Move.from_uci(move_str)
+        return True
+    except ValueError:
+        return False
+
 def poly_hash(s, base=131, mod=10**9 + 7):
 
     hash_value = 0
@@ -106,7 +114,12 @@ def main():
         while True:
             # Oczekiwanie na ruch od bota A 
             move_A = botA.stdout.readline().strip()
+            print(board.fen())
             print(move_A)
+            if not is_valid_uci_move(move_A): 
+               print("botA podal ruch w nieprawidlowym formacie") 
+               zwyciezca = "botB"
+               break
             if chess.Move.from_uci(move_A) not in board.legal_moves:
                 print("botA probowal wykonac nielegalny ruch") 
                 zwyciezca = "botB"
@@ -117,10 +130,10 @@ def main():
                 print("potrojne powtorzenie pozycji") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                print("Niewystarczajacy material") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
                 print("mat!") 
                 zwyciezca = "botA"
@@ -133,7 +146,12 @@ def main():
             botB.stdin.flush()
 
             move_B = botB.stdout.readline().strip()
-            print(move_B)
+            print(board.fen())
+            print(move_B) 
+            if not is_valid_uci_move(move_B): 
+                print("botB podal ruch w nieprawidlowym formacie") 
+                zwyciezca = "botA"
+                break
             if chess.Move.from_uci(move_B) not in board.legal_moves:
                 print("botB probowal wykonac nielegalny ruch") 
                 zwyciezca = "botA"
@@ -144,10 +162,10 @@ def main():
                 print("potrojne powtorzenie pozycji") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                print("Niewystarczajacy material") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
                 print("mat!") 
                 zwyciezca = "botB"
@@ -162,7 +180,12 @@ def main():
     else: 
         while True: 
             move_B = botB.stdout.readline().strip()
-            print(move_B)
+            print(board.fen())
+            print(move_B) 
+            if not is_valid_uci_move(move_B): 
+                print("botB podal ruch w nieprawidlowym formacie") 
+                zwyciezca = "botA"
+                break
             if chess.Move.from_uci(move_B) not in board.legal_moves:
                 print("botB probowal wykonac nielegalny ruch") 
                 zwyciezca = "botA"
@@ -173,10 +196,10 @@ def main():
                 print("potrojne powtorzenie pozycji") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                print("Niewystarczajacy material") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
                 print("mat!") 
                 zwyciezca = "botB"
@@ -190,7 +213,12 @@ def main():
             botA.stdin.flush() 
 
             move_A = botA.stdout.readline().strip()
+            print(board.fen())
             print(move_A)
+            if not is_valid_uci_move(move_A): 
+               print("botA podal ruch w nieprawidlowym formacie") 
+               zwyciezca = "botB"
+               break
             if chess.Move.from_uci(move_A) not in board.legal_moves:
                 print("botA probowal wykonac nielegalny ruch") 
                 zwyciezca = "botB"
@@ -201,10 +229,10 @@ def main():
                 print("potrojne powtorzenie pozycji") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                print("Niewystarczajacy material") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
                 print("mat!") 
                 zwyciezca = "botA"
