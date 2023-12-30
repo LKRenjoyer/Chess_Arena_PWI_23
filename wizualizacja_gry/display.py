@@ -4,7 +4,7 @@ import io
 with redirect_stdout(io.StringIO()):
     import pygame as pg
 
-from chess import STARTING_FEN, IllegalMoveError
+import chess
 from board import Board
 from promotion_box import Promotion_Box
 import os
@@ -21,7 +21,7 @@ screen = pg.display.set_mode((64*8,64*8), pg.RESIZABLE)
 clock = pg.time.Clock()
 running = True
 
-board = Board(STARTING_FEN)
+board = Board(chess.STARTING_FEN)
 
 # with open(path("game.txt"), "r") as f:
 #     game = f.read().splitlines()
@@ -32,20 +32,18 @@ current_move = 0
 
 offsets = [0,0]
 
-lock = threading.Lock()
 def redraw(screen, update=True):
-    with lock:
-        screen.fill((62,61,57))
-        scrsize = screen.get_size()
-        bsize = min(scrsize)*9//80
-        if update:
-            board.update(bsize)
-        surface = pg.Surface(scrsize)
-        offsets[0] = (scrsize[0]-bsize*8)//2
-        offsets[1] = (scrsize[1]-bsize*8)//2
-        board.draw(surface)
-        screen.blit(surface, offsets)
-        promotion_box.draw(screen)
+    screen.fill((62,61,57))
+    scrsize = screen.get_size()
+    bsize = min(scrsize)*9//80
+    if update:
+        board.update(bsize)
+    surface = pg.Surface(scrsize)
+    offsets[0] = (scrsize[0]-bsize*8)//2
+    offsets[1] = (scrsize[1]-bsize*8)//2
+    board.draw(surface)
+    screen.blit(surface, offsets)
+    promotion_box.draw(screen)
 
 opponent_moved=False
 def get_move():
@@ -65,30 +63,35 @@ default_cursor = pg.cursors.arrow
 on_piece_cursor = pg.cursors.broken_x
 drag_cursor = pg.cursors.diamond
 start_pos = None
+old_board = None
 
 def conv_to_uci(pos1, pos2):
     return "".join(chr(p[0]+ord('a'))+str(8-p[1]) for p in (pos1, pos2))
 
 def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje go
+    global old_board
     try:
         board.push_uci(move+'p') #to nie powinno działać, ale naprawia błąd z roszadą
-        print(move,flush=True)
-        return False
-    except (IllegalMoveError, ValueError):
+    except (chess.IllegalMoveError, ValueError):
         try: #promocja
+            old_board = board.copy()
             board.push_uci(move+'q')
-            board.pop()
-            promotion_box.update(board.size, ('dl')[board.turn])
-            # redraw(screen,True)
-            return True
-            # print(move,flush=True)
-        except (IllegalMoveError, ValueError):
+        except (chess.IllegalMoveError, ValueError):
             try:
                 board.push_uci(move)
                 print(move,flush=True)
-            except (IllegalMoveError, ValueError):
+            except (chess.IllegalMoveError, ValueError):
                 pass
             return False
+        else:
+            promotion_box.update(board.size, ('ld')[board.turn])
+            pmap = board.piece_map()
+            pmap[(ord(move[2])-ord('a'))+(int(move[3])-1)*8] = chess.Piece.from_symbol('Pp'[board.turn])
+            board.set_piece_map(pmap)
+            return True
+    else:
+        print(move,flush=True)
+        return False
 
 last_move = None
 move_promotes = False
@@ -104,13 +107,16 @@ while running:
                 if move_promotes:
                     promoted_piece = promotion_box.check_clicked(event.pos)
                     if promoted_piece is not None:
+                        board = old_board
+                        old_board = None
                         promotion_box.update(0,'l')
-                        last_move = last_move+promoted_piece
-                        board.push_uci(last_move)
-                        print(last_move, flush=True)
-                        # redraw(screen)
+                        if promoted_piece != 'x':
+                            last_move = last_move+promoted_piece
+                            board.push_uci(last_move)
+                            print(last_move, flush=True)
                         promoted_piece = None
                         move_promotes = False
+                        redraw(screen, True)
                 else:  
                     for sprite in board.piece_sprites:
                         pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])

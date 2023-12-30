@@ -18,6 +18,7 @@ class Promotion_Box:
         for i, p in enumerate("rnbq"):
             self.tiles.add(Tile(i,0,self.size,Tile.colors[i%2]))
             self.pieces.add(Piece(f"{p}{self.color}", i,0,self.size))
+        self.pieces.add(Piece("x_button", 4,0,self.size))
         
     def check_clicked(self, pos):
         for piece in self.pieces:
