@@ -751,7 +751,7 @@ vector<string> possible_moves(position* pos, char color) {
                     }
                     //lewo
                     for (int z = j - 1; z >= 0; z--) {
-                        if ('z' <= pos->board[i][z] && pos->board[i][z] <= 'z')break;
+                        if ('a' <= pos->board[i][z] && pos->board[i][z] <= 'z')break;
                         if ('A' <= pos->board[i][z] && pos->board[i][z] <= 'Z') { moves.pb(daj_ruch(i, j, i, z, i, z, 'X')); break; }
                         moves.pb(daj_ruch(i, j, i, z, -1, -1, 'X'));
                     }
