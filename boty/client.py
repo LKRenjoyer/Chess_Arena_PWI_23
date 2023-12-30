@@ -94,6 +94,8 @@ while not(board.is_game_over()):
         c.send(DISCONNEcT_MSG)
         exit(0)
     if board.is_game_over():
+        bot.stdin.write(wejscie.encode("utf-8"))
+        bot.stdin.flush()
         c.send(DISCONNEcT_MSG)
         exit(0)
     print(f"ruch przeciwnika: {wejscie.strip()}")
