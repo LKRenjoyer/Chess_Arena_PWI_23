@@ -8,6 +8,10 @@ class Board(chess.Board):
         self.size = None
         self.piece_sprites = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
+        self.flipped = False
+
+    def flip(self):
+        self.flipped = not self.flipped
 
     def update_tiles(self, size):
         self.tiles = pg.sprite.Group()
@@ -27,7 +31,8 @@ class Board(chess.Board):
             if char.lower() in "rnbqkp":
                 piece = char.lower()
                 piece_color = "ld"[char.islower()]
-                self.piece_sprites.add(Piece(f"{piece}{piece_color}", column, row, size))
+                dest_row = 7-row if self.flipped else row
+                self.piece_sprites.add(Piece(f"{piece}{piece_color}", column, dest_row, size))
             elif char!='/':
                 n = int(char)
                 column+=n-1
@@ -45,3 +50,13 @@ class Board(chess.Board):
         surface.fill((62,61,57))
         self.tiles.draw(surface)
         self.piece_sprites.draw(surface)
+
+    def get_clicked_piece(self, pos):
+        for piece in self.piece_sprites:
+            if piece.rect.collidepoint(pos):
+                return piece
+            
+    def copy(self):
+        cp = super().copy()
+        cp.flipped = self.flipped
+        return cp

@@ -15,12 +15,13 @@ class Promotion_Box:
         self.color = color
         self.tiles = pg.sprite.Group()
         self.pieces = pg.sprite.Group()
-        for i, p in enumerate("rnbq"):
-            self.tiles.add(Tile(i,0,self.size,Tile.colors[i%2]))
-            self.pieces.add(Piece(f"{p}{self.color}", i,0,self.size))
-        self.pieces.add(Piece("x_button", 4,0,self.size))
+        if self.size!=-1:
+            for i, p in enumerate("rnbq"):
+                self.tiles.add(Tile(0,i,self.size,Tile.colors[i%2]))
+                self.pieces.add(Piece(f"{p}{self.color}", 0,i,self.size))
+            self.pieces.add(Piece("x_button", 0,4,self.size))
         
-    def check_clicked(self, pos):
+    def get_clicked_piece(self, pos):
         for piece in self.pieces:
             if piece.rect.collidepoint(pos):
                 return piece.piece_type[0]
