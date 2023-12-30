@@ -11,6 +11,14 @@ import os
 from functools import partial
 import threading
 import sys
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description="program do wizualizacji gry między botami/graczami")
+
+parser.add_argument('-w', action='store_true', help="oznacza, że gracz biały nie jest botem.", required=False)
+parser.add_argument('-b', action='store_true', help="oznacza, że gracz czarny nie jest botem.", required=False)
+
+args = parser.parse_args(sys.argv[1:])
 
 path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 
@@ -57,7 +65,9 @@ def get_move():
 
 threading.Thread(target=get_move).start()
 
-# board.flip()
+if args.b and not args.w:
+    board.flip()
+
 redraw(screen)
 clicked = None
 cursor_on_piece = False
@@ -101,6 +111,11 @@ def flip_pos(pos):
 
 last_move = None
 move_promotes = False
+player_colors = set()
+if args.w:
+    player_colors.add('l')
+if args.b:
+    player_colors.add('d') 
 
 while running:
     for event in pg.event.get():
@@ -126,12 +141,14 @@ while running:
                 else:  
                     pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
                     clicked = board.get_clicked_piece(pos)
-                    if clicked is not None:
+                    if clicked is not None and clicked.piece_type[1] in player_colors:
                         pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                         clicked.rect.update(pos, clicked.rect.size)
                         start_pos = ((event.pos[0]-offsets[0])//board.size, (event.pos[1]-offsets[1])//board.size)
                         redraw(screen, False)
                         pg.mouse.set_cursor(*pg.cursors.diamond)
+                    else:
+                        clicked = None
                     
         elif event.type == pg.MOUSEBUTTONUP:
             if event.button == 1:
@@ -153,8 +170,8 @@ while running:
                 clicked = None
         elif event.type == pg.MOUSEMOTION:
             pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
-            for sprite in board.piece_sprites:
-                if sprite.rect.collidepoint(pos):
+            for piece in board.piece_sprites:
+                if piece.rect.collidepoint(pos) and piece.piece_type[1] in player_colors:
                     if not cursor_on_piece:
                         pg.mouse.set_cursor(*pg.cursors.broken_x)
                         cursor_on_piece=True
