@@ -1,6 +1,9 @@
 #Główny serwer, który komunikuje:
 #1.server -> boty(client) 2. boty(client) -> server 3. server -> wizualiazja(client) 4. wizualiazja(client) -> server (4. punkt tylko dla pvp lub pvb)
 
+#Należy dodać sprawdzanie, czy otrzymany ruch to None. Dzieje się to, gdy bot przedwcześnie zakończył swoje działanie
+#Jego brak powoduje błąd przy uruchomieniu np. python run_duel.py fast_q_bot bot_jana_1_lepszy
+
 import socket
 import threading
 from server_const import *

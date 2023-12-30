@@ -71,52 +71,55 @@ print(kolor,flush=True)
 def ruch_clienta():
     return c.recv_msg()
 
-if kolor=="biale":
-    #wykonaj pierwszy ruch
-    wyjscie = bot.stdout.readline().decode('utf-8')
-    if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wyjscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+try:
+    if kolor=="biale":
+        #wykonaj pierwszy ruch
+        wyjscie = bot.stdout.readline().decode('utf-8')
+        if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
+            board.push(chess.Move.from_uci(wyjscie.strip()))
+        else:
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            c.send(wyjscie)
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        print(f"moj ruch: {wyjscie}",flush=True)
         c.send(wyjscie)
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"moj ruch: {wyjscie}",flush=True)
-    c.send(wyjscie)
 
-while not(board.is_game_over()):
-    wejscie = f"{ruch_clienta()}\n"
-    if chess.Move.from_uci(wejscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wejscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+    while not(board.is_game_over()):
+        wejscie = f"{ruch_clienta()}\n"
+        if chess.Move.from_uci(wejscie.strip()) in board.legal_moves:#(2)
+            board.push(chess.Move.from_uci(wejscie.strip()))
+        else:
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            bot.stdin.write(wejscie.encode("utf-8"))
+            bot.stdin.flush()
+            # c.send(DISCONNEcT_MSG)
+            exit(0)
+        print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
         bot.stdin.write(wejscie.encode("utf-8"))
         bot.stdin.flush()
-        # c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
-    bot.stdin.write(wejscie.encode("utf-8"))
-    bot.stdin.flush()
-    # print("xd")
-    wyjscie = bot.stdout.readline().decode('utf-8')
-    if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wyjscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+        # print("xd")
+        wyjscie = bot.stdout.readline().decode('utf-8')
+        if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
+            board.push(chess.Move.from_uci(wyjscie.strip()))
+        else:
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            c.send(wyjscie)
+            # c.send(DISCONNEcT_MSG)
+            exit(0)
+        print(f"moj ruch: {wyjscie}",flush=True)
         c.send(wyjscie)
-        # c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"moj ruch: {wyjscie}",flush=True)
-    c.send(wyjscie)
-    
+        
 
-# c = Client()
-# c.send("Gitara siema")
-# print(c.recv_msg())
-# c.send(f"{DISCONNEcT_MSG}")
+    # c = Client()
+    # c.send("Gitara siema")
+    # print(c.recv_msg())
+    # c.send(f"{DISCONNEcT_MSG}")
+except (BrokenPipeError, OSError):
+    pass
