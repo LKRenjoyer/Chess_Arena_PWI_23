@@ -18,7 +18,7 @@ class Piece(pg.sprite.Sprite):
     def __init__(self, piece, x, y, size):
         pg.sprite.Sprite.__init__(self)
         self.piece_type = piece
-        self.image = pg.image.load(path("pieces",f"{piece}.png")).convert_alpha()
+        self.image = pg.image.load(path("images",f"{piece}.png")).convert_alpha()
         self.image = pg.transform.smoothscale(self.image, (size, size))
         self.rect = self.image.get_rect()
         self.rect.x = x*size
