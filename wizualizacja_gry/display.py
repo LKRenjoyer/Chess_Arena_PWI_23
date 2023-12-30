@@ -67,7 +67,8 @@ def get_move():
             move = input()
         except EOFError:
             break
-        opponent_moved = True
+        finally:
+            opponent_moved = True
         board.push_uci(move)
 
 threading.Thread(target=get_move).start()
