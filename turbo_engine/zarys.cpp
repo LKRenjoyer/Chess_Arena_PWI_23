@@ -417,14 +417,13 @@ bool position_checked(int a, int b, char color, position* pos) {
          for (int i = i; a + i < 8 && b + i < 8; i++) {
              if (pos->board[a + i][b + i] == ' ')continue;
              if (pos->board[a + i][b + i] == 'Q' || pos->board[a + i][b + i] == 'B')return 1;
+         }
          //szach krol    
              for (int i = 0; i < 8; i++) {
                  int akt_x = a + x_krol[i], akt_y = b + y_krol[i];
                  if (pos->board[akt_x][akt_y] == 'K')return 1;
              }
          }
-     }
-     
     return 0;
 } 
 string beginnig_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; 
@@ -518,7 +517,7 @@ string daj_ruch(int st_x, int st_y, int en_x, int en_y, int bicie_x, int bicie_y
     ruch.pb(en_y + '0');
     if (bicie_x >= 0) {
         ruch.pb(bicie_x + '0');
-        ruch.pb(bicie_x + '0');
+        ruch.pb(bicie_y + '0');
     }
     if (promocja != 'X')ruch.pb(promocja);
     return ruch;
@@ -609,7 +608,7 @@ vector<string> possible_moves(position* pos, char color) {
 
                     }
                     //lewo dol
-                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                    for (int z = 1; i + z < 8 && j - z >= 0; z++) {
                         if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z')break;
                         if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
                         moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
@@ -663,7 +662,7 @@ vector<string> possible_moves(position* pos, char color) {
 
                     }
                     //lewo dol
-                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                    for (int z = 1; i + z < 8 && j - z >= 0; z++) {
                         if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z')break;
                         if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
                         moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
@@ -780,7 +779,7 @@ vector<string> possible_moves(position* pos, char color) {
 
                     }
                     //lewo dol
-                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                    for (int z = 1; i + z < 8 && j - z >= 0; z++) {
                         if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z')break;
                         if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
                         moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
@@ -834,7 +833,7 @@ vector<string> possible_moves(position* pos, char color) {
 
                     }
                     //lewo dol
-                    for (int z = 1; i + z >= 0 && j - z < 8; z++) {
+                    for (int z = 1; i + z < 8 && j - z >= 0; z++) {
                         if ('a' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'z')break;
                         if ('A' <= pos->board[i + z][j - z] && pos->board[i + z][j - z] <= 'Z') { moves.pb(daj_ruch(i, j, i + z, j - z, i + z, j - z, 'X')); break; }
                         moves.pb(daj_ruch(i, j, i + z, j - z, -1, -1, 'X'));
