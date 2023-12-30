@@ -52,7 +52,7 @@ class Server:
         #     return self.recv_msg_from_client(conn)
         
     def settrue(self):
-        # koniec[0]=True
+        koniec[0]=True
         # gotowy_kanal_1_main[0] = True
         # gotowy_kanal_2_main[0] = True
         # gotowy_kanal_3_main[0] = True
@@ -85,7 +85,7 @@ class Server:
                 gotowy_kanal_1[0]=True
                 wykonaj_ruch = not wykonaj_ruch
             else:
-                while gotowy_kanal_2[0]==False:
+                while gotowy_kanal_2[0]==False and koniec_th[0]==False:
                     pass
 
                 if koniec_th[0]:
@@ -113,7 +113,7 @@ class Server:
             
 
     def pull_white_move(self):
-        while gotowy_kanal_1_main[0] == False:
+        while gotowy_kanal_1_main[0] == False and koniec[0]==False:
             pass
 
         if koniec[0]:
@@ -124,7 +124,7 @@ class Server:
 
 
     def pull_black_move(self):
-        while gotowy_kanal_3_main[0] == False:
+        while gotowy_kanal_3_main[0] == False and koniec[0]==False:
             pass
 
         if koniec[0]:
@@ -151,8 +151,10 @@ class Server:
             # print(f"{addr} wlasnie sie polaczyl")
             if ile_polaczen==kto_bialy:
                 thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,"biale",gotowy_kanal_1_main,gotowy_kanal_2_main,name1,koniec))
+                bialy_conn = conn
             else:
                 thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,"czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
+                czarny_conn = conn
             thr.start()
 
         # dopoki prawda(gra się nie skończyła):
@@ -187,16 +189,21 @@ class Server:
             # os.system('cls')
             # print(board)
             # print()
-
-            kanal4_main[0]=white_move#(4)
-            gotowy_kanal_4_main[0]=True
             if board.is_game_over():#(3)
                 # print("Koniec gry!")
                 # time.sleep(5)
+                kanal4_main[0]=white_move
+                self.send_msg_to_client(czarny_conn,kanal4_main[0]) 
+
+
+
                 print(self.eval_res(board.result()))
                 print(DISCONNEcT_MSG)
                 self.settrue()
                 break
+
+            kanal4_main[0]=white_move#(4)
+            gotowy_kanal_4_main[0]=True
 
             black_move = self.pull_black_move()#(5)
             black_move = black_move.strip()
@@ -216,16 +223,21 @@ class Server:
                 break
 
 
-            kanal2_main[0]=black_move#(8)
-            gotowy_kanal_2_main[0] = True
             if board.is_game_over():#(7)
                 # print("Koniec gry!")
                 # time.sleep(5)
+                kanal2_main[0]=black_move
+                self.send_msg_to_client(bialy_conn,kanal2_main[0])             
+
                 print(self.eval_res(board.result()))
                 print(DISCONNEcT_MSG)
                 self.settrue()
                 break
+
+            kanal2_main[0]=black_move#(8)
+            gotowy_kanal_2_main[0] = True
         
+        # time.sleep(5)
         self.server.close()
 
 
