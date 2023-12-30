@@ -77,9 +77,7 @@ def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje 
         board.push_uci(move+'p') #to nie powinno działać, ale naprawia błąd z roszadą
     except (chess.IllegalMoveError, ValueError):
         try: #promocja
-            print(board.flipped)
             old_board = board.copy()
-            print(old_board.flipped)
             board.push_uci(move+'q')
         except (chess.IllegalMoveError, ValueError):
             try:
