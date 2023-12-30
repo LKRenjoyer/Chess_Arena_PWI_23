@@ -56,10 +56,10 @@ class Server:
         
     def settrue(self):
         koniec[0]=True
-        # gotowy_kanal_1_main[0] = True
-        # gotowy_kanal_2_main[0] = True
-        # gotowy_kanal_3_main[0] = True
-        # gotowy_kanal_4_main[0] = True
+        gotowy_kanal_1_main[0] = True
+        gotowy_kanal_2_main[0] = True
+        gotowy_kanal_3_main[0] = True
+        gotowy_kanal_4_main[0] = True
         pass
             
     
@@ -92,6 +92,10 @@ class Server:
                     pass
 
                 if koniec_th[0]:
+                    try:
+                        self.send_msg_to_client(conn,DISCONNEcT_MSG)
+                    except ConnectionAbortedError:
+                        pass
                     active=False
                     break
 
@@ -174,6 +178,12 @@ class Server:
         
         while not(board.is_game_over()):
             white_move = self.pull_white_move() #(1)
+            if type(white_move)!=str:
+                print("Wygrywa:",name2[0],flush=True)
+                print(DISCONNEcT_MSG,flush=True)
+                self.settrue()
+                break
+
             white_move = white_move.strip()
             # print(white_move)
 
@@ -209,6 +219,13 @@ class Server:
             gotowy_kanal_4_main[0]=True
 
             black_move = self.pull_black_move()#(5)
+            if type(black_move)!=str:
+                print("Wygrywa:",name1[0],flush=True)
+                print(DISCONNEcT_MSG,flush=True)
+                self.settrue()
+                break
+
+
             black_move = black_move.strip()
             print(black_move)
             # print("ruch czarnego: ",black_move)

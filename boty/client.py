@@ -89,9 +89,16 @@ try:
 
     while not(board.is_game_over()):
         wejscie = f"{ruch_clienta()}\n"
+        if wejscie.strip("\n")==DISCONNEcT_MSG:
+            # with open("xd.txt","a") as f:
+            #     f.write(wejscie)
+            bot.terminate()
+            c.send(DISCONNEcT_MSG)
+            exit(0)
         if chess.Move.from_uci(wejscie.strip()) in board.legal_moves:#(2)
             board.push(chess.Move.from_uci(wejscie.strip()))
         else:
+            bot.terminate()
             c.send(DISCONNEcT_MSG)
             exit(0)
         if board.is_game_over():
