@@ -9,7 +9,7 @@ class Bot:
 
     def make_move(self):
         move = next(iter(self.board.legal_moves)).uci()
-        print(move)
+        print(move,flush=True)
         self.board.push(chess.Move.from_uci(move))
         self.tura = False
             

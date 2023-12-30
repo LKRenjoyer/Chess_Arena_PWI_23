@@ -11,7 +11,7 @@ class Bot:
         move = None
         while move==None:
             move = random.choice(list(move.uci() for move in self.board.legal_moves))
-        print(move)
+        print(move,flush=True)
         self.board.push(chess.Move.from_uci(move))
         self.tura = False
             
