@@ -28,7 +28,7 @@ koniec = [False]
 
 board = chess.Board()
 
-print = functools.partial(print,flush=True)
+# print = functools.partial(print,flush=True)
 
 class Server:
     def __init__(self):
@@ -60,7 +60,14 @@ class Server:
         gotowy_kanal_2_main[0] = True
         gotowy_kanal_3_main[0] = True
         gotowy_kanal_4_main[0] = True
-        pass
+    #  print("Wygrywa:",name2[0],flush=True)
+    #     print(DISCONNEcT_MSG,flush=True)
+
+    def wypisz_zwyciezce(self,kto_wygral):
+        if kto_wygral==1:
+            print(f"Wygrywa: {name1[0]}\n{DISCONNEcT_MSG}",flush=True)
+        else:
+            print(f"Wygrywa: {name2[0]}\n{DISCONNEcT_MSG}",flush=True)
             
     
     def handle_client(self,conn,addr,kanal1,kanal2,kolor,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
@@ -83,6 +90,13 @@ class Server:
                 wiadomosc = self.recv_msg_from_client(conn)
                 if wiadomosc==DISCONNEcT_MSG:
                     active=False
+                    # if nazwa[0]==name1[0]:
+                    #     print(f"Wygrywa: {name2[0]}")
+                    # else:
+                    #     print(f"Wygrywa: {name1[0]}")
+                    kanal1[0] = DISCONNEcT_MSG
+                    gotowy_kanal_1[0]=True
+                    koniec[0]=True
                     break
                 kanal1[0] = wiadomosc
                 gotowy_kanal_1[0]=True
@@ -96,8 +110,9 @@ class Server:
                         self.send_msg_to_client(conn,DISCONNEcT_MSG)
                     except ConnectionAbortedError:
                         pass
-                    active=False
-                    break
+                    finally:
+                        active=False
+                        break
 
                 self.send_msg_to_client(conn,kanal2[0])             
 
@@ -124,7 +139,7 @@ class Server:
             pass
 
         if koniec[0]:
-            return ""
+            return DISCONNEcT_MSG
         
         gotowy_kanal_1_main[0] = False
         return kanal1_main[0]
@@ -135,18 +150,18 @@ class Server:
             pass
 
         if koniec[0]:
-            return ""
+            return DISCONNEcT_MSG
         
         gotowy_kanal_3_main[0] = False
         return kanal3_main[0]
     
     def eval_res(self,res):
         if res=='1-0':
-            return f"Wygrywa: {name1[0]}"
+            return f"Wygrywa: {name1[0]}\n{DISCONNEcT_MSG}"
         elif res=='0-1':
-            return f"Wygrywa: {name2[0]}"
+            return f"Wygrywa: {name2[0]}\n{DISCONNEcT_MSG}"
         else:
-            return "Remis obu graczy"
+            return f"Remis obu graczy\n{DISCONNEcT_MSG}"
     
     def run(self):
         self.server.listen()
@@ -179,24 +194,27 @@ class Server:
         while not(board.is_game_over()):
             white_move = self.pull_white_move() #(1)
             if type(white_move)!=str:
-                print("Wygrywa:",name2[0],flush=True)
-                print(DISCONNEcT_MSG,flush=True)
+                self.wypisz_zwyciezce(2)
                 self.settrue()
                 break
 
             white_move = white_move.strip()
             # print(white_move)
 
-            print(white_move)
-            if chess.Move.from_uci(white_move) in board.legal_moves:#(2)
-                board.push(chess.Move.from_uci(white_move))
-            else:
-                # print("Nie legalny ruch!!! Rogrywka przerwana :(")
-                print("Wygrywa:",name2[0],flush=True)
-                print(DISCONNEcT_MSG,flush=True)
+
+            try:
+                if chess.Move.from_uci(white_move) in board.legal_moves:#(2)
+                    board.push(chess.Move.from_uci(white_move))
+                else:
+                    self.wypisz_zwyciezce(2)
+                    self.settrue()
+                    break
+            except ValueError:
+                self.wypisz_zwyciezce(2)
                 self.settrue()
                 break
 
+            print(white_move,flush=True)
 
             # print("ruch białego: ",white_move)
             # os.system('cls')
@@ -210,8 +228,7 @@ class Server:
 
 
 
-                print(self.eval_res(board.result()))
-                print(DISCONNEcT_MSG)
+                print(self.eval_res(board.result()),flush=True)
                 self.settrue()
                 break
 
@@ -220,28 +237,30 @@ class Server:
 
             black_move = self.pull_black_move()#(5)
             if type(black_move)!=str:
-                print("Wygrywa:",name1[0],flush=True)
-                print(DISCONNEcT_MSG,flush=True)
+                self.wypisz_zwyciezce(1)
                 self.settrue()
                 break
 
 
             black_move = black_move.strip()
-            print(black_move)
             # print("ruch czarnego: ",black_move)
             # os.system('cls')
             # print(board)
             # print()
-
-            if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
-                board.push(chess.Move.from_uci(black_move))
-            else:
-                # print("Nie legalny ruch!!! Rogrywka przerwana :(")
-                print("Wygrywa:",name1[0],flush=True)
-                print(DISCONNEcT_MSG,flush=True)
+            try:
+                if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
+                    board.push(chess.Move.from_uci(black_move))
+                else:
+                    # print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                    self.wypisz_zwyciezce(1)
+                    self.settrue()
+                    break
+            except ValueError:
+                self.wypisz_zwyciezce(1)
                 self.settrue()
                 break
 
+            print(black_move,flush=True)
 
             if board.is_game_over():#(7)
                 # print("Koniec gry!")
@@ -250,7 +269,6 @@ class Server:
                 self.send_msg_to_client(bialy_conn,kanal2_main[0])             
 
                 print(self.eval_res(board.result()),flush=True)
-                print(DISCONNEcT_MSG,flush=True)
                 self.settrue()
                 break
 

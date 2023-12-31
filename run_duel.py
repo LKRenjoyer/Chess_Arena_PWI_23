@@ -31,11 +31,13 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 
     while True:
         move = server.stdout.readline().decode('utf-8').strip()
+        print(move)
 
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
+            # print(koniec)
             # print(DISCONNEcT_MSG, file=visualization.stdin, flush=True)
-            print(move)
+            # print(move)
             break
 
         if not(args.nv):
