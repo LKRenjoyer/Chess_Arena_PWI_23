@@ -1,13 +1,8 @@
 import chess
 import random
 import sys
-import chess
-import chess.engine
-
-engine = chess.engine.SimpleEngine.popen_uci("/home/jakub/Desktop/chess/stockfish-ubuntu-x86-64-avx2/stockfish/src/stockfish")
 #zapozyczone z bot_jana_2 
-global aktu 
-
+global aktu
 class Bot:
     def __init__(self):
         self.board = chess.Board()
@@ -16,18 +11,8 @@ class Bot:
     def make_move(self):
         move = None
         while move==None:
-            #node_limit = 1000000  # Wybierz odpowiednią liczbę węzłów
-            #limit = chess.engine.Limit(nodes=node_limit)
-            #depth_limit = 0  # Wybierz odpowiednią głębokość 
-            #print("xdxdxdxd")
-            #limit = chess.engine.Limit(depth=depth_limit)
-            limit = chess.engine.Limit(time=0.1)  # 10 ms
-            # Zainicjuj analizę   flush = True)
-            result = engine.play(self.board, limit)
-            # Pobierz najlepszy ruch
-            move = result.move
-        #print(move) 
-        self.board.push(move)
+            move = random.choice(list(move.uci() for move in self.board.legal_moves))
+        self.board.push(chess.Move.from_uci(move))
         self.tura = False
         print(move)
         
@@ -78,9 +63,7 @@ def run():
     if (value=="white" and bot.board.turn == chess.WHITE) or (value=="black" and bot.board.turn == chess.BLACK): 
         bot.tura = True 
     else:
-        bot.tura = False 
-    #print(bot.tura) 
-    #exit(0)
+        bot.tura = False
     # while bot.board.is_stalemate==False and bot.board.is_checkmate==False:
     while not(bot.board.is_game_over()):
         if bot.tura:
