@@ -409,7 +409,7 @@ class Board:
             return
         x1, y1, x2, y2, z = self.convertMoveSmithToXYZ(move)
         #recording data
-        self.data_record.append([self.turn, self.castling_data, self.en_passant_data, self.halfmove_clock, self.fullmove_clock])
+        self.data_record.append([self.turn, self.castling_data.copy(), self.en_passant_data, self.halfmove_clock, self.fullmove_clock])
         #iterating counters
         if self.turn == 1:
             self.fullmove_clock += 1
@@ -625,7 +625,7 @@ class Board:
 
 if __name__ == "__main__":
     board=Board()
-    board.setToFen("P1P5/8/P2P1K1k/6Rp/1B5P/8/8/1b2p3 b - - 1 43")
+    board.setToFen("rnbqk2r/pppp1pp1/5n2/2b1p2p/4P3/P2B1N1P/1PPP1PP1/RNBQK2R b KQkq - 0 6")
     print(board.isLegal("e1c1"))
     board.visualize()
-    board.getLegalMoves()
+    print(board.getLegalMoves())
