@@ -592,7 +592,8 @@ class Board:
                                 move = self.convertMoveXYZToSmith(x, y, p[0], p[1], promo)
                                 if self.isLegal(move) == True:
                                     legal.append(move)
-        print(legal)            
+        # print(legal)       
+        return legal     
     #part 8: bonus debug functions
     #printing everything
     def test(self):
@@ -620,8 +621,12 @@ class Board:
                 line +=" "
             print(line)
 
-board=Board()
-board.setToFen("4k3/P7/2PP2Rp/4pK2/b5nP/PPb1p3/8/4B3 w - - 0 1")
-print(board.isLegal("e1c1"))
-board.visualize()
-board.getLegalMoves()
+if __name__ == "__main__":
+    board=Board()
+    board.setToFen("4k3/P7/2PP2Rp/4pK2/b5nP/PPb1p3/8/4B3 w - - 0 1")
+    print(board.isLegal("e1c1"))
+    board.visualize()
+    board.getLegalMoves()
+
+# funkcja getLegalMoves() zwraca błąd dla FEN'u poniżej
+# r1bq1bnr/p1p1pppp/1pnpk3/8/5P2/1P1PB3/P1P1P1PP/RN1QKBNR b KQ - 0 6
