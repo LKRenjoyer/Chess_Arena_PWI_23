@@ -512,7 +512,7 @@ class Board:
             self.castling_data[3] = 0
         #en passant info
         if self.getPiece(x2, y2) == 0 and abs(x1 - x2) == 2:
-            self.en_passant_data[0] = (x1 + x2)/2
+            self.en_passant_data[0] = (x1 + x2)//2
             self.en_passant_data[1] = y1
         else:
             self.en_passant_data[0] = -1
@@ -554,7 +554,7 @@ class Board:
                 return False
             #we also attempt making a halfcastle (moving the king 1 square in castling direction) and check for legality of that move
             x1, y1, x2, y2, z = self.convertMoveSmithToXYZ(move)
-            halfCastle = self.convertMoveXYZToSmith(x1, y1, (x1+x2)/2, y2, z)
+            halfCastle = self.convertMoveXYZToSmith(x1, y1, (x1+x2)//2, y2, z)
             resultsInCheck = False
             self.push(halfCastle)
             resultsInCheck = self.isInCheck(who)
