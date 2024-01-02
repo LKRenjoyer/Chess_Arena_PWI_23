@@ -269,9 +269,9 @@ class Board:
                 moveTiles.append((x+1, y))
                 if x == 1 and self.getOwner(x+2, y) == -1:
                     moveTiles.append((x+2, y))
-            if y-1 >= 0 and ( self.getOwner(x+1, y-1) == 1 or (x+1, y-1) == self.en_passant_data ):
+            if y-1 >= 0 and ( self.getOwner(x+1, y-1) == 0 or (x+1, y-1) == self.en_passant_data ):
                 moveTiles.append((x+1, y-1))
-            if y+1 < 8 and ( self.getOwner(x+1, y+1) == 1 or (x+1, y+1) == self.en_passant_data ):
+            if y+1 < 8 and ( self.getOwner(x+1, y+1) == 0 or (x+1, y+1) == self.en_passant_data ):
                 moveTiles.append((x+1, y+1))
         #pawns weren't that bad actually
         return moveTiles
