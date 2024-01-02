@@ -39,6 +39,7 @@ args = parser.parse_args()
                 
 c = Client()
 kolor = c.recv_msg()
+# print(kolor,flush=True)
 czy_bialy = True if kolor=="biale" else False
 
 
@@ -63,7 +64,6 @@ else:
         bot = subprocess.Popen([sys.executable,path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 
-print(kolor,flush=True)
 
 
 
@@ -71,52 +71,75 @@ print(kolor,flush=True)
 def ruch_clienta():
     return c.recv_msg()
 
-if kolor=="biale":
-    #wykonaj pierwszy ruch
-    wyjscie = bot.stdout.readline().decode('utf-8')
-    if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wyjscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+try:
+    if kolor=="biale":
+        #wykonaj pierwszy ruch
+        wyjscie = bot.stdout.readline().decode('utf-8')
+        try:
+            if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
+                board.push(chess.Move.from_uci(wyjscie.strip()))
+            else:
+                c.send(DISCONNEcT_MSG)
+                exit(0)
+        except ValueError:
+            bot.terminate()
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            c.send(wyjscie)
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        # print(f"moj ruch: {wyjscie}",flush=True)
         c.send(wyjscie)
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"moj ruch: {wyjscie}",flush=True)
-    c.send(wyjscie)
 
-while not(board.is_game_over()):
-    wejscie = f"{ruch_clienta()}\n"
-    if chess.Move.from_uci(wejscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wejscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+    while not(board.is_game_over()):
+        wejscie = f"{ruch_clienta()}\n"
+        # with open("xd.txt","w") as f:
+        #     f.write(wejscie)
+        if wejscie.strip("\n")==DISCONNEcT_MSG:
+            bot.terminate()
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if chess.Move.from_uci(wejscie.strip()) in board.legal_moves:#(2)
+            board.push(chess.Move.from_uci(wejscie.strip()))
+        else:
+            bot.terminate()
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            bot.stdin.write(wejscie.encode("utf-8"))
+            bot.stdin.flush()
+            # c.send(DISCONNEcT_MSG)
+            exit(0)
+        # print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
         bot.stdin.write(wejscie.encode("utf-8"))
         bot.stdin.flush()
-        # c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
-    bot.stdin.write(wejscie.encode("utf-8"))
-    bot.stdin.flush()
-    # print("xd")
-    wyjscie = bot.stdout.readline().decode('utf-8')
-    if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
-        board.push(chess.Move.from_uci(wyjscie.strip()))
-    else:
-        c.send(DISCONNEcT_MSG)
-        exit(0)
-    if board.is_game_over():
+        # print("xd")
+        wyjscie = bot.stdout.readline().decode('utf-8')
+        # with open("xd2.txt","a") as f:
+        #     f.write(wyjscie)
+        try:
+            if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
+                board.push(chess.Move.from_uci(wyjscie.strip()))
+            else:
+                bot.terminate()
+                c.send(DISCONNEcT_MSG)
+                exit(0)
+        except ValueError:
+            bot.terminate()
+            c.send(DISCONNEcT_MSG)
+            exit(0)
+        if board.is_game_over():
+            c.send(wyjscie)
+            # c.send(DISCONNEcT_MSG)
+            exit(0)
+        # print(f"moj ruch: {wyjscie}",flush=True)
         c.send(wyjscie)
-        # c.send(DISCONNEcT_MSG)
-        exit(0)
-    print(f"moj ruch: {wyjscie}",flush=True)
-    c.send(wyjscie)
-    
+        
 
-# c = Client()
-# c.send("Gitara siema")
-# print(c.recv_msg())
-# c.send(f"{DISCONNEcT_MSG}")
+    # c = Client()
+    # c.send("Gitara siema")
+    # print(c.recv_msg())
+    # c.send(f"{DISCONNEcT_MSG}")
+except (BrokenPipeError, OSError):
+    pass

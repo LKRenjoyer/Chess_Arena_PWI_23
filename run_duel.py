@@ -31,10 +31,13 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 
     while True:
         move = server.stdout.readline().decode('utf-8').strip()
+        print(move)
+
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
+            # print(koniec)
             # print(DISCONNEcT_MSG, file=visualization.stdin, flush=True)
-            print(move)
+            # print(move)
             break
 
         if not(args.nv):
@@ -43,7 +46,7 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 elif(args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
     client = subprocess.Popen([sys.executable,'boty/client.py',args.bot1],stdout=subprocess.PIPE)
-    time.sleep(1)
+    # time.sleep(1)
     player = subprocess.Popen([sys.executable,'boty/client.py',args.bot2,'--player'],stdout=subprocess.PIPE)
     # time.sleep(0.5)
     # visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")

@@ -1,22 +1,48 @@
 import subprocess
 import chess 
 import random
+import sys
+import os
+from functools import partial
+
+# todo: 
+# dodanie reguly 50 nuda-ruchow 
+# dodanie ograniczenia czasowego na wykonanie ruchu
+
 def run_bot(bot_command):
     return subprocess.Popen(bot_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
-#proces.kill / terminate
+#proces.kill / terminate 
 global_dict = {}
-global null_move 
 null_move = "a1a1\n"
+file =1 
+path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
+def load(): 
+    with open(path("data"), "r") as f: 
+        return f.read().splitlines(False)
+
+moje_fajne_feny = load()
+
+def is_valid_uci_move(move_str):
+    try:
+        move = chess.Move.from_uci(move_str)
+        return True
+    except ValueError:
+        return False
+
+def is_valid_fen(fen):
+    try:
+        board = chess.Board(fen)
+        return True
+    except ValueError:
+        return False
 
 def poly_hash(s, base=131, mod=10**9 + 7):
 
     hash_value = 0
     base_power = 1
-
     for char in s:
         hash_value = (hash_value * base + ord(char)) % mod
         base_power = (base_power * base) % mod
-
     return hash_value
 
 def add(s):
@@ -36,20 +62,23 @@ def is_threefold_repetition(s):
 
     return global_dict.get(hash_value, 0) >= 3
 
-def main():
+def run(color1, color2, moj_fen):
     # Uruchamianie dwóch botów
-    botA = run_bot(["python3", "botA.py"])
-    botB = run_bot(["python3", "botB.py"])
-    global null_move
+    botA = run_bot([sys.executable, "botA.py"])
+    botB = run_bot([sys.executable, "old_botB.py"])
+    global null_move, Ascore, Bscore, Draws
     # Przykładowy stan początkowy
-    initial_position = "FEN: r1bqkbnr/1ppppp2/2n3p1/p6p/4P2P/P1P5/1P1P1PP1/RNBQKBNR w KQkq - 0 5\n"
+    if not is_valid_fen(moj_fen): 
+        print("Niepoprawny fen szachownicy") 
+        return
+    initial_position = "FEN: " + moj_fen + "\n"
 
     # Przesyłanie stanu początkowego do obu botów
     botA.stdin.write("isready?\n")
     botA.stdin.flush()
     botB.stdin.write("isready?\n")
     botB.stdin.flush()
-    kolory = []
+    kolory = [color1, color2]
     if random.randint(0,1) == 1:
         kolory.append("white") 
         kolory.append("black") 
@@ -104,54 +133,64 @@ def main():
         while True:
             # Oczekiwanie na ruch od bota A 
             move_A = botA.stdout.readline().strip()
-            print(move_A)
+            file.write(board.fen() + "\n")
+            file.write("botA: "+move_A + "\n")
+            if not is_valid_uci_move(move_A): 
+               file.write("botA podal ruch w nieprawidlowym formacie\n") 
+               zwyciezca = "botB"
+               break
             if chess.Move.from_uci(move_A) not in board.legal_moves:
-                print("botA probowal wykonac nielegalny ruch") 
+                file.write("botA probowal wykonac nielegalny ruch\n") 
                 zwyciezca = "botB"
                 break
             board.push(chess.Move.from_uci(move_A))
             add(board.fen()) 
             if is_threefold_repetition(board.fen()): 
-                print("potrojne powtorzenie pozycji") 
+                file.write("potrojne powtorzenie pozycji\n") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                file.write("Niewystarczajacy material\n") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
-                print("mat!") 
+                file.write("mat!\n") 
                 zwyciezca = "botA"
                 break
             if board.is_stalemate():  
-                print("pat!") 
+                file.write("pat!\n") 
                 zwyciezca = " "
                 break
             botB.stdin.write(move_A + "\n")
             botB.stdin.flush()
 
             move_B = botB.stdout.readline().strip()
-            print(move_B)
+            file.write(board.fen()+"\n")
+            file.write("botB: "+move_B +"\n") 
+            if not is_valid_uci_move(move_B): 
+                file.write("botB podal ruch w nieprawidlowym formacie\n") 
+                zwyciezca = "botA"
+                break
             if chess.Move.from_uci(move_B) not in board.legal_moves:
-                print("botB probowal wykonac nielegalny ruch") 
+                file.write("botB probowal wykonac nielegalny ruch\n") 
                 zwyciezca = "botA"
                 break
             board.push(chess.Move.from_uci(move_B))
             add(board.fen()) 
             if is_threefold_repetition(board.fen()): 
-                print("potrojne powtorzenie pozycji") 
+                file.write("potrojne powtorzenie pozycji\n") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                file.write("Niewystarczajacy material\n") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
-                print("mat!") 
+                file.write("mat!\n") 
                 zwyciezca = "botB"
                 break
             if board.is_stalemate():  
-                print("pat!") 
+                file.write("pat!\n") 
                 zwyciezca = " "
                 break
             # Przesyłanie ruchu od bota B do bota A
@@ -160,27 +199,32 @@ def main():
     else: 
         while True: 
             move_B = botB.stdout.readline().strip()
-            print(move_B)
+            file.write(board.fen()+"\n")
+            file.write("botB: "+move_B +"\n") 
+            if not is_valid_uci_move(move_B): 
+                file.write("botB podal ruch w nieprawidlowym formacie\n") 
+                zwyciezca = "botA"
+                break
             if chess.Move.from_uci(move_B) not in board.legal_moves:
-                print("botB probowal wykonac nielegalny ruch") 
+                file.write("botB probowal wykonac nielegalny ruch\n") 
                 zwyciezca = "botA"
                 break
             board.push(chess.Move.from_uci(move_B))
             add(board.fen()) 
             if is_threefold_repetition(board.fen()): 
-                print("potrojne powtorzenie pozycji") 
+                file.write("potrojne powtorzenie pozycji\n") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                file.write("Niewystarczajacy material\n") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
-                print("mat!") 
+                file.write("mat!\n") 
                 zwyciezca = "botB"
                 break
             if board.is_stalemate():  
-                print("pat!") 
+                file.write("pat!\n") 
                 zwyciezca = " "
                 break
             # Przesyłanie ruchu od bota B do bota A
@@ -188,40 +232,71 @@ def main():
             botA.stdin.flush() 
 
             move_A = botA.stdout.readline().strip()
-            print(move_A)
+            file.write(board.fen()+"\n")
+            file.write("botA: "+move_A+"\n")
+            if not is_valid_uci_move(move_A): 
+               file.write("botA podal ruch w nieprawidlowym formacie\n") 
+               zwyciezca = "botB"
+               break
             if chess.Move.from_uci(move_A) not in board.legal_moves:
-                print("botA probowal wykonac nielegalny ruch") 
+                file.write("botA probowal wykonac nielegalny ruch\n") 
                 zwyciezca = "botB"
                 break
             board.push(chess.Move.from_uci(move_A))
             add(board.fen()) 
             if is_threefold_repetition(board.fen()): 
-                print("potrojne powtorzenie pozycji") 
+                file.write("potrojne powtorzenie pozycji\n") 
                 zwyciezca = " "
                 break
-            #if board.is_inssuficient_material():
-            #    print("Niewystarczajacy material") 
-            #    zwyciezca = " "
-            #    break
+            if board.is_insufficient_material():
+                file.write("Niewystarczajacy material\n") 
+                zwyciezca = " "
+                break
             if board.is_checkmate():  
-                print("mat!") 
+                file.write("mat!\n") 
                 zwyciezca = "botA"
                 break
             if board.is_stalemate():  
-                print("pat!") 
+                file.write("pat!\n") 
                 zwyciezca = " "
                 break
             botB.stdin.write(move_A + "\n")
             botB.stdin.flush()
     if zwyciezca == " ": 
-        print("Remis!")
+        print("Remis!") 
+        Draws += 1
     else: 
-        print("Zwyciezca to: " + zwyciezca)
-    botA.stdin.write(null_move)
-    botA.stdin.flush() 
-    botB.stdin.write(null_move)
-    botB.stdin.flush()  
-    botA.terminate() 
-    botB.terminate()
+        print("Zwyciezca to: " + zwyciezca)  
+        if zwyciezca == "botA": 
+            Ascore += 1 
+        if zwyciezca == "botB": 
+            Bscore += 1 
+    #print(Ascore, Bscore, Draws) 
+    if botA.poll() == None: 
+        botA.stdin.write(null_move)
+        botA.stdin.flush() 
+        botA.terminate() 
+    if botB.poll() == None: 
+        botB.stdin.write(null_move)
+        botB.stdin.flush()  
+        botB.terminate()
 if __name__ == "__main__":
-    main()
+    N = 100 # do modyfiakcji przez usera, liczba szachownic
+    assert(N <= len(moje_fajne_feny)) #liczba partii nie moze przekraczac liczby dostepnych fenow  
+    Ascore=0; Bscore =0; Draws = 0
+    file = open('log_partii', 'w')
+    numer = 1; 
+    for k in range(1, N+1):
+        print(f"Szachownica numer {k}:") 
+        file.write((f"\n\nSzachownica numer {k}:\n\n"))
+        kolory = ["white", "black"] 
+        print(f"Partia numer: {numer}") 
+        file.write(f"\nPartia numer: {numer}\n\n")
+        numer += 1
+        run(kolory[0], kolory[1], moje_fajne_feny[k-1])
+        print(f"Partia numer: {numer}") 
+        file.write(f"\nPartia numer: {numer}\n\n")
+        numer += 1 
+        run(kolory[1], kolory[0], moje_fajne_feny[k-1])
+    print(f"botA wins: {Ascore} Draws: {Draws} botB wins: {Bscore}")
+    file.close()

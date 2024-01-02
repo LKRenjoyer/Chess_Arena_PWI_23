@@ -80,7 +80,7 @@ def run():
         exit(4)
     bot.board = initialize_board_from_fen(fen)
     print("understood") 
-    if (value=="white" and bot.board.turn == chess.WHITE) or (value=="white" and bot.board.turn == chess.WHITE): 
+    if (value=="white" and bot.board.turn == chess.WHITE) or (value=="black" and bot.board.turn == chess.BLACK): 
         bot.tura = True 
     else:
         bot.tura = False
