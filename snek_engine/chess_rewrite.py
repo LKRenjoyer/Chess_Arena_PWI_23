@@ -135,6 +135,8 @@ class Board:
         z = -1
         if len(move) == 5:
             z = FenToNum[move[4]]
+        if not (x1 >= 0 and x1 < 8 and y1 >= 0 and y1 < 8 and x2 >= 0 and x2 < 8 and y2 >= 0 and y2 < 8): #we deal with moves with invalid cooridnates by transforming them into a move no chess piece can make (a1 to b7 exactly) (that is 7 0 1 1 in XYZ notation) (let's also attach a king promotion just to be sure)
+            return 7, 0, 1, 1, 5
         return x1, y1, x2, y2, z
     def convertMoveXYZToSmith(self, x1, y1, x2, y2, z = -1):
         fen = ""
@@ -362,7 +364,7 @@ class Board:
             return False
         if self.isPromotion(move) == False and z != -1: #non promotion moves should have default z
             return False
-        if self.isPromotion(move) == True and not(z >= 1 and z <= 4): #promotions must be to either knight, bishop, rook or queen
+        if self.isPromotion(move) == True and not(z >= 0 and z <= 4): #promotions must be to either knight, bishop, rook or queen !!!IMPORTANT!!! -> at the request of the visualization team promotions to a pawn are now allowed; however it is assumed they will be immediately undone because their implications were not previously considered
             return False
         if piece == 0:
             tiles = self.pawn(x1, y1)
