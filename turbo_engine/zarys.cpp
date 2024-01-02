@@ -22,16 +22,16 @@ typedef vector<pii > vii;
 typedef vector<ll> vl;
 typedef vector<pll> vll;
 typedef string str;
-#define BOOST ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL); 
+#define BOOST ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
 
-// 
+//
 struct position {
     char board[8][8] = {};
     char mover = ' ';
     bool poss_Q = 0, poss_K = 0, poss_q = 0, poss_k = 0;
     bool en_passant = 0;
     char row_enpas = ' ', col_enpas = ' '; // opisuje pole 'za' pionem, ktorego mozna zbic uzywajac en passant, czyli pole docelowe potencjalnego ruchu enpassant
-    int halfmoves_amo = 0; // liczba posuniec figurami bez zbicia, liczona do reguly remisu po 50 
+    int halfmoves_amo = 0; // liczba posuniec figurami bez zbicia, liczona do reguly remisu po 50
     int moves_amo = 0; // liczba zwyklych ruchow
 };
 
@@ -156,14 +156,14 @@ position position_from_fen(string fen) {
         }
         ind++;
     }
-    //where(ind);   
+    //where(ind);  
     pos.mover = fen[ind];
     if (pos.mover == 'w')
         pos.mover = 'W';
     ind++; ind++;  // spacja
     pos.poss_K = 0; pos.poss_Q = 0; pos.poss_k = 0; pos.poss_q = 0;
     if (fen[ind] == '-') {
-        1 + 2; // nic nie rob 
+        1 + 2; // nic nie rob
         ind++;
     }
     else
@@ -193,21 +193,21 @@ position position_from_fen(string fen) {
         ind++;
     }
     ind++;
-    //where(ind); 
+    //where(ind);
     pos.halfmoves_amo = 0;
     while (fen[ind] >= '0' && fen[ind] <= '9') {
         pos.halfmoves_amo *= 10;
         pos.halfmoves_amo += fen[ind++] - '0';
     }
-    //where(ind); 
+    //where(ind);
     fen += " "; ind++;
     pos.moves_amo = 0;
-    //where(ind); 
+    //where(ind);
     while (fen[ind] >= '0' && fen[ind] <= '9') {
         pos.moves_amo *= 10;
         pos.moves_amo += fen[ind++] - '0';
     }
-    //where(ind); 
+    //where(ind);
     return pos;
 }
 
@@ -301,7 +301,7 @@ void make_move(string move, position* pos) {
     //wykonanie ruchu + zrobienie bicia
     if (pos->mover == 'W')pos->mover = 'b';
     else { pos->mover = 'W'; pos->moves_amo++; }
-    //zmiana strony dodanie cyklu 
+    //zmiana strony dodanie cyklu
 
 }
 
@@ -345,21 +345,25 @@ bool position_checked(int a, int b, char color, position* pos) {
         for (int i = 1; a - i >= 0 && b - i >= 0; i++) {
             if (pos->board[a - i][b - i] == ' ')continue;
             if (pos->board[a - i][b - i] == 'q' || pos->board[a - i][b - i] == 'b')return 1;
+            break;
         }
         //prawo-g�ra
         for (int i = 1; a - i >= 0 && b + i < 8; i++) {
             if (pos->board[a - i][b + i] == ' ')continue;
             if (pos->board[a - i][b + i] == 'q' || pos->board[a - i][b + i] == 'b')return 1;
+            break;
         }
         //lewo-d�
         for (int i = 1; a + i < 8 && b - i >= 0; i++) {
             if (pos->board[a + i][b - i] == ' ')continue;
             if (pos->board[a + i][b - i] == 'q' || pos->board[a + i][b - i] == 'b')return 1;
+            break;
         }
         //prawo-d�
         for (int i = 1; a + i < 8 && b + i < 8; i++) {
             if (pos->board[a + i][b + i] == ' ')continue;
             if (pos->board[a + i][b + i] == 'q' || pos->board[a + i][b + i] == 'b')return 1;
+            break;
         }
         //szach krol
         for (int i = 0; i < 8; i++) {
@@ -400,24 +404,31 @@ bool position_checked(int a, int b, char color, position* pos) {
             break;
         }
         //lewo-g�ra
+
         for (int i = 1; a - i >= 0 && b - i >= 0; i++) {
+
             if (pos->board[a - i][b - i] == ' ')continue;
             if (pos->board[a - i][b - i] == 'Q' || pos->board[a - i][b - i] == 'B')return 1;
+            break;
         }
         //prawo-g�ra
         for (int i = 1; a - i >= 0 && b + i < 8; i++) {
             if (pos->board[a - i][b + i] == ' ')continue;
             if (pos->board[a - i][b + i] == 'Q' || pos->board[a - i][b + i] == 'B')return 1;
+            break;
         }
         //lewo-d�
         for (int i = 1; a + i < 8 && b - i >= 0; i++) {
+
             if (pos->board[a + i][b - i] == ' ')continue;
             if (pos->board[a + i][b - i] == 'Q' || pos->board[a + i][b - i] == 'B')return 1;
+            break;
         }
         //prawo-d�
         for (int i = 1; a + i < 8 && b + i < 8; i++) {
             if (pos->board[a + i][b + i] == ' ')continue;
             if (pos->board[a + i][b + i] == 'Q' || pos->board[a + i][b + i] == 'B')return 1;
+            break;
         }
         //szach krol    
         for (int i = 0; i < 8; i++) {
@@ -532,7 +543,9 @@ bool czy_szach(char color, position* pos, string move) {
     if (color == 'W') {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++)
-                if (klon.board[i][j] == 'K') { if (position_checked(i, j, 'W', &klon))return 1; return 0; }
+                if (klon.board[i][j] == 'K') {
+                    return position_checked(i, j, 'W', &klon);
+                }
         }
     }
     else {
@@ -560,7 +573,9 @@ vector<string> possible_moves(position* pos, char color) {
                         if ('a' <= attacked && attacked <= 'z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
                     }
                     if (pos->poss_K && pos->board[7][5] == ' ' && pos->board[7][6] == ' ') {
+
                         if (position_checked(7, 4, 'W', pos) == 0 && position_checked(7, 5, 'W', pos) == 0 && position_checked(7, 6, 'W', pos) == 0)
+
                             moves.pb("O-O");
                     }
                     if (pos->poss_Q && pos->board[7][1] == ' ' && pos->board[7][2] == ' ' && pos->board[7][3] == ' ') {
@@ -714,7 +729,7 @@ vector<string> possible_moves(position* pos, char color) {
                     if (j > 0 && 'a' <= pos->board[i - 1][j - 1] && pos->board[i - 1][j - 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j - 1, i - 1, j - 1, 'X'));
                     if (j < 7 && 'a' <= pos->board[i - 1][j + 1] && pos->board[i - 1][j + 1] <= 'z')moves.pb(daj_ruch(i, j, i - 1, j + 1, i - 1, j + 1, 'X'));
                     //en passant
-                    if (i == 3 && abs(j - int(pos->col_enpas)) == 1)moves.pb(daj_ruch(i, j, i - 1, pos->col_enpas, i, pos->col_enpas, 'X'));
+                    if (i == 3 && abs(j - int(pos->col_enpas)) == 1 && pos->en_passant) { moves.pb(daj_ruch(i, j, i - 1, pos->col_enpas, i, pos->col_enpas, 'X')); }
                 }
             }
         }
@@ -731,6 +746,7 @@ vector<string> possible_moves(position* pos, char color) {
                         if ('A' <= attacked && attacked <= 'Z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
                     }
                     if (pos->poss_K && pos->board[0][5] == ' ' && pos->board[0][6] == ' ') {
+
                         if (position_checked(0, 4, 'b', pos) == 0 && position_checked(0, 5, 'b', pos) == 0 && position_checked(0, 6, 'b', pos) == 0)
                             moves.pb("O-O");
                     }
@@ -892,31 +908,31 @@ vector<string> possible_moves(position* pos, char color) {
     }
     vector<string> legal_moves = {};
     for (auto i : moves) {
-        if (i[0] == 'O')continue;
-        if (czy_szach(color, pos, i) == 0)legal_moves.pb(i);
+
+        if (i[0] == 'O' || czy_szach(color, pos, i) == 0)legal_moves.pb(i);
     }
     return legal_moves;
 }
 
 
-int main(){    
-    
-    position pos;    
+int main() {
+
+    position pos;
     string basic_fen;
-    getline(cin, basic_fen);  
-    //basic_fen = beginnig_fen; 
-    int val; 
-    pos = position_from_fen(basic_fen);  
-    vector<string> moves = possible_moves(&pos, pos.mover);     
-    // cout << sz(moves) << "\n"; 
-    // for(auto x : moves)     
-    //     cout << x << "\n";   
-    vector<string> uci_moves; 
-    for(auto x : moves){ 
-        uci_moves.pb(uci_from_our_fromat(x, &pos)); 
-    } 
-    sort(all(uci_moves));   
+    getline(cin, basic_fen);
+    //basic_fen = beginnig_fen;
+    int val;
+    pos = position_from_fen(basic_fen);
+    vector<string> moves = possible_moves(&pos, pos.mover);
+    // cout << sz(moves) << "\n";
+    // for(auto x : moves)    
+    //     cout << x << "\n";  
+    vector<string> uci_moves;
+    for (auto x : moves) {
+        uci_moves.pb(uci_from_our_fromat(x, &pos));
+    }
+    sort(all(uci_moves));
     cout << sz(uci_moves) << "\n";
-    for(auto x : uci_moves) 
-        cout <<  x << "\n"; 
+    for (auto x : uci_moves)
+        cout << x << "\n";
 }
