@@ -256,23 +256,25 @@ class Board:
                 return self.moveHelperList(x, y, [(x+1, y-1), (x+1, y+1)])
         moveTiles = []
         if who == 0:
-            if self.getOwner(x-1, y) == -1:
-                moveTiles.append((x-1, y))
-                if x == 6 and self.getOwner(x-2, y) == -1:
-                    moveTiles.append((x-2, y))
-            if y-1 >= 0 and ( self.getOwner(x-1, y-1) == 1 or (x-1, y-1) == self.en_passant_data ):
-                moveTiles.append((x-1, y-1))
-            if y+1 < 8 and ( self.getOwner(x-1, y+1) == 1 or (x-1, y+1) == self.en_passant_data ):
-                moveTiles.append((x-1, y+1))
+            if x-1 >= 0:
+                if self.getOwner(x-1, y) == -1:
+                    moveTiles.append((x-1, y))
+                    if x == 6 and self.getOwner(x-2, y) == -1:
+                        moveTiles.append((x-2, y))
+                if y-1 >= 0 and ( self.getOwner(x-1, y-1) == 1 or (x-1, y-1) == self.en_passant_data ):
+                    moveTiles.append((x-1, y-1))
+                if y+1 < 8 and ( self.getOwner(x-1, y+1) == 1 or (x-1, y+1) == self.en_passant_data ):
+                    moveTiles.append((x-1, y+1))
         else:
-            if self.getOwner(x+1, y) == -1:
-                moveTiles.append((x+1, y))
-                if x == 1 and self.getOwner(x+2, y) == -1:
-                    moveTiles.append((x+2, y))
-            if y-1 >= 0 and ( self.getOwner(x+1, y-1) == 0 or (x+1, y-1) == self.en_passant_data ):
-                moveTiles.append((x+1, y-1))
-            if y+1 < 8 and ( self.getOwner(x+1, y+1) == 0 or (x+1, y+1) == self.en_passant_data ):
-                moveTiles.append((x+1, y+1))
+            if x+1 < 8:
+                if self.getOwner(x+1, y) == -1:
+                    moveTiles.append((x+1, y))
+                    if x == 1 and self.getOwner(x+2, y) == -1:
+                        moveTiles.append((x+2, y))
+                if y-1 >= 0 and ( self.getOwner(x+1, y-1) == 0 or (x+1, y-1) == self.en_passant_data ):
+                    moveTiles.append((x+1, y-1))
+                if y+1 < 8 and ( self.getOwner(x+1, y+1) == 0 or (x+1, y+1) == self.en_passant_data ):
+                    moveTiles.append((x+1, y+1))
         #pawns weren't that bad actually
         return moveTiles
     #part 5 - auxiliary board and move methods
@@ -435,7 +437,7 @@ class Board:
                 memory.append(self.getTileData(7, 4))
                 memory.append(self.getTileData(7, 3))
                 memory.append(self.getTileData(7, 2))
-                memory.append(self.getTileData(7, 1))
+                #memory.append(self.getTileData(7, 1))
                 memory.append(self.getTileData(7, 0))
                 self.clearTile(7, 4)
                 self.clearTile(7, 3)
@@ -461,7 +463,7 @@ class Board:
                 memory.append(self.getTileData(0, 4))
                 memory.append(self.getTileData(0, 3))
                 memory.append(self.getTileData(0, 2))
-                memory.append(self.getTileData(0, 1))
+                #memory.append(self.getTileData(0, 1))
                 memory.append(self.getTileData(0, 0))
                 self.clearTile(0, 4)
                 self.clearTile(0, 3)
@@ -623,10 +625,7 @@ class Board:
 
 if __name__ == "__main__":
     board=Board()
-    board.setToFen("4k3/P7/2PP2Rp/4pK2/b5nP/PPb1p3/8/4B3 w - - 0 1")
+    board.setToFen("P1P5/8/P2P1K1k/6Rp/1B5P/8/8/1b2p3 b - - 1 43")
     print(board.isLegal("e1c1"))
     board.visualize()
     board.getLegalMoves()
-
-# funkcja getLegalMoves() zwraca błąd dla FEN'u poniżej
-# r1bq1bnr/p1p1pppp/1pnpk3/8/5P2/1P1PB3/P1P1P1PP/RN1QKBNR b KQ - 0 6
