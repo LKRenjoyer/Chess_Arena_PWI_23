@@ -217,15 +217,20 @@ ll position_hash(position* pos) {
 
 
 
-void make_move(string move, position* pos) {
+pair<vector<string>, bitset<5>> make_move(string move, position* pos) {
+    bitset<5> roszady;
+    roszady[0] = pos->poss_k;
+    roszady[1] = pos->poss_q;
+    roszady[2] = pos->poss_K;
+    roszady[3] = pos->poss_Q;
+    roszady[4] = pos->en_passant;
+    vector<string> pola = {};
     pii st_kord = { 0,0 }, en_kord = { 0,0 }, bicie_kord = { -1,-1 };
     char przemiana = ' ';
     char typ_figury = ' ';
     char kon = move[move.size() - 1];
     if ('a' <= kon && kon <= 'z')przemiana = kon;
     if ('A' <= kon && kon <= 'Z')przemiana = kon;
-    pos->row_enpas = ' ';
-    pos->col_enpas = ' ';
     if (move == "O-O") {
         if (pos->mover == 'W') {
             pos->board[7][4] = ' ';
@@ -233,6 +238,7 @@ void make_move(string move, position* pos) {
             pos->board[7][6] = 'K';
             pos->board[7][7] = ' ';
             pos->poss_Q = 0; pos->poss_K = 0;
+            pola = { "74K", "75 ","76 ","77R" };
         }
         else {
             pos->board[0][4] = ' ';
@@ -240,11 +246,12 @@ void make_move(string move, position* pos) {
             pos->board[0][6] = 'k';
             pos->board[0][7] = ' ';
             pos->poss_q = 0; pos->poss_k = 0;
+            pola = { "04k", "05 ","06 ","07r" };
         }
         pos->halfmoves_amo++;
         if (pos->mover == 'W')pos->mover = 'b';
         else { pos->mover = 'W'; pos->moves_amo++; }
-        return;
+        return { pola,roszady };
     }
     //roszady kr�tkie
     if (move == "O-O-O") {
@@ -255,6 +262,7 @@ void make_move(string move, position* pos) {
             pos->board[7][3] = 'R';
             pos->board[7][4] = ' ';
             pos->poss_Q = 0; pos->poss_K = 0;
+            pola = { "70R","71 ","72 ","73 ","74K" };
         }
         else {
             pos->board[0][0] = ' ';
@@ -263,20 +271,34 @@ void make_move(string move, position* pos) {
             pos->board[0][3] = 'r';
             pos->board[0][4] = ' ';
             pos->poss_q = 0; pos->poss_k = 0;
+            pola = { "00r","01 ","02 ","03 ","04k" };
         }
         pos->halfmoves_amo++;
         if (pos->mover == 'W')pos->mover = 'b';
         else { pos->mover = 'W'; pos->moves_amo++; }
-        return;
+        return { pola,roszady };
     }
-    //roszady d�ugie
+    //roszady dlugie
     st_kord = { move[0] - '0',move[1] - '0' };
     en_kord = { move[2] - '0',move[3] - '0' };
-    if (move.size() > 5)bicie_kord = { move[4] - '0',move[5] - '0' };
+    string start = ""; start += move[0]; start += move[1]; start += pos->board[st_kord.st][st_kord.nd];
+    pola.pb(start);
+    string en = ""; en += move[2]; en += move[3]; en += pos->board[en_kord.st][en_kord.nd];
+    pola.pb(en);
+    if (move.size() > 5) {
+        bicie_kord = { move[4] - '0',move[5] - '0' };
+        if (bicie_kord != en_kord) {
+            string bij = "";
+            bij += move[4];
+            bij += move[5];
+            bij += pos->board[bicie_kord.st][bicie_kord.nd];
+            pola.pb(bij);
+        }
+    }
     typ_figury = pos->board[st_kord.st][st_kord.nd];
     if (bicie_kord.st >= 0 || typ_figury == 'p' || typ_figury == 'P')pos->halfmoves_amo = -1;
     pos->halfmoves_amo++;
-    //rozwa�enie p�ruch�w (czy ruch pionkiem lub czy bicie)
+    //rozwazenie polruchow (czy ruch pionkiem lub czy bicie)
     if (pair_comp(st_kord, 0, 0) || pair_comp(en_kord, 0, 0))pos->poss_q = 0;
     if (pair_comp(st_kord, 7, 0) || pair_comp(en_kord, 7, 0))pos->poss_Q = 0;
     if (pair_comp(st_kord, 7, 7) || pair_comp(en_kord, 7, 7))pos->poss_K = 0;
@@ -302,7 +324,24 @@ void make_move(string move, position* pos) {
     if (pos->mover == 'W')pos->mover = 'b';
     else { pos->mover = 'W'; pos->moves_amo++; }
     //zmiana strony dodanie cyklu
+    return { pola,roszady };
+}
+void pop_move(pair<vector<string>, bitset<5>> pr, position* pos) {
+    vector<string> pola = pr.st; bitset<5> roszady = pr.nd;
+    pos->poss_k = roszady[0];
+    pos->poss_q = roszady[1];
+    pos->poss_K = roszady[2];
+    pos->poss_Q = roszady[3];
+    pos->en_passant = roszady[4];
 
+
+    for (string i : pola) {
+        int a = int(i[0] - '0'), b = int(i[1] - '0'); char f = i[2];
+        pos->board[a][b] = f;
+    }
+    if (pos->mover == 'W')pos->mover = 'b'; else pos->mover = 'W';
+    pos->halfmoves_amo = max(0, pos->halfmoves_amo - 1);
+    if (pos->mover == 'W')pos->moves_amo = max(0, pos->moves_amo - 1);
 }
 
 bool position_checked(int a, int b, char color, position* pos) {
@@ -536,24 +575,24 @@ string daj_ruch(int st_x, int st_y, int en_x, int en_y, int bicie_x, int bicie_y
     return ruch;
 }
 bool czy_szach(char color, position* pos, string move) {
-    string fen = fen_from_position(pos);
-    position klon = position_from_fen(fen);
-
-    make_move(move, &klon);
+    pair<vector<string>, bitset<5>> wroc = make_move(move, pos);
+    bool szach = 0;
     if (color == 'W') {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++)
-                if (klon.board[i][j] == 'K') {
-                    return position_checked(i, j, 'W', &klon);
+                if (pos->board[i][j] == 'K') {
+                    szach = position_checked(i, j, 'W', pos);
+                    break;
                 }
         }
     }
     else {
         for (int i = 0; i < 8; i++)
             for (int j = 0; j < 8; j++)
-                if (klon.board[i][j] == 'k') { if (position_checked(i, j, 'b', &klon))return 1; return 0; }
+                if (pos->board[i][j] == 'k') { szach = position_checked(i, j, 'b', pos); }
     }
-    return 0;
+    pop_move(wroc, pos);
+    return szach;
 }
 vector<string> possible_moves(position* pos, char color) {
     vector<string> moves = {};
@@ -745,12 +784,12 @@ vector<string> possible_moves(position* pos, char color) {
                         if (attacked == ' ')moves.pb(daj_ruch(i, j, akt_x, akt_y, -1, -1, 'X'));
                         if ('A' <= attacked && attacked <= 'Z')moves.pb(daj_ruch(i, j, akt_x, akt_y, akt_x, akt_y, 'X'));
                     }
-                    if (pos->poss_K && pos->board[0][5] == ' ' && pos->board[0][6] == ' ') {
+                    if (pos->poss_k && pos->board[0][5] == ' ' && pos->board[0][6] == ' ') {
 
                         if (position_checked(0, 4, 'b', pos) == 0 && position_checked(0, 5, 'b', pos) == 0 && position_checked(0, 6, 'b', pos) == 0)
                             moves.pb("O-O");
                     }
-                    if (pos->poss_Q && pos->board[0][1] == ' ' && pos->board[0][2] == ' ' && pos->board[0][3] == ' ') {
+                    if (pos->poss_q && pos->board[0][1] == ' ' && pos->board[0][2] == ' ' && pos->board[0][3] == ' ') {
                         if (position_checked(0, 4, 'b', pos) == 0 && position_checked(0, 5, 'b', pos) == 0 && position_checked(0, 6, 'b', pos) == 0)
                             moves.pb("O-O-O");
                     }
@@ -901,7 +940,7 @@ vector<string> possible_moves(position* pos, char color) {
                     if (j > 0 && 'A' <= pos->board[i + 1][j - 1] && pos->board[i + 1][j - 1] <= 'Z')moves.pb(daj_ruch(i, j, i + 1, j - 1, i + 1, j - 1, 'X'));
                     if (j < 7 && 'A' <= pos->board[i + 1][j + 1] && pos->board[i + 1][j + 1] <= 'Z')moves.pb(daj_ruch(i, j, i + 1, j + 1, i + 1, j + 1, 'X'));
                     //en passant
-                    if (i == 4 && abs(j - int(pos->col_enpas)) == 1&&pos->en_passant)moves.pb(daj_ruch(i, j, i + 1, pos->col_enpas, i, pos->col_enpas, 'X'));
+                    if (i == 4 && abs(j - int(pos->col_enpas)) == 1 && pos->en_passant)moves.pb(daj_ruch(i, j, i + 1, pos->col_enpas, i, pos->col_enpas, 'X'));
                 }
             }
         }
