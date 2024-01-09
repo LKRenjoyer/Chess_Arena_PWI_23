@@ -18,9 +18,7 @@ class Board:
         fen += " "
         i = 0
         #getting the board state
-        self.board = []
-        for _ in range(8):
-            self.board.append([-1, -1, -1, -1, -1, -1, -1, -1])
+        self.board = np.zeros((2, 6, 8, 8))
         row = 0
         column = 0
         while fen[i] != ' ':
@@ -33,7 +31,7 @@ class Board:
             else:
                 color = int(c.islower())
                 piece = FenToNum[c.lower()]
-                self.setTile(row, column, color, piece)
+                self.board[color][piece][row][column] = 1
                 column += 1
             i += 1
         i += 1
@@ -83,7 +81,7 @@ class Board:
             for j in range(8):
                 for f in range(6):
                     for k in range(2):
-                        if self.isTile(i, j, k, f):
+                        if self.board[k][f][i][j] == 1:
                             tmp[j] = NumToFen[f]
                             if k == 0:
                                 tmp[j] = tmp[j].upper()
@@ -151,32 +149,25 @@ class Board:
         return fen
     #part 3 - board access auxiliary functions
     def getPiece(self, x, y):
-        if self.board[x][y] == -1:
-            return -1
-        if self.board[x][y] < 10:
-            return self.board[x][y]
-        return self.board[x][y] - 10
+        for i in range(2):
+            for j in range(6):
+                if self.board[i][j][x][y] == 1:
+                    return j
+        return -1
     def getOwner(self, x, y):
-        if self.board[x][y] == -1:
-            return -1
-        if self.board[x][y] < 10:
-            return 0
-        return 1
+        for i in range(2):
+            for j in range(6):
+                if self.board[i][j][x][y] == 1:
+                    return i
+        return -1
     def getTileData(self, x, y):
         piece = self.getPiece(x, y)
         owner = self.getOwner(x, y)
-        return (x, y, owner, piece)
-    def setTile(self, x, y, owner, piece):
-        self.board[x][y] = owner * 10 + piece
-    def isTile(self, x, y, owner, piece):
-        if self.board[x][y] == owner * 10 + piece:
-            return True
-        else:
-            return False
+        return (x, y, piece, owner)
     def getKingTile(self, who):
         for i in range(8):
             for j in range(8):
-                if self.isTile(i, j, who, 5):
+                if self.board[who][5][i][j] == 1:
                     return i, j
     #part 4 - chess piece methods
     #these generate list of moves that a piece can make from a chosen tile
@@ -410,7 +401,9 @@ class Board:
         return True
     #part 6: board modification methods
     def clearTile(self, x, y):
-        self.board[x][y] = -1
+        for i in range(2):
+            for j in range(6):
+                self.board[i][j][x][y] = 0
     def push(self, move):
         if not self.isRational(move):
             return
@@ -437,8 +430,8 @@ class Board:
                 self.clearTile(7, 5)
                 self.clearTile(7, 6)
                 self.clearTile(7, 7)
-                self.setTile(7, 6, 0, 5)
-                self.setTile(7, 5, 0, 3)
+                self.board[0][5][7][6] = 1
+                self.board[0][3][7][5] = 1
             #white queenside
             if x2 == 7 and y2 == 2:
                 memory.append(self.getTileData(7, 4))
@@ -451,8 +444,8 @@ class Board:
                 self.clearTile(7, 2)
                 self.clearTile(7, 1)
                 self.clearTile(7, 0)
-                self.setTile(7, 2, 0, 5)
-                self.setTile(7, 3, 0, 3)
+                self.board[0][5][7][2] = 1
+                self.board[0][3][7][3] = 1
             #black kingside
             if x2 == 0 and y2 == 6:
                 memory.append(self.getTileData(0, 4))
@@ -463,8 +456,8 @@ class Board:
                 self.clearTile(0, 5)
                 self.clearTile(0, 6)
                 self.clearTile(0, 7)
-                self.setTile(0, 6, 1, 5)
-                self.setTile(0, 5, 1, 3)
+                self.board[1][5][0][6] = 1
+                self.board[1][3][0][5] = 1
             #black queenside
             if x2 == 0 and y2 == 2:
                 memory.append(self.getTileData(0, 4))
@@ -477,8 +470,8 @@ class Board:
                 self.clearTile(0, 2)
                 self.clearTile(0, 1)
                 self.clearTile(0, 0)
-                self.setTile(0, 2, 1, 5)
-                self.setTile(0, 3, 1, 3)
+                self.board[1][5][0][2] = 1
+                self.board[1][3][0][3] = 1
             self.board_record.append(memory)
         else:
             memory = []
@@ -495,9 +488,9 @@ class Board:
                     memory.append(self.getTileData(x2 - 1, y2))
                     self.clearTile(x2 - 1, y2)
             if self.isPromotion(move):
-                self.setTile(x2, y2, self.turn, z)
+                self.board[self.turn][z][x2][y2] = 1
             else:
-                self.setTile(x2, y2, self.turn, piece)
+                self.board[self.turn][piece][x2][y2] = 1
             self.board_record.append(memory)
         #data modifications
         #turn
@@ -533,7 +526,7 @@ class Board:
         for tile in undo:
             self.clearTile(tile[0], tile[1])
             if tile[2] != -1:
-                self.setTile(tile[0], tile[1], tile[2], tile[3])
+                self.board[tile[3]][tile[2]][tile[0]][tile[1]] = 1
         undo = self.data_record[-1]
         self.data_record.pop()
         self.turn = undo[0]

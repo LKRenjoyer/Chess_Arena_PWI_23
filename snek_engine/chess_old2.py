@@ -18,9 +18,7 @@ class Board:
         fen += " "
         i = 0
         #getting the board state
-        self.board = []
-        for _ in range(8):
-            self.board.append([-1, -1, -1, -1, -1, -1, -1, -1])
+        self.board = np.zeros((2, 6, 8, 8))
         row = 0
         column = 0
         while fen[i] != ' ':
@@ -151,25 +149,25 @@ class Board:
         return fen
     #part 3 - board access auxiliary functions
     def getPiece(self, x, y):
-        if self.board[x][y] == -1:
-            return -1
-        if self.board[x][y] < 10:
-            return self.board[x][y]
-        return self.board[x][y] - 10
+        for i in range(2):
+            for j in range(6):
+                if self.isTile(x, y, i, j):
+                    return j
+        return -1
     def getOwner(self, x, y):
-        if self.board[x][y] == -1:
-            return -1
-        if self.board[x][y] < 10:
-            return 0
-        return 1
+        for i in range(2):
+            for j in range(6):
+                if self.isTile(x, y, i, j):
+                    return i
+        return -1
     def getTileData(self, x, y):
         piece = self.getPiece(x, y)
         owner = self.getOwner(x, y)
         return (x, y, owner, piece)
     def setTile(self, x, y, owner, piece):
-        self.board[x][y] = owner * 10 + piece
+        self.board[owner][piece][x][y] = 1
     def isTile(self, x, y, owner, piece):
-        if self.board[x][y] == owner * 10 + piece:
+        if self.board[owner][piece][x][y] == 1:
             return True
         else:
             return False
@@ -410,7 +408,9 @@ class Board:
         return True
     #part 6: board modification methods
     def clearTile(self, x, y):
-        self.board[x][y] = -1
+        for i in range(2):
+            for j in range(6):
+                self.board[i][j][x][y] = 0
     def push(self, move):
         if not self.isRational(move):
             return

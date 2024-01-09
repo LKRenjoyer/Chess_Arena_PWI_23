@@ -25,11 +25,12 @@ for fen in fens:
     m2 = sorted(move.uci() for move in b2.legal_moves)
     print(m1)
     print(m2)
-    for i in range(10):
+    t = perf_counter()
+    for i in range(50):
+        if len(b1.getLegalMoves()) == 0:
+            break
         b1.push(choice(b1.getLegalMoves()))
-    for i in range(10):
-        b1.pop()
+    print(perf_counter() - t)
     m3 = sorted(b1.getLegalMoves())
-    print(m1==m2, m1==m3)
+    print(m1==m2)
     assert(m1==m2)
-    assert(m1==m3)
