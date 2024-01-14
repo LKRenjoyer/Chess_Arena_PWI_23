@@ -344,7 +344,7 @@ class Board:
         #we needn't worry about white attempting to castle on the 8-th rank (and black on 1-st)
         #yes it gets treated as if the attempt was by the wrong color and thus uses wrong castling_data
         #but for that situation to take place the other color must have also moved their king
-        #thus resulting in the wrongly used castling_data used being a 0 anyways
+        #thus resulting in the wrongly used castling_data to be a 0 anyways
         #observation: writing this took way longer that fixing it in code would have
         #I added an extra condition into the code but I am not deleting this anyways, I am attached to this awful wall of text now
         #white kingside
@@ -547,7 +547,7 @@ class Board:
         if not self.isRational(move):
             return False
         who = self.turn
-        #we perform a move and then check if it resultet in us being checked, if so the move was not legal
+        #we perform a move and then check if it results in us being checked, if so the move was not legal
         resultsInCheck = False
         self.push(move)
         resultsInCheck = self.isInCheck(who)
@@ -559,7 +559,7 @@ class Board:
             #if the king is in check at the moment he cannot castle
             if self.isInCheck(who):
                 return False
-            #we also attempt making a halfcastle (moving the king 1 square in castling direction) and check for legality of that move
+            #we also attempt making a halfcastle (moving the king 1 square in castling direction) and check for legality of that move as a castling king may not pass through a check
             x1, y1, x2, y2, z = self.convertMoveSmithToXYZ(move)
             halfCastle = self.convertMoveXYZToSmith(x1, y1, (x1+x2)//2, y2, z)
             resultsInCheck = False
