@@ -14,11 +14,20 @@ class Board(chess.Board):
         self.flipped = not self.flipped
 
     def update_tiles(self, size):
+        highlight = set()
+        if len(self.move_stack)>0:
+            last_move = str(self.move_stack[-1])
+            if self.flipped:
+                highlight = {(ord(last_move[0])-ord('a'), int(last_move[1])-1), (ord(last_move[2])-ord('a'), int(last_move[3])-1)}
+            else:
+                highlight = {(ord(last_move[0])-ord('a'), 8-int(last_move[1])), (ord(last_move[2])-ord('a'), 8-int(last_move[3]))}
         self.tiles = pg.sprite.Group()
-        tile_colors = ((237,214,176),(184,135,98))
         for i in range(8):
             for j in range(8):
-                self.tiles.add(Tile(i,j, size, tile_colors[(i+j)%2]))
+                if (i,j) in highlight:
+                    self.tiles.add(Tile(i,j, size, Tile.highlight_colors[(i+j)%2]))
+                else:
+                    self.tiles.add(Tile(i,j, size, Tile.colors[(i+j)%2]))
 
     def update_pieces(self, size):
         self.piece_sprites = pg.sprite.Group()

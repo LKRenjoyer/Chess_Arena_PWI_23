@@ -35,9 +35,6 @@ running = True
 
 board = Board(chess.STARTING_FEN)
 
-# with open(path("game.txt"), "r") as f:
-#     game = f.read().splitlines()
-
 promotion_box = Promotion_Box(-1,'l') 
 
 current_move = 0

@@ -7,6 +7,7 @@ path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
 class Tile(pg.sprite.Sprite):
     colors = ((237,214,176),(184,135,98))
     alt_colors = ((200,100,200),(100,200,100))
+    highlight_colors = ((237,214,100),(237,214,100))
     def __init__(self, x, y, size, color):
         pg.sprite.Sprite.__init__(self)
         self.image=pg.Surface((size,size))
