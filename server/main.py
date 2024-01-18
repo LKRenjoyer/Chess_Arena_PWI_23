@@ -25,10 +25,25 @@ gotowy_kanal_4_main = [False]
 name1 = [""]
 name2 = [""]
 koniec = [False]
+start_time = 0
+end_time = 0
 
 board = chess.Board()
 
 # print = functools.partial(print,flush=True)
+
+class Timer:
+    def __init__(self) -> None:
+        self.czas_bialego = 600
+        self.czas_czarnego = 600
+        self.kogo_tura = "nikt"
+    
+
+        
+timer = Timer()
+
+
+        
 
 class Server:
     def __init__(self):
@@ -136,7 +151,10 @@ class Server:
 
     def pull_white_move(self):
         while gotowy_kanal_1_main[0] == False and koniec[0]==False:
-            pass
+            if timer.czas_bialego - (time.time() - start_time) <= 0 and timer.kogo_tura=="bialy":
+                # with open("xd.txt",'a') as f:
+                #     f.write(f"{time.time() - start_time}  {time.time()} {start_time}\n")
+                return 1
 
         if koniec[0]:
             return DISCONNEcT_MSG
@@ -147,7 +165,10 @@ class Server:
 
     def pull_black_move(self):
         while gotowy_kanal_3_main[0] == False and koniec[0]==False:
-            pass
+            if timer.czas_czarnego - (time.time() - start_time) <= 0 and timer.kogo_tura=="czarny":
+                # with open("xd.txt",'a') as f:
+                #     f.write(f"{time.time() - start_time}  {time.time()} {start_time}\n")
+                return 1
 
         if koniec[0]:
             return DISCONNEcT_MSG
@@ -164,6 +185,9 @@ class Server:
             return f"Remis obu graczy\n{DISCONNEcT_MSG}"
     
     def run(self):
+        global start_time
+        global end_time
+        global timer
         self.server.listen()
         ile_polaczen = 0
         kto_bialy=random.randint(1,2)
@@ -192,7 +216,13 @@ class Server:
         # print("Oba boty sie polaczyly")
         
         while not(board.is_game_over()):
+            start_time = time.time()
+            timer.kogo_tura = "bialy"
             white_move = self.pull_white_move() #(1)
+            timer.kogo_tura = "nikt"
+            end_time = time.time()
+            timer.czas_bialego -= (end_time-start_time)
+
             if type(white_move)!=str:
                 self.wypisz_zwyciezce(2)
                 self.settrue()
@@ -235,7 +265,13 @@ class Server:
             kanal4_main[0]=white_move#(4)
             gotowy_kanal_4_main[0]=True
 
+            start_time = time.time()
+            timer.kogo_tura = "czarny"
             black_move = self.pull_black_move()#(5)
+            timer.kogo_tura = "nikt"
+            end_time = time.time()
+            timer.czas_czarnego -= (end_time-start_time)
+
             if type(black_move)!=str:
                 self.wypisz_zwyciezce(1)
                 self.settrue()
