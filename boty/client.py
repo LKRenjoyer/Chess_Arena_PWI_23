@@ -93,7 +93,8 @@ try:
         c.send(wyjscie)
 
     while not(board.is_game_over()):
-        wejscie = f"{ruch_clienta()}\n"
+        wejscie,twhite,tblack = ruch_clienta().split('|')
+        wejscie+="\n"
         # with open("xd.txt","w") as f:
         #     f.write(wejscie)
         if wejscie.strip("\n")==DISCONNEcT_MSG:
@@ -112,8 +113,12 @@ try:
             # c.send(DISCONNEcT_MSG)
             exit(0)
         # print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
-        bot.stdin.write(wejscie.encode("utf-8"))
-        bot.stdin.flush()
+        if args.player:
+            bot.stdin.write(f"{wejscie}|{twhite}|{tblack}".encode("utf-8"))
+            bot.stdin.flush()
+        else:
+            bot.stdin.write(wejscie.encode("utf-8"))
+            bot.stdin.flush()
         # print("xd")
         wyjscie = bot.stdout.readline().decode('utf-8')
         # with open("xd2.txt","a") as f:

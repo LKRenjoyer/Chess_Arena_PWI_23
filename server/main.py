@@ -262,7 +262,7 @@ class Server:
                 self.settrue()
                 break
 
-            kanal4_main[0]=white_move#(4)
+            kanal4_main[0]=f"{white_move}|{timer.czas_bialego}|{timer.czas_czarnego}"#(4)
             gotowy_kanal_4_main[0]=True
 
             start_time = time.time()
@@ -308,7 +308,7 @@ class Server:
                 self.settrue()
                 break
 
-            kanal2_main[0]=black_move#(8)
+            kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"#(8)
             gotowy_kanal_2_main[0] = True
         
         # time.sleep(5)
