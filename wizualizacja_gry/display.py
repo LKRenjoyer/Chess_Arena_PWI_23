@@ -68,7 +68,7 @@ def get_move():
             move, twhite, tblack = input().split()
             timer_box.update(twhite, tblack)
             print(twhite, tblack)
-        except EOFError, ValueError:
+        except (EOFError, ValueError):
             break
         finally:
             opponent_moved = True
