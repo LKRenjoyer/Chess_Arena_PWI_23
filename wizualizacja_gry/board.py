@@ -9,6 +9,18 @@ class Board(chess.Board):
         self.piece_sprites = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
         self.flipped = False
+        self.all_moves = []
+
+    def base_push(self, move):
+        super().push_uci(move)
+
+    def push_uci(self, move):
+        self.base_push(move)
+        self.all_moves.append(move)
+
+    def revert_undos(self):
+        for move in self.all_moves[len(self.move_stack):]:
+            self.base_push(move)
 
     def flip(self):
         self.flipped = not self.flipped
