@@ -244,7 +244,7 @@ class Server:
                 self.settrue()
                 break
 
-            print(white_move,flush=True)
+            print(f"{white_move}|{timer.czas_bialego}|{timer.czas_czarnego}",flush=True)
 
             # print("ruch białego: ",white_move)
             # os.system('cls')
@@ -296,7 +296,7 @@ class Server:
                 self.settrue()
                 break
 
-            print(black_move,flush=True)
+            print(f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}",flush=True)
 
             if board.is_game_over():#(7)
                 # print("Koniec gry!")

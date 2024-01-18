@@ -30,7 +30,8 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
         visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
 
     while True:
-        move = server.stdout.readline().decode('utf-8').strip()
+        package = server.stdout.readline().decode('utf-8').strip().split("|")
+        move,white_time,black_time = package
         print(move)
 
         if len(move)>5:
@@ -38,10 +39,12 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
             # print(koniec)
             # print(DISCONNEcT_MSG, file=visualization.stdin, flush=True)
             # print(move)
-            break
+            break  
+            
 
+        # move.strip()
         if not(args.nv):
-            print(move, file=visualization.stdin, flush=True)
+            print(move,white_time,black_time, file=visualization.stdin, flush=True)
 
 elif(args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py'],stdout=subprocess.PIPE)
