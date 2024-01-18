@@ -7,6 +7,7 @@ with redirect_stdout(io.StringIO()):
 import chess
 from board import Board
 from promotion_box import Promotion_Box
+from timer_box import TimerBox
 import os
 from functools import partial
 import threading
@@ -35,7 +36,8 @@ running = True
 
 board = Board(chess.STARTING_FEN)
 
-promotion_box = Promotion_Box(-1,'l') 
+promotion_box = Promotion_Box(-1,'l')
+timer_box = TimerBox(0,0,600,600)
 
 current_move = 0
 
@@ -55,14 +57,18 @@ def redraw(screen, update=True):
     board.draw(surface)
     screen.blit(surface, offsets)
     promotion_box.draw(screen)
+    timer_box.draw(screen)
+
 
 opponent_moved=False
 def get_move():
     while running:
         global opponent_moved
         try:
-            move = input()
-        except EOFError:
+            move, twhite, tblack = input().split()
+            timer_box.update(twhite, tblack)
+            print(twhite, tblack)
+        except EOFError, ValueError:
             break
         finally:
             opponent_moved = True
