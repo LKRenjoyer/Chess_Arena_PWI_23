@@ -7,6 +7,7 @@ with redirect_stdout(io.StringIO()):
 import chess
 from board import Board
 from promotion_box import Promotion_Box
+from timer_box import TimerBox
 import os
 from functools import partial
 import threading
@@ -35,7 +36,8 @@ running = True
 
 board = Board(chess.STARTING_FEN)
 
-promotion_box = Promotion_Box(-1,'l') 
+promotion_box = Promotion_Box(-1,'l')
+timer_box = TimerBox(0,0,600,600)
 
 current_move = 0
 
@@ -55,17 +57,22 @@ def redraw(screen, update=True):
     board.draw(surface)
     screen.blit(surface, offsets)
     promotion_box.draw(screen)
+    timer_box.draw(screen)
+
 
 opponent_moved=False
 def get_move():
     while running:
         global opponent_moved
         try:
-            move = input()
-        except EOFError:
+            move, twhite, tblack = input().split()
+            timer_box.update(twhite, tblack)
+            print(twhite, tblack)
+        except EOFError, ValueError:
             break
         finally:
             opponent_moved = True
+        board.revert_undos()
         board.push_uci(move)
 
 threading.Thread(target=get_move).start()
@@ -131,6 +138,8 @@ while running:
             sys.exit(7)
         elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
+                board.revert_undos()
+                redraw(screen, True)
                 if move_promotes:
                     promoted_piece = promotion_box.get_clicked_piece(event.pos)
                     if promoted_piece is not None:
@@ -189,14 +198,14 @@ while running:
             if clicked is not None:
                 pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
                 clicked.rect.update(pos, clicked.rect.size)
-        # elif event.type == pg.KEYDOWN:
-        #     if event.key == pg.K_RIGHT:
-        #         board.push_uci(game[current_move])
-        #         current_move += 1
-        #     elif event.key == pg.K_LEFT:
-        #         board.pop()
-        #         current_move-=1
-        #     redraw(screen)
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_RIGHT:
+                if len(board.move_stack)<len(board.all_moves):
+                    board.base_push(board.all_moves[len(board.move_stack)])
+            elif event.key == pg.K_LEFT:
+                if len(board.move_stack)>0:
+                    board.pop()
+            redraw(screen, True)
         elif event.type == pg.WINDOWRESIZED:
             redraw(screen,True)
     if opponent_moved:
