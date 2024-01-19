@@ -31,8 +31,8 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 
     while True:
         package = server.stdout.readline().decode('utf-8').strip().split("|")
+        # print(package)
         move,white_time,black_time = package
-        print(move)
 
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()

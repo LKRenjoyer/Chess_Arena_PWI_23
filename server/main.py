@@ -178,11 +178,11 @@ class Server:
     
     def eval_res(self,res):
         if res=='1-0':
-            return f"Wygrywa: {name1[0]}\n{DISCONNEcT_MSG}"
+            return f"Wygrywa: {name1[0]}|x|x\n{DISCONNEcT_MSG}"
         elif res=='0-1':
-            return f"Wygrywa: {name2[0]}\n{DISCONNEcT_MSG}"
+            return f"Wygrywa: {name2[0]}|x|x\n{DISCONNEcT_MSG}"
         else:
-            return f"Remis obu graczy\n{DISCONNEcT_MSG}"
+            return f"Remis obu graczy|x|x\n{DISCONNEcT_MSG}"
     
     def run(self):
         global start_time
@@ -253,12 +253,12 @@ class Server:
             if board.is_game_over():#(3)
                 # print("Koniec gry!")
                 # time.sleep(5)
-                kanal4_main[0]=white_move
+                kanal4_main[0]=f"{white_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
                 self.send_msg_to_client(czarny_conn,kanal4_main[0]) 
 
 
 
-                print(self.eval_res(board.result()),flush=True)
+                print(f"{self.eval_res(board.result())}",flush=True)
                 self.settrue()
                 break
 
@@ -301,10 +301,10 @@ class Server:
             if board.is_game_over():#(7)
                 # print("Koniec gry!")
                 # time.sleep(5)
-                kanal2_main[0]=black_move
+                kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
                 self.send_msg_to_client(bialy_conn,kanal2_main[0])             
 
-                print(self.eval_res(board.result()),flush=True)
+                print(f"{self.eval_res(board.result())}",flush=True)
                 self.settrue()
                 break
 
