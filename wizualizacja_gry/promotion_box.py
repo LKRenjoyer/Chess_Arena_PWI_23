@@ -4,11 +4,15 @@ from tiles import Tile, Piece
 
 class Promotion_Box:
     def __init__(self, size, color): #color - l for white, d for black
+        self.x=self.y=0
         self.update(size, color)
 
     def draw(self, surface):
-        self.tiles.draw(surface)
-        self.pieces.draw(surface)
+        if self.size!=-1:
+            s=pg.Surface((self.size,self.size*5))
+            self.tiles.draw(s)
+            self.pieces.draw(s)
+            surface.blit(s, (self.x, self.y))
 
     def update(self, size, color):
         self.size = size
