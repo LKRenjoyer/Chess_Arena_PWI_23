@@ -67,7 +67,7 @@ def get_move():
         try:
             move, twhite, tblack = input().split()
             timer_box.update(twhite, tblack)
-            print(twhite, tblack)
+            # print(twhite, tblack)
         except (EOFError, ValueError):
             break
         finally:

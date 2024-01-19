@@ -223,6 +223,7 @@ class Server:
             end_time = time.time()
             timer.czas_bialego -= (end_time-start_time)
 
+
             if type(white_move)!=str:
                 self.wypisz_zwyciezce(2)
                 self.settrue()
@@ -262,6 +263,8 @@ class Server:
                 self.settrue()
                 break
 
+            # with open("xd.txt","w") as f:
+            #     f.write(f"{white_move}")
             kanal4_main[0]=f"{white_move}|{timer.czas_bialego}|{timer.czas_czarnego}"#(4)
             gotowy_kanal_4_main[0]=True
 

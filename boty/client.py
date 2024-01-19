@@ -69,12 +69,16 @@ else:
 
 
 def ruch_clienta():
-    return c.recv_msg()
+    xde=c.recv_msg()
+    # with open("xd.txt","w") as f:
+    #     f.write(xd)
+    return xde
 
 try:
     if kolor=="biale":
         #wykonaj pierwszy ruch
         wyjscie = bot.stdout.readline().decode('utf-8')
+        wyjscie = wyjscie.strip()
         try:
             if chess.Move.from_uci(wyjscie.strip()) in board.legal_moves:#(2)
                 board.push(chess.Move.from_uci(wyjscie.strip()))
@@ -95,8 +99,10 @@ try:
     while not(board.is_game_over()):
         wejscie,twhite,tblack = ruch_clienta().split('|')
         wejscie+="\n"
-        # with open("xd.txt","w") as f:
-        #     f.write(wejscie)
+
+        # if not(args.player):
+        #     with open("xd.txt","w") as f:
+        #         f.write(f"{wejscie}1")
         if wejscie.strip("\n")==DISCONNEcT_MSG:
             bot.terminate()
             c.send(DISCONNEcT_MSG)
@@ -113,8 +119,10 @@ try:
             # c.send(DISCONNEcT_MSG)
             exit(0)
         # print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
+        # with open("xd.txt","w") as f:
+        #     f.write(f"{wejscie},{twhite},{tblack}")
         if args.player:
-            bot.stdin.write(f"{wejscie}|{twhite}|{tblack}".encode("utf-8"))
+            bot.stdin.write(f"{wejscie.strip()} {twhite.strip()} {tblack.strip()}\n".encode("utf-8"))
             bot.stdin.flush()
         else:
             bot.stdin.write(wejscie.encode("utf-8"))
