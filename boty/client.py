@@ -32,7 +32,7 @@ class Client:
         #     return self.recv_msg()
         
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
-parser.add_argument('name', type=str, help='Nazwa bota')
+parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa bota')
 parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
 
 args = parser.parse_args()
