@@ -93,6 +93,9 @@ old_board = None
 def conv_to_uci(pos1, pos2):
     return "".join(chr(p[0]+ord('a'))+str(8-p[1]) for p in (pos1, pos2))
 
+def conv_from_uci(move):
+    return (ord(move[0])-ord('a'), int(move[1])-1, ord(move[2])-ord('a'), int(move[3])-1)
+
 def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje go
     global old_board
     try:
@@ -110,9 +113,6 @@ def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje 
             return False
         else:
             promotion_box.update(board.size, ('ld')[board.turn])
-            pmap = board.piece_map()
-            pmap[(ord(move[2])-ord('a'))+(int(move[3])-1)*8] = chess.Piece.from_symbol('Pp'[board.turn])
-            board.set_piece_map(pmap)
             return True
     else:
         print(move,flush=True)
