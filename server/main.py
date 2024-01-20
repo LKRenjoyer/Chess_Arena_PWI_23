@@ -46,8 +46,8 @@ board = chess.Board(starting_fen)
 
 class Timer:
     def __init__(self) -> None:
-        self.czas_bialego = 5
-        self.czas_czarnego = 5
+        self.czas_bialego = 600
+        self.czas_czarnego = 600
         self.kogo_tura = "nikt"
     
 

@@ -25,7 +25,7 @@ int main(int argc, char ** argv) {
             if(najlepszy_ruch.size() == 5 && najlepszy_ruch[4] >= 'A' && najlepszy_ruch[4] <= 'Z') {
                 najlepszy_ruch[4] -= ('A' - 'a');
             }
-            cout << najlepszy_ruch << "\n";
+            cout << najlepszy_ruch << endl;
             zmiana_glebokosci(&poz);
         }
         else {
