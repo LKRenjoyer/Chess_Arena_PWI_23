@@ -19,11 +19,12 @@ int main(int argc, char ** argv) {
     fen_to_chessboard(fen, &poz);
 
     while(1) {
-        //wizualizacja(&poz);
-
         if(poz.czyj_ruch == kolor_bota) {
             alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
             porusz(najlepszy_ruch, &poz);
+            if(najlepszy_ruch.size() == 5 && najlepszy_ruch[4] >= 'A' && najlepszy_ruch[4] <= 'Z') {
+                najlepszy_ruch[4] -= ('A' - 'a');
+            }
             cout << najlepszy_ruch << "\n";
             zmiana_glebokosci(&poz);
         }
@@ -38,8 +39,6 @@ int main(int argc, char ** argv) {
         if(ruchy.size() == 0)
             break;
     }
-
-    
 
     return 0;
 }

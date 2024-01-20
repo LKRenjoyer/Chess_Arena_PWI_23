@@ -72,7 +72,9 @@ void porusz(string ruch, pozycja *poz) {
         }
     }
     if(ruch.size() == 5) {
-        //uwaga na promocje figur 
+        //uwaga na promocje figur
+        if(ruch[3] == '8')
+            ruch[4] += 'A' - 'a'; 
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         if(ruch[3] == '1')
             poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = ruch[4];
