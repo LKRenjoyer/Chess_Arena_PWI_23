@@ -171,7 +171,7 @@ class Server:
                 return 1
 
         if koniec[0]:
-            return DISCONNEcT_MSG
+            return f"{DISCONNEcT_MSG}|x|x"
         
         gotowy_kanal_1_main[0] = False
         return kanal1_main[0]
@@ -185,7 +185,7 @@ class Server:
                 return 1
 
         if koniec[0]:
-            return DISCONNEcT_MSG
+            return f"{DISCONNEcT_MSG}|x|x"
         
         gotowy_kanal_3_main[0] = False
         return kanal3_main[0]
