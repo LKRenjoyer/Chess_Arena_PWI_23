@@ -61,12 +61,20 @@ if args.player:
         bot = subprocess.Popen([sys.executable,path,"-b",f'--fen={args.fen}'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
-    path = merge_path(args.name, "main.py")
-    c.send(args.name)
-    if czy_bialy:
-        bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    if os.path.exists(merge_path(args.name, "main.py")):
+        path = merge_path(args.name, "main.py")
+        c.send(args.name)
+        if czy_bialy:
+            bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        else:
+            bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
-        bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        path = merge_path(args.name, "main")
+        c.send(args.name)
+        if czy_bialy:
+            bot = subprocess.Popen([path,"w",fen], shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        else:
+            bot = subprocess.Popen([path,"b",fen], shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 
 
