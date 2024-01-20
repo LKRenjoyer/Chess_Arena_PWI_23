@@ -3,6 +3,7 @@ import math
 
 #this file contains the function used for evaluating a chess positions
 #it evaluates the position from both sides at once: white's score is added while black's is detracted
+#however at the end it return the score from the perspective of the currently playing side, thus reversing the evaluation if necessary
 #here is the list of things that will be scored:
 #total material value
 #square quality for each piece
@@ -10,7 +11,7 @@ import math
 #each of this will have two variations based on the part of the game (early game / late game) (I am not using standard chess naming on purpose)
 #pawns are divided into kingside and nonkingside ones. If used incorrectly or combined with too weak of an engine this might not help but my chess expirience tells me that that if the bot ends up decent at standard tactics this is a massive strategy improvement
 
-materialValue = [
+materialValue = [ #custom made by me
     #early game
     #pieces in order: kingside pawn, knight, bishop, rook, queen, king,  nonkingside pawn
     [120, 360, 400, 560, 1200, 0, 80],
@@ -19,7 +20,7 @@ materialValue = [
     [170, 400, 480, 800, 1400, 0, 160]
 ]
 
-#square tables for major pieces from https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function, pawns are custom
+#square tables for major pieces from https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function, pawns are custom made by me
 squareValue = [
     #early game
     [
@@ -185,7 +186,7 @@ squareValue = [
 
 def evaluate(state):
     #even before we begin we need to check whether the game is already over
-    if len(state.getLegalMoves == 0):
+    if len(state.getLegalMoves()) == 0:
         if state.isInCheck(state.turn):
             return 10000 * (1 + state.turn * (-2))
         else:
@@ -248,4 +249,7 @@ def evaluate(state):
         score += 100
     else:
         score -= 100
-    return score
+    if state.turn == 0:
+        return score
+    else:
+        return -score

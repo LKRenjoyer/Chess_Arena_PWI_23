@@ -2,7 +2,7 @@ import numpy as np
 from data import *
 
 class Board:
-    def __init__(self):
+    def __init__(self, fastmode = False):
         self.board = None
         self.turn = None
         self.castling_data = None
@@ -425,7 +425,7 @@ class Board:
         else:
             self.halfmove_clock = 0
         #board modifications
-        if self.isRationalCastle(move):
+        if self.isRationalCastle(move): #castles
             memory = []
             #white kingside
             if x2 == 7 and y2 == 6:
@@ -480,13 +480,11 @@ class Board:
                 self.setTile(0, 2, 1, 5)
                 self.setTile(0, 3, 1, 3)
             self.board_record.append(memory)
-        else:
+        else: #non castles
             memory = []
             memory.append(self.getTileData(x1, y1))
             memory.append(self.getTileData(x2, y2))
             piece = self.getPiece(x1, y1)
-            self.clearTile(x1, y1)
-            self.clearTile(x2, y2)
             if self.isEnPassant(move):
                 if self.turn == 0:
                     memory.append(self.getTileData(x2 + 1, y2))
@@ -498,6 +496,7 @@ class Board:
                 self.setTile(x2, y2, self.turn, z)
             else:
                 self.setTile(x2, y2, self.turn, piece)
+            self.clearTile(x1, y1)
             self.board_record.append(memory)
         #data modifications
         #turn
@@ -600,9 +599,8 @@ class Board:
                             for promo in range(1, 5):
                                 move = self.convertMoveXYZToSmith(x, y, p[0], p[1], promo)
                                 if self.isLegal(move) == True:
-                                    legal.append(move)
-        # print(legal)       
-        return legal     
+                                    legal.append(move)     
+        return legal
     #part 8: bonus debug functions
     #printing everything
     def test(self):
