@@ -96,9 +96,9 @@ elif args.online:
     else:
         ngrok = args.ngrok
         if args.player:
-            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player',f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
         else:
-            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
+            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
 # elif(args.pvp):
 #     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
 #     player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)

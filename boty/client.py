@@ -21,7 +21,7 @@ class Client:
         if ngrok == "localhost":
             self.client.connect(ADDR)
         else:
-            self.client.connect((ngrok.split(":")[0],ngrok.split(":")[1]))
+            self.client.connect((ngrok.split(":")[0],int(ngrok.split(":")[1])))
     
     def send(self,msg):
         msg = msg.encode('utf-8')
