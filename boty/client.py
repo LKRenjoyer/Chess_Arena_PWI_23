@@ -109,6 +109,8 @@ try:
         # print(f"moj ruch: {wyjscie}",flush=True)
         # with open("xd.txt","a") as f:
         #     f.write(f"{wyjscie}haha\n")
+        # with open("xd.txt","a") as f:
+        #     f.write(f"{wyjscie} {kolor}\n")
         c.send(wyjscie)
 
     while not(board.is_game_over()):

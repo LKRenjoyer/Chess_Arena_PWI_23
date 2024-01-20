@@ -99,12 +99,12 @@ class Server:
     
     def handle_client(self,conn,addr,kanal1,kanal2,paczka,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
         active = True                                                               #
-        kolor = paczka.split("|")[1] 
+        fen,kolor = paczka.split("|")
         self.send_msg_to_client(conn,paczka)
         nazwa[0] = self.recv_msg_from_client(conn)
 
 
-        if kolor == "biale":
+        if (kolor == "biale" and board.turn==chess.WHITE) or (kolor == "czarne" and board.turn==chess.BLACK):
             wykonaj_ruch = True
         else:
             wykonaj_ruch = False
@@ -232,6 +232,8 @@ class Server:
             start_time = time.time()
             timer.kogo_tura = "czarny"
             black_move = self.pull_black_move()#(5)
+            with open("xd.txt","a") as f:
+                f.write(f"{black_move}\n")
             timer.kogo_tura = "nikt"
             end_time = time.time()
             timer.czas_czarnego -= (end_time-start_time)

@@ -45,6 +45,7 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
 
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
+            print(move)
             break  
             
         if not(args.nv):
