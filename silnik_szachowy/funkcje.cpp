@@ -655,7 +655,6 @@ long double ewaluacja_pozycji(pozycja *poz) {
 
 void zmiana_glebokosci(pozycja *poz) {
     int liczfigury[256] = {};
-    int pionyb[8] = {}, pionyc[8] = {};
     for(int i = 0; i <= 7; i++) {
         for(int ii = 0; ii <= 7; ii++) {
             liczfigury[poz->plansza[i][ii]]++;
