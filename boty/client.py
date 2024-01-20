@@ -7,11 +7,21 @@ from functools import partial
 import argparse
 import chess
 
+parser = argparse.ArgumentParser(description='Główna program do runowania botów')
+parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa bota')
+parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
+parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument("--ngrok", type=str, nargs='?',default="localhost", help='Podaj ngroka')
+
+args = parser.parse_args()
 
 class Client:
-    def __init__(self):
+    def __init__(self,ngrok):
         self.client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.client.connect(ADDR)
+        if ngrok == "localhost":
+            self.client.connect(ADDR)
+        else:
+            self.client.connect((ngrok.split(":")[0],ngrok.split(":")[1]))
     
     def send(self,msg):
         msg = msg.encode('utf-8')
@@ -30,14 +40,8 @@ class Client:
         # else:
         #     return self.recv_msg()
         
-parser = argparse.ArgumentParser(description='Główna program do runowania botów')
-parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa bota')
-parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
-parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
-
-args = parser.parse_args()
                 
-c = Client()
+c = Client(args.ngrok)
 wiadomosc = c.recv_msg()
 fen, kolor = wiadomosc.split("|")
 # print(kolor,flush=True)

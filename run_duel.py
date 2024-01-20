@@ -22,6 +22,7 @@ parser.add_argument("-nv", action='store_true', help='Włącz walkę botów bez 
 parser.add_argument("-online", action='store_true', help='Ta flaga mówi czy grasz jako online, czyli czy jest serwer a ty się do niego łączysz')
 parser.add_argument("-host", action='store_true', help='Ta flaga wystepuje tylko jak gracz online i mówi czy jesteś hostem')
 parser.add_argument("-player", action='store_true', help='Ta flaga wystepuje tylko jak gracz online i mówi, że chcesz grać jako człowiek')
+parser.add_argument("-ngrok", type=str, nargs='?',default="localhost", help='Podaj ngroka')
 
 # if len(sys.argv)<3:
 #     raise AttributeError("Bots' names not passed")
@@ -93,6 +94,7 @@ elif args.online:
                     print(move)
                     break  
     else:
+        ngrok = args.ngrok
         if args.player:
             player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
         else:
