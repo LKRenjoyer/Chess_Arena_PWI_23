@@ -591,8 +591,8 @@ long double ewaluacja_pozycji(pozycja *poz) {
     }
     //zdublowane piony
     for(int i = 0; i < 8; i++) {
-        wart -= (long double)max(0, pionyb[i] - 1) * 0,25;
-        wart += (long double)max(0, pionyc[i] - 1) * 0,25;
+        wart -= (long double)max(0, pionyb[i] - 1) * 0.25;
+        wart += (long double)max(0, pionyc[i] - 1) * 0.25;
     }
     //izolowane piony
     for(int i = 1; i < 7; i++) {
