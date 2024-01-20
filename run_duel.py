@@ -13,10 +13,15 @@ parser = argparse.ArgumentParser(description='Główny program do runowania bot�
 parser.add_argument('bot1', type=str, nargs='?', default='gracz', help='Nazwa pierwszego bota')
 parser.add_argument('bot2', type=str, nargs='?', default='gracz', help='Nazwa drugiego bota')
 parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument("-kolor", type=str, nargs='?',default="nic", help='Ustaw kolor jakim ma grac gracz')
 parser.add_argument("-pvp", action='store_true', help='Player vs Player')
 parser.add_argument("-pve", action='store_true', help='Player vs Entity')
 parser.add_argument("-eve", action='store_true', help='Entity vs Entity')
 parser.add_argument("-nv", action='store_true', help='Włącz walkę botów bez wizualizacji')
+
+parser.add_argument("-online", action='store_true', help='Ta flaga mówi czy grasz jako online, czyli czy jest serwer a ty się do niego łączysz')
+parser.add_argument("-host", action='store_true', help='Ta flaga wystepuje tylko jak gracz online i mówi czy jesteś hostem')
+parser.add_argument("-player", action='store_true', help='Ta flaga wystepuje tylko jak gracz online i mówi, że chcesz grać jako człowiek')
 
 # if len(sys.argv)<3:
 #     raise AttributeError("Bots' names not passed")
@@ -31,7 +36,7 @@ bot1,bot2 = args.bot1,args.bot2
 #     raise ValueError("Nie podano wystarczajaco botow")
 
 
-if args.eve or (not args.pvp and not args.pvp and not args.pve):
+if args.eve:
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
     client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
     client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}"],stdout=subprocess.PIPE)
@@ -63,17 +68,43 @@ elif(args.pve):
             koniec = server.stdout.readline().decode('utf-8').strip()
             print(move)
             break  
+elif args.online:
+    if args.host:
+        if args.player:
+            server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
+            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+            while True:
+                package = server.stdout.readline().decode('utf-8').strip().split("|")
+                move,white_time,black_time = package
 
-elif(args.pvp):
-    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
-    player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
-    while True:
-        package = server.stdout.readline().decode('utf-8').strip().split("|")
-        move,white_time,black_time = package
+                if len(move)>5:
+                    koniec = server.stdout.readline().decode('utf-8').strip()
+                    print(move)
+                    break 
+        else:
+            server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
+            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
+            while True:
+                package = server.stdout.readline().decode('utf-8').strip().split("|")
+                move,white_time,black_time = package
 
-        if len(move)>5:
-            koniec = server.stdout.readline().decode('utf-8').strip()
-            print(move)
-            break  
+                if len(move)>5:
+                    koniec = server.stdout.readline().decode('utf-8').strip()
+                    print(move)
+                    break  
+    else:
+        if args.player:
+            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+        else:
+            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
+# elif(args.pvp):
+#     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
+#     player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+#     while True:
+#         package = server.stdout.readline().decode('utf-8').strip().split("|")
+#         move,white_time,black_time = package
 
-
+#         if len(move)>5:
+#             koniec = server.stdout.readline().decode('utf-8').strip()
+#             print(move)
+#             break  
