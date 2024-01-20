@@ -99,14 +99,15 @@ elif args.online:
             player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player',f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
         else:
             client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
-# elif(args.pvp):
-#     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
-#     player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
-#     while True:
-#         package = server.stdout.readline().decode('utf-8').strip().split("|")
-#         move,white_time,black_time = package
+elif(args.pvp):
+    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
+    player1 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+    player2 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 2",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+    while True:
+        package = server.stdout.readline().decode('utf-8').strip().split("|")
+        move,white_time,black_time = package
 
-#         if len(move)>5:
-#             koniec = server.stdout.readline().decode('utf-8').strip()
-#             print(move)
-#             break  
+        if len(move)>5:
+            koniec = server.stdout.readline().decode('utf-8').strip()
+            print(move)
+            break  
