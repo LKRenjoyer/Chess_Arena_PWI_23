@@ -46,8 +46,8 @@ board = chess.Board(starting_fen)
 
 class Timer:
     def __init__(self) -> None:
-        self.czas_bialego = 600
-        self.czas_czarnego = 600
+        self.czas_bialego = 5
+        self.czas_czarnego = 5
         self.kogo_tura = "nikt"
     
 
@@ -92,9 +92,9 @@ class Server:
 
     def wypisz_zwyciezce(self,kto_wygral):
         if kto_wygral==1:
-            print(f"Wygrywa: {name1[0]}\n{DISCONNEcT_MSG}",flush=True)
+            print(f"Wygrywa: {name1[0]}|x|x\n{DISCONNEcT_MSG}",flush=True)
         else:
-            print(f"Wygrywa: {name2[0]}\n{DISCONNEcT_MSG}",flush=True)
+            print(f"Wygrywa: {name2[0]}|x|x\n{DISCONNEcT_MSG}",flush=True)
             
     
     def handle_client(self,conn,addr,kanal1,kanal2,paczka,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
@@ -171,7 +171,7 @@ class Server:
                 return 1
 
         if koniec[0]:
-            return f"{DISCONNEcT_MSG}|x|x"
+            return f"{DISCONNEcT_MSG}"
         
         gotowy_kanal_1_main[0] = False
         return kanal1_main[0]
@@ -185,7 +185,7 @@ class Server:
                 return 1
 
         if koniec[0]:
-            return f"{DISCONNEcT_MSG}|x|x"
+            return f"{DISCONNEcT_MSG}"
         
         gotowy_kanal_3_main[0] = False
         return kanal3_main[0]

@@ -120,7 +120,7 @@ try:
         # if not(args.player):
         #     with open("xd.txt","w") as f:
         #         f.write(f"{wejscie}1")
-        if wejscie.strip("\n")==DISCONNEcT_MSG:
+        if wejscie.strip("\n")==parsed_DISCONNEcT_MSG:
             bot.terminate()
             c.send(DISCONNEcT_MSG)
             exit(0)
