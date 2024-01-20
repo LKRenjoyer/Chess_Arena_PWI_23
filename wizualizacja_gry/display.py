@@ -22,6 +22,7 @@ parser = ArgumentParser(description="program do wizualizacji gry między botami/
 
 parser.add_argument('-w', action='store_true', help="oznacza, że gracz biały nie jest botem.", required=False)
 parser.add_argument('-b', action='store_true', help="oznacza, że gracz czarny nie jest botem.", required=False)
+parser.add_argument('--fen', action='store', help="startowy fen.", required=False)
 
 args = parser.parse_args(sys.argv[1:])
 
@@ -34,7 +35,7 @@ screen = pg.display.set_mode((64*8,64*8), pg.RESIZABLE)
 clock = pg.time.Clock()
 running = True
 
-board = Board(chess.STARTING_FEN)
+board = Board(chess.STARTING_FEN if not args.fen else args.fen)
 
 promotion_box = Promotion_Box(-1,'l')
 timer_box = TimerBox(0,0,600,600)
