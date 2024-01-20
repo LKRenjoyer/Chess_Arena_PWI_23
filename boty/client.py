@@ -7,7 +7,6 @@ from functools import partial
 import argparse
 import chess
 
-board = chess.Board()
 
 class Client:
     def __init__(self):
@@ -34,14 +33,20 @@ class Client:
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa bota')
 parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
+parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
 
 args = parser.parse_args()
                 
 c = Client()
-kolor = c.recv_msg()
+wiadomosc = c.recv_msg()
+fen, kolor = wiadomosc.split("|")
 # print(kolor,flush=True)
 czy_bialy = True if kolor=="biale" else False
 
+# with open("xd.txt","a") as f:
+#     f.write(f"{fen} {kolor}\n")
+
+board = chess.Board(fen)
 
 # curr_path = os.path.abspath(sys.argv[0])
 if args.player:
@@ -59,9 +64,9 @@ else:
     path = merge_path(args.name, "main.py")
     c.send(args.name)
     if czy_bialy:
-        bot = subprocess.Popen([sys.executable,path,"w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
-        bot = subprocess.Popen([sys.executable,path,"b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 
 
@@ -75,7 +80,7 @@ def ruch_clienta():
     return xde
 
 try:
-    if kolor=="biale":
+    if (kolor=="biale" and board.turn == chess.WHITE) or (kolor=="czarne" and board.turn == chess.BLACK):
         #wykonaj pierwszy ruch
         wyjscie = bot.stdout.readline().decode('utf-8')
         wyjscie = wyjscie.strip()
@@ -94,6 +99,8 @@ try:
             c.send(DISCONNEcT_MSG)
             exit(0)
         # print(f"moj ruch: {wyjscie}",flush=True)
+        # with open("xd.txt","a") as f:
+        #     f.write(f"{wyjscie}haha\n")
         c.send(wyjscie)
 
     while not(board.is_game_over()):
@@ -149,10 +156,5 @@ try:
         # print(f"moj ruch: {wyjscie}",flush=True)
         c.send(wyjscie)
         
-
-    # c = Client()
-    # c.send("Gitara siema")
-    # print(c.recv_msg())
-    # c.send(f"{DISCONNEcT_MSG}")
 except (BrokenPipeError, OSError):
     pass

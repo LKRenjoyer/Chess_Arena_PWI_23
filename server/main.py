@@ -12,6 +12,7 @@ import os
 import functools
 import random
 import time
+import argparse
 
 kanal1_main = [""]
 kanal2_main = [""]
@@ -28,7 +29,17 @@ koniec = [False]
 start_time = 0
 end_time = 0
 
-board = chess.Board()
+parser = argparse.ArgumentParser(description='Główna program do runowania botów')
+parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
+
+args = parser.parse_args()
+
+starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" if args.fen == "base_start" else args.fen
+
+# with open("xd.txt","a") as f:
+#     f.write(f"{starting_fen}\n")
+
+board = chess.Board(starting_fen)
 
 # print = functools.partial(print,flush=True)
 
@@ -85,10 +96,10 @@ class Server:
             print(f"Wygrywa: {name2[0]}\n{DISCONNEcT_MSG}",flush=True)
             
     
-    def handle_client(self,conn,addr,kanal1,kanal2,kolor,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
+    def handle_client(self,conn,addr,kanal1,kanal2,paczka,gotowy_kanal_1,gotowy_kanal_2,nazwa,koniec_th): #wykonaj_ruch == True - zwróć na kanał ruch bota, wykonaj_ruch == False - wyślij clientowi ruch przeciwnika
         active = True                                                               #
-
-        self.send_msg_to_client(conn,kolor)
+        kolor = paczka.split("|")[1] 
+        self.send_msg_to_client(conn,paczka)
         nazwa[0] = self.recv_msg_from_client(conn)
 
 
@@ -151,6 +162,8 @@ class Server:
 
     def pull_white_move(self):
         while gotowy_kanal_1_main[0] == False and koniec[0]==False:
+            # with open("xd.txt","a") as f:
+            #     f.write(f"xd\n")
             if timer.czas_bialego - (time.time() - start_time) <= 0 and timer.kogo_tura=="bialy":
                 # with open("xd.txt",'a') as f:
                 #     f.write(f"{time.time() - start_time}  {time.time()} {start_time}\n")
@@ -196,10 +209,10 @@ class Server:
             ile_polaczen+=1
             # print(f"{addr} wlasnie sie polaczyl")
             if ile_polaczen==kto_bialy:
-                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,"biale",gotowy_kanal_1_main,gotowy_kanal_2_main,name1,koniec))
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal1_main,kanal2_main,f"{starting_fen}|biale",gotowy_kanal_1_main,gotowy_kanal_2_main,name1,koniec))
                 bialy_conn = conn
             else:
-                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,"czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
+                thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,f"{starting_fen}|czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
                 czarny_conn = conn
             thr.start()
 
@@ -214,11 +227,56 @@ class Server:
         #     wyślij ten ruch do białego (8)
         
         # print("Oba boty sie polaczyly")
+        if board.turn == chess.BLACK:
+            start_time = time.time()
+            timer.kogo_tura = "czarny"
+            black_move = self.pull_black_move()#(5)
+            timer.kogo_tura = "nikt"
+            end_time = time.time()
+            timer.czas_czarnego -= (end_time-start_time)
+
+            if type(black_move)!=str:
+                self.wypisz_zwyciezce(1)
+                self.settrue()
+                
+
+
+            black_move = black_move.strip()
+            # print("ruch czarnego: ",black_move)
+            # os.system('cls')
+            # print(board)
+            # print()
+            try:
+                if chess.Move.from_uci(black_move) in board.legal_moves:#(6)
+                    board.push(chess.Move.from_uci(black_move))
+                else:
+                    # print("Nie legalny ruch!!! Rogrywka przerwana :(")
+                    self.wypisz_zwyciezce(1)
+                    self.settrue()
+            except ValueError:
+                self.wypisz_zwyciezce(1)
+                self.settrue()
+
+            print(f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}",flush=True)
+
+            if board.is_game_over():#(7)
+                # print("Koniec gry!")
+                # time.sleep(5)
+                kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
+                self.send_msg_to_client(bialy_conn,kanal2_main[0])             
+
+                print(f"{self.eval_res(board.result())}",flush=True)
+                self.settrue()
+
+            kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"#(8)
+            gotowy_kanal_2_main[0] = True
         
-        while not(board.is_game_over()):
+        while not(board.is_game_over()) and not(koniec[0]):
             start_time = time.time()
             timer.kogo_tura = "bialy"
             white_move = self.pull_white_move() #(1)
+            # with open("xd.txt","a") as f:
+            #     f.write(f"darek\n")
             timer.kogo_tura = "nikt"
             end_time = time.time()
             timer.czas_bialego -= (end_time-start_time)
