@@ -12,7 +12,7 @@ from server.server_const import *
 parser = argparse.ArgumentParser(description='Główny program do runowania botów')
 parser.add_argument('bot1', type=str, nargs='?', default='gracz', help='Nazwa pierwszego bota')
 parser.add_argument('bot2', type=str, nargs='?', default='gracz', help='Nazwa drugiego bota')
-parser.add_argument('-fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("-pvp", action='store_true', help='Player vs Player')
 parser.add_argument("-pve", action='store_true', help='Player vs Entity')
 parser.add_argument("-eve", action='store_true', help='Entity vs Entity')

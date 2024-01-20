@@ -37,7 +37,7 @@ args = parser.parse_args()
 with open("xd.txt","a") as f:
     f.write(f"{args.fen}\n")
 
-starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" if args.fen == "base start" else args.fen
+starting_fen = args.fen
 
 
 board = chess.Board(starting_fen)
