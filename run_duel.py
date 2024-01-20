@@ -12,7 +12,7 @@ from server.server_const import *
 parser = argparse.ArgumentParser(description='Główny program do runowania botów')
 parser.add_argument('bot1', type=str, nargs='?', default='gracz', help='Nazwa pierwszego bota')
 parser.add_argument('bot2', type=str, nargs='?', default='gracz', help='Nazwa drugiego bota')
-parser.add_argument('-fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument('-fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("-pvp", action='store_true', help='Player vs Player')
 parser.add_argument("-pve", action='store_true', help='Player vs Entity')
 parser.add_argument("-eve", action='store_true', help='Entity vs Entity')
@@ -36,7 +36,7 @@ if args.eve or (not args.pvp and not args.pvp and not args.pve):
     client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
     client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}"],stdout=subprocess.PIPE)
     if not(args.nv):
-        visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py'], stdin=subprocess.PIPE, encoding="utf-8")
+        visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}'], stdin=subprocess.PIPE, encoding="utf-8")
 
     # print(args.nv)
     while True:

@@ -55,10 +55,10 @@ if args.player:
     path = "wizualizacja_gry/display.py"
     if czy_bialy:
         c.send("gracz bialy")
-        bot = subprocess.Popen([sys.executable, path,"-w"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable, path,"-w",f'--fen={args.fen}'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
         c.send("gracz czarny")
-        bot = subprocess.Popen([sys.executable,path,"-b"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"-b",f'--fen={args.fen}'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
     path = merge_path(args.name, "main.py")

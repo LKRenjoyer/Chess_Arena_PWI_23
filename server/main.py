@@ -30,14 +30,15 @@ start_time = 0
 end_time = 0
 
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
-parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument('--fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
 
 args = parser.parse_args()
 
-starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" if args.fen == "base_start" else args.fen
+with open("xd.txt","a") as f:
+    f.write(f"{args.fen}\n")
 
-# with open("xd.txt","a") as f:
-#     f.write(f"{starting_fen}\n")
+starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" if args.fen == "base start" else args.fen
+
 
 board = chess.Board(starting_fen)
 
