@@ -8,28 +8,37 @@ int glebokoscaktualna;
 int glebokoscsrodkowa;
 int glebokosckoncowa;
 
-int main() {
-    kolor_bota = 'b';
+int main(int argc, char ** argv) {
+    kolor_bota = argv[1][0];
     najlepszy_ruch = "";
     glebokoscaktualna = 4;
     glebokoscsrodkowa = 5;
     glebokosckoncowa = 6;
-
-    string fen = pozycja_startowa;
+    string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
-    wizualizacja(&poz);
+
     while(1) {
-        string ruch;
-        cin >> ruch;
-        porusz(ruch, &poz);
-        wizualizacja(&poz);
-        zmiana_glebokosci(&poz);
-        alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
-        porusz(najlepszy_ruch, &poz);
-        wizualizacja(&poz);
-        zmiana_glebokosci(&poz);
+        //wizualizacja(&poz);
+
+        if(poz.czyj_ruch == kolor_bota) {
+            alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
+            porusz(najlepszy_ruch, &poz);
+            zmiana_glebokosci(&poz);
+        }
+        else {
+            string ruch_przeciwnika;
+            cin >> ruch_przeciwnika;
+            porusz(ruch_przeciwnika, &poz);
+            zmiana_glebokosci(&poz);
+        }
+        //konczenie programu
+        vector <string> ruchy = mozliwe_ruchy(&poz);
+        if(ruchy.size() == 0)
+            break;
     }
+
+    
 
     return 0;
 }
