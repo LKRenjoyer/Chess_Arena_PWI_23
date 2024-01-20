@@ -19,6 +19,9 @@ extern string najlepszy_ruch;
 extern int glebokoscaktualna;
 extern int glebokoscsrodkowa;
 extern int glebokosckoncowa;
+//Zobrist hashing
+extern int tab1[12][64];
+extern int tab2[13];
 
 struct pozycja {
     char plansza[8][8] = {};
@@ -42,9 +45,9 @@ void zmiana_glebokosci(pozycja *poz);
 void los1(int a,int b,int tab[12][64]);
 void los2(int a,int b,int tab[13]);
 vector <int> pole_w_liczby(char bwp1,char bwp2);
-int Zobrist_hash_start(pozycja *poz,int tab1[12][64],int tab2[13]);
-int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int tab1[12][64],int tab2[13]);
-bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int tab1[12][64],int tab2[13]);
+int Zobrist_hash_start(pozycja *poz);
+int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash);
+bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2);
 bool czy_mat(pozycja *poz);
 
 long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu);
