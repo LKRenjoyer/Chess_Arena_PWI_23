@@ -56,11 +56,24 @@ elif(args.pve):
     client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
     player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
     while True:
-        pass
+        package = server.stdout.readline().decode('utf-8').strip().split("|")
+        move,white_time,black_time = package
+
+        if len(move)>5:
+            koniec = server.stdout.readline().decode('utf-8').strip()
+            print(move)
+            break  
+
 elif(args.pvp):
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
     player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
     while True:
-        pass
+        package = server.stdout.readline().decode('utf-8').strip().split("|")
+        move,white_time,black_time = package
+
+        if len(move)>5:
+            koniec = server.stdout.readline().decode('utf-8').strip()
+            print(move)
+            break  
 
 
