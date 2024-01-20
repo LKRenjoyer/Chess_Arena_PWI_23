@@ -2,26 +2,33 @@
 
 string pozycja_startowa = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-bool czy_jestesmy_bialymi;
+char kolor_bota;
 string najlepszy_ruch;
-int glebokoscstartowa;
+int glebokoscaktualna;
+int glebokoscsrodkowa;
+int glebokosckoncowa;
 
 int main() {
-    czy_jestesmy_bialymi = 1;
+    kolor_bota = 'b';
     najlepszy_ruch = "";
-    glebokoscstartowa = 4;
+    glebokoscaktualna = 4;
+    glebokoscsrodkowa = 5;
+    glebokosckoncowa = 6;
 
     string fen = pozycja_startowa;
     pozycja poz;
     fen_to_chessboard(fen, &poz);
     wizualizacja(&poz);
-    while(true) {
+    while(1) {
         string ruch;
         cin >> ruch;
         porusz(ruch, &poz);
-        alpha_beta(poz, glebokoscstartowa, -10000, 10000, 1);
+        wizualizacja(&poz);
+        zmiana_glebokosci(&poz);
+        alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
         porusz(najlepszy_ruch, &poz);
         wizualizacja(&poz);
+        zmiana_glebokosci(&poz);
     }
 
     return 0;

@@ -500,6 +500,8 @@ long double ewaluacja_pozycji(pozycja *poz) {
     if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
         czy_endgame_c = 1;
     pair <int, int> bk, ck; // pozycja bialego i czarnego krola
+
+
     for(int i = 0; i < 8; i++) {
         for(int ii = 0; ii < 8; ii++) {
             if(poz->plansza[i][ii] == 'K') {
@@ -572,6 +574,21 @@ long double ewaluacja_pozycji(pozycja *poz) {
             }
         }
     }
+    //zblizanie sie krolow jak endgame
+    bool czy_endgame2_b = 0;
+    bool czy_endgame2_c = 0;
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 4)
+        czy_endgame2_b = 1;
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 4)
+        czy_endgame2_c = 1;
+    if(czy_endgame2_b) {
+        wart += 0.3 * (abs(bk.st - ck.st) + abs(bk.nd - ck.nd));
+        wart += 0.3 * min(min(abs(bk.st + bk.nd), abs(bk.st + 7 - bk.nd)), min(abs(7 - bk.st + bk.nd), abs(7 - bk.st + 7 - bk.nd)));
+    }
+    if(czy_endgame2_c) {
+        wart -= 0.3 * (abs(bk.st - ck.st) + abs(bk.nd - ck.nd));
+        wart -= 0.3 * min(min(abs(ck.st + ck.nd), abs(ck.st + 7 - ck.nd)), min(abs(7 - ck.st + ck.nd), abs(7 - ck.st + 7 - ck.nd)));
+    }
     //zdublowane piony
     for(int i = 0; i < 8; i++) {
         wart -= (long double)max(0, pionyb[i] - 1) * 0,25;
@@ -621,9 +638,45 @@ long double ewaluacja_pozycji(pozycja *poz) {
         }
     }
 
-    //dodać sprawdzanie czy pat i czy mat 
+    //czy pat i mat głupio
+    vector <string> czy = mozliwe_ruchy(poz);
+    if(poz->czyj_ruch == 'w' && czy.size() == 0 && czy_pole_jest_szachowane(bk.st, bk.nd, 'b', poz)) {
+        return -1000000;
+    }
+    if(poz->czyj_ruch == 'b' && czy.size() == 0 && czy_pole_jest_szachowane(ck.st, ck.nd, 'w', poz)) {
+        return 1000000;
+    }
+    if(czy.size() == 0) {
+        return 0;
+    }
 
-    return -wart;
+    return wart;
+}
+
+void zmiana_glebokosci(pozycja *poz) {
+    int liczfigury[256] = {};
+    int pionyb[8] = {}, pionyc[8] = {};
+    for(int i = 0; i <= 7; i++) {
+        for(int ii = 0; ii <= 7; ii++) {
+            liczfigury[poz->plansza[i][ii]]++;
+        }
+    }
+    bool czy_endgame_b = 0;
+    bool czy_endgame_c = 0;
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 15)
+        czy_endgame_b = 1;
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
+        czy_endgame_c = 1;
+    bool czy_endgame2_b = 0;
+    bool czy_endgame2_c = 0;
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 4)
+        czy_endgame2_b = 1;
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 4)
+        czy_endgame2_c = 1;
+    if(czy_endgame_b && czy_endgame2_c)
+        glebokoscaktualna = glebokoscsrodkowa;
+    if((czy_endgame2_b && czy_endgame2_c) || (czy_endgame2_b && czy_endgame_c) || (czy_endgame2_c && czy_endgame_b))
+        glebokoscaktualna = glebokosckoncowa;
 }
 
 bool czy_w_planszy(int i,int j)
@@ -2783,53 +2836,38 @@ bool czy_mat(pozycja *poz)
     return 0;
 }
 
-//alphabeta(stan_pocz, gl_docelowa, −10000, 10000, 1);
+//alphabeta(stan_pocz, gl_docelowa, −1000000, 1000000, 1);
 
 long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu) {
-    //cout << glebokosc << endl;
-    if(glebokosc == 0) {//lub pat/mat dodać!!!
-        //jak mat czy pat to koniec
-
-        //wpp
-        return ewaluacja_pozycji(&stan);
-        //sprawdzamy czy jak zejdziemy glebiej to zmieni sie ewaluacja o min 1.81 !!!
-        /*
-        long double akt_wart = ewaluacja_pozycji(&stan);
-        vector <string> ruchy = mozliwe_ruchy(&stan);
-        if(czy_maksymalizujemy_na_ruchu) {
-            for(int i = 0; i < ruchy.size(); i++) {
-                pozycja stan_2 = stan;
-                porusz(ruchy[i], &stan_2);
-                long double nowa_wart = ewaluacja_pozycji(&stan_2);
-                if(nowa_wart - akt_wart >= 4.81) {
-                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 0);
-                }
-            }
-        }
-        else {
-            for(int i = 0; i < ruchy.size(); i++) {
-                pozycja stan_2 = stan;
-                porusz(ruchy[i], &stan_2);
-                long double nowa_wart = ewaluacja_pozycji(&stan_2);
-                if(nowa_wart - akt_wart <= -4.81) {
-                    akt_wart = alpha_beta(stan_2, 0, alpha, beta, 1);
-                }
-            }
-        }
-        return akt_wart;
-        */
+    if(glebokosc == 0) {
+        long double wyn = ewaluacja_pozycji(&stan);
+        if(kolor_bota == 'b')
+            wyn *= -1;
+        if(abs(wyn) > 1000)
+            wyn *= glebokoscaktualna;
+        return wyn;
     }
     long double wart;
     vector <string> ruchy = mozliwe_ruchy(&stan);
+    if(ruchy.size() == 0) {
+        long double wyn = ewaluacja_pozycji(&stan);
+        if(kolor_bota == 'b')
+            wyn *= -1;
+        if(abs(wyn) > 1000) {
+            wyn *= (glebokosc);
+        }
+        return wyn;
+    }
+
     if(czy_maksymalizujemy_na_ruchu) {
-        wart = -10000;
+        wart = -10000000;
         for(int i = 0; i < ruchy.size(); i++) {
             pozycja stan_2 = stan;
             porusz(ruchy[i], &stan_2);
             long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 0);
             if(wart2 > wart) {
                 wart = wart2;
-                if(glebokosc == glebokoscstartowa) {
+                if(glebokosc == glebokoscaktualna) {
                     najlepszy_ruch = ruchy[i];
                 }
             }
@@ -2839,14 +2877,14 @@ long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long doub
         }
     }
     else {
-        wart = 10000;
+        wart = 10000000;
         for(int i = 0; i < ruchy.size(); i++) {
             pozycja stan_2 = stan;
             porusz(ruchy[i], &stan_2);
             long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1);
             if(wart2 < wart) {
                 wart = wart2;
-                if(glebokosc == glebokoscstartowa) {
+                if(glebokosc == glebokoscaktualna) {
                     najlepszy_ruch = ruchy[i];
                 }
             }
