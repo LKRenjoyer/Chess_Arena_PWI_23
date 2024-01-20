@@ -5,8 +5,9 @@ import sys
 
 class Bot:
     def __init__(self):
-        self.board = chess.Board()
-        self.tura = False if sys.argv[1]=='b' else True #True - moja tura, False - tura przeciwnika
+        self.board = chess.Board(sys.argv[2])
+        # self.tura = False if sys.argv[1]=='b' else True #True - moja tura, False - tura przeciwnika
+        self.tura = (sys.argv[1]=='w' and self.board.turn == chess.WHITE) or (sys.argv[1]=='b' and self.board.turn == chess.BLACK)
 
     def check_stalemate(self, move):
         self.board.push(move)

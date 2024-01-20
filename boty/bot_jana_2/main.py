@@ -4,8 +4,8 @@ import sys
 
 class Bot:
     def __init__(self):
-        self.board = chess.Board()
-        self.tura = False if sys.argv[1]=='b' else True #True - moja tura, False - tura przeciwnika
+        self.board = chess.Board(sys.argv[2])
+        self.tura = (sys.argv[1]=='w' and self.board.turn == chess.WHITE) or (sys.argv[1]=='b' and self.board.turn == chess.BLACK) #True - moja tura, False - tura przeciwnika
 
     def make_move(self):
         move = None
