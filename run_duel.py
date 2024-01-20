@@ -9,7 +9,7 @@ import argparse
 import time
 from server.server_const import *
 
-parser = argparse.ArgumentParser(description='Główny program do runowania botów')
+parser = argparse.ArgumentParser(description='Główny program do runowania botów, musisz dodać folder z nazwą twojego bota do folderu boty i w nim plik main.py lub main.exe')
 parser.add_argument('bot1', type=str, nargs='?', default='gracz', help='Nazwa pierwszego bota')
 parser.add_argument('bot2', type=str, nargs='?', default='gracz', help='Nazwa drugiego bota')
 parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
