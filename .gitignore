@@ -21,5 +21,6 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+xd.txt
 
 *.vscode

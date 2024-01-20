@@ -12,8 +12,8 @@ int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
     najlepszy_ruch = "";
     glebokoscaktualna = 4;
-    glebokoscsrodkowa = 5;
-    glebokosckoncowa = 6;
+    glebokoscsrodkowa = 4;
+    glebokosckoncowa = 5;
     string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
@@ -24,6 +24,7 @@ int main(int argc, char ** argv) {
         if(poz.czyj_ruch == kolor_bota) {
             alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
             porusz(najlepszy_ruch, &poz);
+            cout << najlepszy_ruch << "\n";
             zmiana_glebokosci(&poz);
         }
         else {
