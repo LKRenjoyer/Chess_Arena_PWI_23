@@ -188,7 +188,7 @@ def evaluate(state):
     #even before we begin we need to check whether the game is already over
     if len(state.getLegalMoves()) == 0:
         if state.isInCheck(state.turn):
-            return 10000 * (1 + state.turn * (-2))
+            return 10000 * (-1 + state.turn * 2)
         else:
             return 0
     score = 0
@@ -238,13 +238,13 @@ def evaluate(state):
             score += multiplier * squareValue[partOfTheGame][piece][x1][y1]
             #part 3 - mobility bonus for bishops, rooks, queens and kings, with kings being treated as a negative queen (early game only)
             if piece == 2:
-                score += multiplier * math.ceil(len(state.bishop(x, y)) ** 1.5) * 18
+                score += multiplier * math.ceil(len(state.bishop(x, y)) ** 1.5) * 10
             if piece == 3:
-                score += multiplier * math.ceil(len(state.rook(x, y)) ** 1.5) * 18
+                score += multiplier * math.ceil(len(state.rook(x, y)) ** 1.5) * 10
             if piece == 4:
-                score += multiplier * math.ceil(len(state.queen(x, y)) ** 1.5) * 18
+                score += multiplier * math.ceil(len(state.queen(x, y)) ** 1.5) * 10
             if piece == 5 and partOfTheGame == 0:
-                score += multiplier * math.ceil(len(state.queen(x, y)) ** 1.5) * -30
+                score += multiplier * math.ceil(len(state.queen(x, y)) ** 1.5) * -15
     if state.turn == 0: #I decided to add a little bonus for the side which is on move
         score += 100
     else:
