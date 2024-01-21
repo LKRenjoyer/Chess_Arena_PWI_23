@@ -6,6 +6,7 @@ import os
 from functools import partial
 import argparse
 import chess
+import time
 
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa bota')
@@ -135,8 +136,14 @@ try:
             c.send(DISCONNEcT_MSG)
             exit(0)
         if board.is_game_over():
-            bot.stdin.write(wejscie.encode("utf-8"))
+            # with open("xd.txt","a") as f:
+            #     f.write(f"{kolor.strip()} {wejscie.strip()}\n")
+            if args.player:
+                bot.stdin.write(f"{wejscie.strip()} {twhite.strip()} {tblack.strip()}\n".encode("utf-8"))
+            else:
+                bot.stdin.write(wejscie.encode("utf-8"))
             bot.stdin.flush()
+            # time.sleep(3)
             # c.send(DISCONNEcT_MSG)
             exit(0)
         # print(f"ruch przeciwnika: {wejscie.strip()}",flush=True)
