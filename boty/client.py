@@ -80,16 +80,16 @@ else:
         path = merge_path(args.name, "main.py")
         # c.send(args.name)
         if czy_bialy:
-            bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+            bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
-            bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+            bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         path = merge_path(args.name, "main.exe")
         # c.send(args.name)
         if czy_bialy:
-            bot = subprocess.Popen([path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+            bot = subprocess.Popen([path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
-            bot = subprocess.Popen([path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+            bot = subprocess.Popen([path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 
