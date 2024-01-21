@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include<positional_diff.h> 
 
 #define st first
 #define nd second
@@ -344,6 +345,7 @@ void pop_move(pair<vector<string>, bitset<5>> pr, position* pos) {
     if (pos->mover == 'W')pos->moves_amo = max(0, pos->moves_amo - 1);
 }
 
+// funkcja sprawdza czy na pos->board[a][b] krol koloru color jest szachowany 
 bool position_checked(int a, int b, char color, position* pos) {
     int x_kon[8] = { 1,2,2,1,-1,-2,-2,-1 };
     int y_kon[8] = { -2,-1,1,2,2,1,-1,-2 };
@@ -574,7 +576,7 @@ string daj_ruch(int st_x, int st_y, int en_x, int en_y, int bicie_x, int bicie_y
     if (promocja != 'X')ruch.pb(promocja);
     return ruch;
 }
-bool czy_szach(char color, position* pos, string move) {
+bool czy_szach(char color, position* pos, string move) { // funkcja sprawdza czy bedzie szach po wykonaniu ruchu
     pair<vector<string>, bitset<5>> wroc = make_move(move, pos);
     bool szach = 0;
     if (color == 'W') {
@@ -953,15 +955,37 @@ vector<string> possible_moves(position* pos, char color) {
     return legal_moves;
 }
 
+int value[256];  
+void init_data(){ 
+    value['P'] = 100;   value['p'] = 100;   
+    value['N'] = 320;   value['n'] = 320; 
+    value['B'] = 330;   value['b'] = 330; 
+    value['R'] = 500;   value['r'] = 500;
+    value['Q'] = 900;   value['q'] = 900;  
+    value['K'] = 20000; value['k'] = 20000; 
+}
+
+
+int evaluate(position* pos){ 
+    return 0; 
+} 
+
+string best_move(position* pos, int depth){ 
+    return ""; 
+}
+
+
 
 int main() {
-
+    init_data();  
     position pos;
     string basic_fen;
-    getline(cin, basic_fen);
+   // getline(cin, basic_fen);
     //basic_fen = beginnig_fen;
     int val;
-    pos = position_from_fen(basic_fen);
+    pos = position_from_fen(beginnig_fen);
+    visualize(&pos); 
+    exit(0); 
     vector<string> moves = possible_moves(&pos, pos.mover);
     // cout << sz(moves) << "\n";
     // for(auto x : moves)    
