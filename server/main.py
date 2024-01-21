@@ -104,6 +104,8 @@ class Server:
         fen,kolor = paczka.split("|")
         self.send_msg_to_client(conn,paczka)
         nazwa[0] = self.recv_msg_from_client(conn)
+        with open("xd.txt","a") as f:
+            f.write(f"xd\n")
         otrzymano[0]+=1
 
 
@@ -223,9 +225,13 @@ class Server:
             pass
         if args.eve:
             print(f"{name1[0]} {name2[0]}",flush=True)
+        
+        self.send_msg_to_client(bialy_conn,name2[0]) 
+        self.send_msg_to_client(czarny_conn,name1[0])
+
         # time.sleep(2)
-        # self.send_msg_to_client(bialy_conn,name2[0]) 
-        # self.send_msg_to_client(czarny_conn,name1[0]) 
+        
+        
 
         # dopoki prawda(gra się nie skończyła):
         #     zapytaj białego o ruch (1)

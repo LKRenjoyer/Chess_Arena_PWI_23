@@ -47,15 +47,17 @@ wiadomosc = c.recv_msg()
 fen, kolor = wiadomosc.split("|")
 # print(kolor,flush=True)
 czy_bialy = True if kolor=="biale" else False
+c.send(args.name)
+imie_nieprzyjaciela = c.recv_msg()
 
 # with open("xd.txt","a") as f:
 #     f.write(f"{fen} {kolor}\n")
 
 if czy_bialy:
     imie_bialego = args.name
-    imie_czarnego = "Wale wez to zaimplementuj"
+    imie_czarnego = imie_nieprzyjaciela
 else:
-    imie_bialego = "Wale wez to zaimplementuj"
+    imie_bialego = imie_nieprzyjaciela
     imie_czarnego = args.name
 
 board = chess.Board(fen)
@@ -66,23 +68,23 @@ if args.player:
     # path = merge_path(args.name, "main.py")
     path = "wizualizacja_gry/display.py"
     if czy_bialy:
-        c.send("gracz bialy")
+        # c.send("gracz bialy")
         bot = subprocess.Popen([sys.executable, path,"-w",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
-        c.send("gracz czarny")
+        # c.send("gracz czarny")
         bot = subprocess.Popen([sys.executable,path,"-b",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
     if os.path.exists(merge_path(args.name, "main.py")):
         path = merge_path(args.name, "main.py")
-        c.send(args.name)
+        # c.send(args.name)
         if czy_bialy:
             bot = subprocess.Popen([sys.executable,path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         else:
             bot = subprocess.Popen([sys.executable,path,"b",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
         path = merge_path(args.name, "main.exe")
-        c.send(args.name)
+        # c.send(args.name)
         if czy_bialy:
             bot = subprocess.Popen([path,"w",fen],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         else:

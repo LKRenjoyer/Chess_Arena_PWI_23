@@ -1,4 +1,4 @@
-PORT = 5050
+PORT = 12345
 SERVER = "localhost"
 ADDR = (SERVER,PORT)
 DISCONNEcT_MSG = "tegoniktnigdyniewpisze:(|x|x"
