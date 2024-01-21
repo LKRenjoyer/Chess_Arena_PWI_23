@@ -31,6 +31,7 @@ end_time = 0
 
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('--fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
+parser.add_argument("--eve", action='store_true', help='Entity vs Entity')
 
 args = parser.parse_args()
 
@@ -217,7 +218,11 @@ class Server:
                 czarny_conn = conn
             thr.start()
         
-        print(name1[0],name2[0])
+        if args.eve:
+            print(name1[0],name2[0])
+        # time.sleep(2)
+        # self.send_msg_to_client(bialy_conn,name2[0]) 
+        # self.send_msg_to_client(czarny_conn,name1[0]) 
 
         # dopoki prawda(gra się nie skończyła):
         #     zapytaj białego o ruch (1)
@@ -234,8 +239,8 @@ class Server:
             start_time = time.time()
             timer.kogo_tura = "czarny"
             black_move = self.pull_black_move()#(5)
-            with open("xd.txt","a") as f:
-                f.write(f"{black_move}\n")
+            # with open("xd.txt","a") as f:
+            #     f.write(f"{black_move}\n")
             timer.kogo_tura = "nikt"
             end_time = time.time()
             timer.czas_czarnego -= (end_time-start_time)

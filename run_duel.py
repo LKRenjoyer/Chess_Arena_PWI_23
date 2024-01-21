@@ -38,7 +38,7 @@ bot1,bot2 = args.bot1,args.bot2
 
 
 if args.eve:
-    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}'],stdout=subprocess.PIPE)
+    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve={args.eve}"],stdout=subprocess.PIPE)
     client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
     client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}"],stdout=subprocess.PIPE)
 
