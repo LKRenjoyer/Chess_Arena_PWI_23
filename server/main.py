@@ -206,6 +206,7 @@ class Server:
         else:
             return f"Remis obu graczy|x|x\n{DISCONNEcT_MSG}"
     
+    
     def run(self):
         global start_time
         global end_time
