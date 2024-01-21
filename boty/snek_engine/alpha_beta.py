@@ -13,7 +13,7 @@ def alphabetaMax(state, alpha, beta, depth):
     random.shuffle(possibleMoves)
     for move in possibleMoves:
         ile += 1
-        if ile > 9:
+        if ile > 7:
             break
         state.push(move)
         result = alphabetaMin(state, alpha, beta, depth + 1)
@@ -33,7 +33,11 @@ def alphabetaMin(state, alpha, beta, depth):
     if depth == MinMaxDepth or len(possibleMoves) == 0:
         return -evaluate(state)
     bestMove = None
+    ile = 0
     for move in possibleMoves:
+        ile += 1
+        if ile > 20:
+            break
         state.push(move)
         result = alphabetaMax(state, alpha, beta, depth + 1)
         state.pop()
