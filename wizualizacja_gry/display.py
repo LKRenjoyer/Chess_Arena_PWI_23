@@ -22,9 +22,10 @@ parser = ArgumentParser(description="program do wizualizacji gry między botami/
 
 parser.add_argument('-w', action='store_true', help="oznacza, że gracz biały nie jest botem.", required=False)
 parser.add_argument('-b', action='store_true', help="oznacza, że gracz czarny nie jest botem.", required=False)
-parser.add_argument('--fen', action='store', help="startowy fen.", required=False)
-parser.add_argument('--nazwa_bialego', action='store', required=False)
-parser.add_argument('--nazwa_czarnego', action='store', required=False)
+parser.add_argument('--fen', action='store', help="startowy fen.", default=chess.STARTING_FEN, required=False)
+parser.add_argument('--nazwa_bialego', action='store', default="gracz biały", required=False)
+parser.add_argument('--nazwa_czarnego', action='store', default="gracz czarny", required=False)
+parser.add_argument('--time', action='store', help="czas trwania gry gra", default="600", required=False)
 
 args = parser.parse_args(sys.argv[1:])
 
@@ -37,10 +38,10 @@ screen = pg.display.set_mode((64*8,64*8), pg.RESIZABLE)
 clock = pg.time.Clock()
 running = True
 
-board = Board(chess.STARTING_FEN if not args.fen else args.fen)
+board = Board(args.fen)
 
 promotion_box = Promotion_Box(-1,'l')
-timer_box = TimerBox(0,0,0,600,600)
+timer_box = TimerBox(0,0,0,int(args.time),int(args.time))
 
 current_move = 0
 
@@ -177,7 +178,7 @@ while running:
                         clicked.rect.update(pos, clicked.rect.size)
                         start_pos = ((event.pos[0]-offsets[0])//board.size, (event.pos[1]-offsets[1])//board.size)
                         redraw(screen, False)
-                        pg.mouse.set_cursor(*pg.cursors.diamond)
+                        pg.mouse.set_cursor(*drag_cursor)
                     else:
                         clicked = None
                     
@@ -195,21 +196,21 @@ while running:
                     move_promotes = try_move(board, move)
                     redraw(screen, True)
                 if not cursor_on_piece:
-                    pg.mouse.set_cursor(*pg.cursors.arrow)
+                    pg.mouse.set_cursor(*default_cursor)
                 else:
-                    pg.mouse.set_cursor(*pg.cursors.broken_x)
+                    pg.mouse.set_cursor(*on_piece_cursor)
                 clicked = None
         elif event.type == pg.MOUSEMOTION:
             pos = (event.pos[0]-offsets[0], event.pos[1]-offsets[1])
             for piece in board.piece_sprites:
                 if piece.rect.collidepoint(pos) and piece.piece_type[1] in player_colors:
                     if not cursor_on_piece:
-                        pg.mouse.set_cursor(*pg.cursors.broken_x)
+                        pg.mouse.set_cursor(*on_piece_cursor)
                         cursor_on_piece=True
                     break
             else:
                 if cursor_on_piece and clicked is None:
-                    pg.mouse.set_cursor(*pg.cursors.arrow)
+                    pg.mouse.set_cursor(*default_cursor)
                     cursor_on_piece = False
             if clicked is not None:
                 pos = (event.pos[0]-clicked.rect.size[0]//2-offsets[0], event.pos[1]-clicked.rect.size[1]//2-offsets[1])
