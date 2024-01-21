@@ -1,6 +1,7 @@
 import chess
 import math
 from data import *
+from zobrist import *
 #temporary version to get replace my subpar chess library with a professional one
 
 #square tables and material values from https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function
