@@ -34,6 +34,7 @@ def alphabetaMin(state, alpha, beta, depth):
         return -evaluate(state)
     bestMove = None
     ile = 0
+    random.shuffle(possibleMoves)
     for move in possibleMoves:
         ile += 1
         if ile > 20:
