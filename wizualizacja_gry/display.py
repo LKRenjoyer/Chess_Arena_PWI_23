@@ -61,6 +61,8 @@ def redraw(screen, update=True, resize = False):
         font = pg.font.SysFont(None, board.size//2)
         nw = font.render(args.nazwa_bialego, True, "white")
         nb = font.render(args.nazwa_czarnego, True, "white")
+        if board.flipped:
+            nw,nb=nb,nw
     surface = pg.Surface(scrsize)
     offsets[0] = (scrsize[0]-bsize*8)//2
     offsets[1] = (scrsize[1]-bsize*8)//2
@@ -68,8 +70,8 @@ def redraw(screen, update=True, resize = False):
     screen.blit(surface, offsets)
     promotion_box.draw(screen)
     timer_box.draw(screen)
-    screen.blit(nw,((scrsize[0]-nw.get_width())//2,offsets[1]-nw.get_height()-5))
-    screen.blit(nb,((scrsize[0]-nb.get_width())//2,9*board.size+5))
+    screen.blit(nb,((scrsize[0]-nw.get_width())//2,offsets[1]-nw.get_height()-5))
+    screen.blit(nw,((scrsize[0]-nb.get_width())//2,9*board.size+5))
 
 
 opponent_moved=False
