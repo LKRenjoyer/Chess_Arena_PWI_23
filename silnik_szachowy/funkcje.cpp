@@ -2270,7 +2270,7 @@ void los2(long long a,long long b,long long tab[13])
 //kolejnosc zdarzen w Zobrist2 tabelce
 // czyj_ruch (jak białych to xor a jak czarnych to unxor), roszady: czy_K, czy_Q, czy_k, czy_q, bwp: dla białych a3,b3,...,h3, dla czarnych a6,b6,...,h6;
 
-int Zobrist_hash_start(pozycja *poz)
+long long Zobrist_hash_start(pozycja *poz)
 {
     int wynik=0;
     for (int i=0;i<8;i++)
@@ -2385,7 +2385,122 @@ int Zobrist_hash_start(pozycja *poz)
     return wynik;
 }
 
-int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash)
+long long Zobrist_hash_start2(pozycja *poz)
+{
+    int wynik=0;
+    for (int i=0;i<8;i++)
+    {
+    	for (int j=0;j<8;j++)
+    	{
+    	    if (poz->plansza[i][j]=='k')
+    	    {
+    	    	wynik^=tab3[0][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='h')
+    	    {
+    	    	wynik^=tab3[1][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='r')
+    	    {
+    	    	wynik^=tab3[2][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='b')
+    	    {
+    	    	wynik^=tab3[3][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='n')
+    	    {
+    	    	wynik^=tab3[4][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='p')
+    	    {
+    	    	wynik^=tab3[5][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='K')
+    	    {
+    	    	wynik^=tab3[6][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='H')
+    	    {
+    	    	wynik^=tab3[7][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='R')
+    	    {
+    	    	wynik^=tab3[8][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='B')
+    	    {
+    	    	wynik^=tab3[9][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='N')
+    	    {
+    	    	wynik^=tab3[10][i*8+j];
+    	    }
+    	    else if (poz->plansza[i][j]=='P')
+    	    {
+    	    	wynik^=tab3[11][i*8+j];
+    	    }
+    	}
+    }
+    if (poz->czyj_ruch=='w')
+    {
+    	wynik^=tab4[0];
+    }
+    if (poz->czy_K==1)
+    {
+    	wynik^=tab4[1];
+    }
+    if (poz->czy_Q==1)
+    {
+    	wynik^=tab4[2];
+    }
+    if (poz->czy_k==1)
+    {
+    	wynik^=tab4[3];
+    }
+    if (poz->czy_q==1)
+    {
+    	wynik^=tab4[4];
+    }
+    if (poz->czy_bicie_w_przelocie==1)
+    {
+    	if (poz->kolumna_bwp=='a')
+    	{
+    	    wynik^=tab4[5];
+    	}
+    	else if (poz->kolumna_bwp=='b')
+    	{
+    	    wynik^=tab4[6];
+    	}
+    	else if (poz->kolumna_bwp=='c')
+    	{
+    	    wynik^=tab4[7];
+    	}
+    	else if (poz->kolumna_bwp=='d')
+    	{
+    	    wynik^=tab4[8];
+    	}
+    	else if (poz->kolumna_bwp=='e')
+    	{
+    	    wynik^=tab4[9];
+    	}
+    	else if (poz->kolumna_bwp=='f')
+    	{
+    	    wynik^=tab4[10];
+    	}
+    	else if (poz->kolumna_bwp=='g')
+    	{
+    	    wynik^=tab4[11];
+    	}
+    	else if (poz->kolumna_bwp=='h')
+    	{
+    	    wynik^=tab4[12];
+    	}
+    }
+    return wynik;
+}
+
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,int hash)
 {
     int wynik=hash;
     int x1=pole_w_liczby(ruch[0],ruch[1])[0];

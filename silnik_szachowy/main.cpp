@@ -10,6 +10,8 @@ int glebokosckoncowa;
 //rzeczy do hashowania
 long long tab1[12][64];
 long long tab2[13];
+long long tab3[12][64];
+long long tab4[13];
 //koniec rzeczy do hashowania
 
 int main(int argc, char ** argv) {
@@ -24,6 +26,8 @@ int main(int argc, char ** argv) {
     //tabelki hashy
     los1(100000000000000LL,999999999999999LL,tab1);
     los2(100000000000000LL,999999999999999LL,tab2);
+    los1(100000000000000LL,999999999999999LL,tab3);
+    los2(100000000000000LL,999999999999999LL,tab4);
     //koniec tabelek hashy
 	
     while(1) {
