@@ -2244,7 +2244,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-void los1(int a,int b,long long tab[12][64])
+void los1(long long a,long long b,long long tab[12][64])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<12;i++)
@@ -2256,7 +2256,7 @@ void los1(int a,int b,long long tab[12][64])
     }
 }
 
-void los2(int a,int b,long long tab[13])
+void los2(long long a,long long b,long long tab[13])
 {
     mt19937_64 gen(getpid());
     for (int i=0;i<13;i++)
