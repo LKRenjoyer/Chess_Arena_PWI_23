@@ -215,6 +215,10 @@ while running:
     else:
         redraw(screen, False)
     pg.display.update()
-    clock.tick()
+    dt=clock.tick()/1000
+    if board.turn:
+        timer_box.twhite-=dt
+    else:
+        timer_box.tblack-=dt
 
 pg.quit()
