@@ -2272,7 +2272,7 @@ void los2(long long a,long long b,long long tab[13])
 
 long long Zobrist_hash_start(pozycja *poz)
 {
-    int wynik=0;
+    long long wynik=0;
     for (int i=0;i<8;i++)
     {
     	for (int j=0;j<8;j++)
@@ -2387,7 +2387,7 @@ long long Zobrist_hash_start(pozycja *poz)
 
 long long Zobrist_hash_start2(pozycja *poz)
 {
-    int wynik=0;
+    long long wynik=0;
     for (int i=0;i<8;i++)
     {
     	for (int j=0;j<8;j++)
