@@ -17,13 +17,13 @@ int main(int argc, char ** argv) {
     najlepszy_ruch = "";
     glebokoscaktualna = 4;
     glebokoscsrodkowa = 6;
-    glebokosckoncowa = 6;
+    glebokosckoncowa = 8;
     string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
     //tabelki hashy
-    los1(100000000000000,999999999999999,tab1);
-    los2(100000000000000,999999999999999,tab2);
+    los1(100000000000000LL,999999999999999LL,tab1);
+    los2(100000000000000LL,999999999999999LL,tab2);
     //koniec tabelek hashy
 	
     while(1) {
