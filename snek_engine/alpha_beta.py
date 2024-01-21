@@ -1,6 +1,7 @@
 from chess_rewrite import *
 from evaluate import *
 from data import *
+import sys
 
 def alphabetaMax(state, alpha, beta, depth):
     possibleMoves = state.getLegalMoves()
@@ -40,15 +41,15 @@ def alphabetaMin(state, alpha, beta, depth):
     else:
         return beta
 
-chess = Board()
-chess.setToFen(startingFen)
-chess.visualize()
-while(1):
-    move = input("make your move: ")
-    print(move)
+chess = Board(sys.argv[2])
+skip = 0
+if (chess.turn == 0 and sys.argv[1] == 'b') or (chess.turn == 1 and sys.argv[1] == 'w'):
+    skip = 1
+while 1:
+    if skip == 0:
+        move = alphabetaMax(chess, -infinity, infinity, 0)
+        print(move)
+        chess.push(move)
+    skip = 0
+    move = input()
     chess.push(move)
-    chess.visualize()
-    response = alphabetaMax(chess, -infinity, infinity, 0)
-    print(response)
-    chess.push(response)
-    chess.visualize()
