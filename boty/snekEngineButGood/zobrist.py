@@ -24,12 +24,13 @@ class Zobrist:
         if piece != None:
             hash ^= self.hashKeys[64 * (piece.piece_type - 1 + 6 * piece.color) + square2]
         piece = board.piece_at(square1)
-        hash ^= self.hashKeys[64 * (piece.piece_type - 1 + 6 * piece.color) + square1]
-        if len(move) == 5:
-            piece = move[4]
-            if board.turn == chess.WHITE:
-                piece = piece.upper()
-        hash ^= self.hashKeys[64 * (piece.piece_type - 1 + 6 * piece.color) + square1]
+        if piece != None:
+            hash ^= self.hashKeys[64 * (piece.piece_type - 1 + 6 * piece.color) + square1]
+            if len(move) == 5:
+                piece = move[4]
+                if board.turn == chess.WHITE:
+                    piece = piece.upper()
+            hash ^= self.hashKeys[64 * (piece.piece_type - 1 + 6 * piece.color) + square1]
         return hash
 
 '''chess = chess.Board(startingFen)
