@@ -1,5 +1,6 @@
 from chess_rewrite import *
 from alpha_beta import *
+import sys
 
 chess = Board(sys.argv[2])
 skip = 0
