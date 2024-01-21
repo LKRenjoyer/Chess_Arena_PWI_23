@@ -36,6 +36,6 @@ if __name__ == "__main__":
         for _ in range(6):
             fibonacciAttack.append(spawn_infinite_loop_process())
         move = input()
-        for i in range(10):
+        for i in range(6):
             fibonacciAttack[i].terminate()
-        chess.push(move)
+        chess.push(move)#booooooo, frajersko
