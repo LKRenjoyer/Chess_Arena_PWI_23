@@ -116,6 +116,8 @@ def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje 
         try: #promocja
             old_board = board.copy()
             board.push_uci(move+'q')
+            pos = conv_from_uci(move)
+            promotion_box.move_to(offsets[0]+board.size*(pos[2] if args.w else 7-pos[2]), offsets[1])
         except (chess.IllegalMoveError, ValueError):
             try:
                 board.push_uci(move)

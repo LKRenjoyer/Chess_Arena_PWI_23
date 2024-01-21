@@ -14,19 +14,23 @@ class Promotion_Box:
             self.pieces.draw(s)
             surface.blit(s, (self.x, self.y))
 
+    def move_to(self,x,y):
+        self.x,self.y=x,y
+
     def update(self, size, color):
         self.size = size
         self.color = color
         self.tiles = pg.sprite.Group()
         self.pieces = pg.sprite.Group()
         if self.size!=-1:
-            for i, p in enumerate("rnbq"):
+            for i, p in enumerate("qrbn"):
                 self.tiles.add(Tile(0,i,self.size,Tile.alt_colors[i%2]))
                 self.pieces.add(Piece(f"{p}{self.color}", 0,i,self.size))
             self.tiles.add(Tile(0,4,self.size,Tile.alt_colors[0]))
             self.pieces.add(Piece("x_button", 0,4,self.size))
         
     def get_clicked_piece(self, pos):
+        pos = (pos[0]-self.x, pos[1]-self.y)
         for piece in self.pieces:
             if piece.rect.collidepoint(pos):
                 return piece.piece_type[0]
