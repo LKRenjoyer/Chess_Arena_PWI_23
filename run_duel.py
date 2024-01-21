@@ -35,7 +35,7 @@ parser.add_argument("-randomfen", action='store_true', help='Czy chcesz wystarto
 args = parser.parse_args()
 
 if args.randomfen:
-    with open("random200_positions.txt","r") as f:
+    with open("random700_positions.txt","r") as f:
         args.fen = random.choice(list(map(lambda x:x[5:],filter(lambda x:x.split(" ")[0]=="FEN:",f.read().split("\n")))))
 
 
