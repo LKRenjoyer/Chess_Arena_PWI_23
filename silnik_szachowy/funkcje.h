@@ -23,6 +23,8 @@ extern int glebokosckoncowa;
 //Zobrist hashing
 extern long long tab1[12][64];
 extern long long tab2[13];
+extern long long tab3[12][64];
+extern long long tab4[13];
 
 struct pozycja {
     char plansza[8][8] = {};
@@ -46,8 +48,9 @@ void zmiana_glebokosci(pozycja *poz);
 void los1(long long a,long long b,long long tab[12][64]);
 void los2(long long a,long long b,long long tab[13]);
 vector <int> pole_w_liczby(char bwp1,char bwp2);
-int Zobrist_hash_start(pozycja *poz);
-int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash);
+long long Zobrist_hash_start(pozycja *poz);
+long long Zobrist_hash_start2(pozycja *poz);
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,int hash);
 bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2);
 bool czy_mat(pozycja *poz);
 
