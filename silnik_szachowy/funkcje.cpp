@@ -2863,10 +2863,10 @@ long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long doub
         }
         return wyn;
     }
-    long long hasz = Zobrist_hash_start(&stan);
-    if(unmp.count(hasz) == 1) {
-        return unmp[hasz];
-    }
+    //long long hasz = Zobrist_hash_start(&stan);
+    //if(unmp.count(hasz) == 1) {
+    //    return unmp[hasz];
+    //}
 
     if(czy_maksymalizujemy_na_ruchu) {
         wart = -10000000;
@@ -2903,6 +2903,6 @@ long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long doub
             beta = min(beta, wart);
         }
     }
-    unmp[hasz] = wart;
+    //unmp[hasz] = wart;
     return wart;
 }

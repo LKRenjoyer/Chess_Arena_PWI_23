@@ -16,8 +16,8 @@ int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
     najlepszy_ruch = "";
     glebokoscaktualna = 4;
-    glebokoscsrodkowa = 6;
-    glebokosckoncowa = 8;
+    glebokoscsrodkowa = 4;
+    glebokosckoncowa = 6;
     string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
