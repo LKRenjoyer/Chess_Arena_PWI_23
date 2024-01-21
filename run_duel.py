@@ -42,15 +42,15 @@ bot1,bot2 = args.bot1,args.bot2
 
 if args.eve:
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve",f"--time={args.time}"],stdout=subprocess.PIPE)
-    client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
-    client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}"],stdout=subprocess.PIPE)
+    client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--time={args.time}"],stdout=subprocess.PIPE)
+    client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}",f"--time={args.time}"],stdout=subprocess.PIPE)
 
     imie_bialego,imie_czarnego = server.stdout.readline().decode('utf-8').split()
     # package = server.stdout.readline().decode('utf-8').split()
     # print(package)
 
     if not(args.nv):
-        visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"], stdin=subprocess.PIPE, encoding="utf-8")
+        visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}",f"--time={args.time}"], stdin=subprocess.PIPE, encoding="utf-8")
 
     # print(args.nv)
     while True:
@@ -67,8 +67,8 @@ if args.eve:
 
 elif(args.pve):
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--time={args.time}"],stdout=subprocess.PIPE)
-    client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
-    player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+    client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--time={args.time}"],stdout=subprocess.PIPE)
+    player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player',f"--time={args.time}"],stdout=subprocess.PIPE)
     while True:
         package = server.stdout.readline().decode('utf-8').strip().split("|")
         move,white_time,black_time = package
@@ -81,7 +81,7 @@ elif args.online:
     if args.host:
         if args.player:
             server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--time={args.time}"],stdout=subprocess.PIPE)
-            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player',f"--time={args.time}"],stdout=subprocess.PIPE)
             while True:
                 package = server.stdout.readline().decode('utf-8').strip().split("|")
                 move,white_time,black_time = package
@@ -92,7 +92,7 @@ elif args.online:
                     break 
         else:
             server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--time={args.time}"],stdout=subprocess.PIPE)
-            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
+            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--time={args.time}"],stdout=subprocess.PIPE)
             while True:
                 package = server.stdout.readline().decode('utf-8').strip().split("|")
                 move,white_time,black_time = package
@@ -104,13 +104,13 @@ elif args.online:
     else:
         ngrok = args.ngrok
         if args.player:
-            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 2",f'--fen={args.fen}','--player',f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
+            player = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 2",f'--fen={args.fen}','--player',f"--ngrok={ngrok}",f"--time={args.time}"],stdout=subprocess.PIPE)
         else:
-            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--ngrok={ngrok}"],stdout=subprocess.PIPE)
+            client = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}",f"--ngrok={ngrok}",f"--time={args.time}"],stdout=subprocess.PIPE)
 elif(args.pvp):
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--time={args.time}"],stdout=subprocess.PIPE)
-    player1 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
-    player2 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 2",f'--fen={args.fen}','--player'],stdout=subprocess.PIPE)
+    player1 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 1",f'--fen={args.fen}','--player',f"--time={args.time}"],stdout=subprocess.PIPE)
+    player2 = subprocess.Popen([sys.executable,'boty/client.py',"--name=gracz 2",f'--fen={args.fen}','--player',f"--time={args.time}"],stdout=subprocess.PIPE)
     while True:
         package = server.stdout.readline().decode('utf-8').strip().split("|")
         move,white_time,black_time = package

@@ -13,6 +13,7 @@ parser.add_argument('--name', nargs='?', default='gracz', type=str, help='Nazwa 
 parser.add_argument("--player", action='store_true', help='Oznacza, że to będzie prawdziwy gracz')
 parser.add_argument('--fen', type=str, nargs='?', default='base_start', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("--ngrok", type=str, nargs='?',default="localhost", help='Podaj ngroka')
+parser.add_argument("--time", type=str, nargs='?',default="600", help='Podaj ile ma czasu ma mieć każdy gracz')
 
 args = parser.parse_args()
 
@@ -69,10 +70,10 @@ if args.player:
     path = "wizualizacja_gry/display.py"
     if czy_bialy:
         # c.send("gracz bialy")
-        bot = subprocess.Popen([sys.executable, path,"-w",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable, path,"-w",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}",f"--time={args.time}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     else:
         # c.send("gracz czarny")
-        bot = subprocess.Popen([sys.executable,path,"-b",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        bot = subprocess.Popen([sys.executable,path,"-b",f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}",f"--time={args.time}"],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 else:
     merge_path = partial(os.path.join, os.path.dirname(os.path.abspath(__file__)))
     if os.path.exists(merge_path(args.name, "main.py")):
