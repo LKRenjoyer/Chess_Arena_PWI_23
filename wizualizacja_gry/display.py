@@ -23,6 +23,8 @@ parser = ArgumentParser(description="program do wizualizacji gry między botami/
 parser.add_argument('-w', action='store_true', help="oznacza, że gracz biały nie jest botem.", required=False)
 parser.add_argument('-b', action='store_true', help="oznacza, że gracz czarny nie jest botem.", required=False)
 parser.add_argument('--fen', action='store', help="startowy fen.", required=False)
+parser.add_argument('--nazwa_bialego', action='store', required=False)
+parser.add_argument('--nazwa_czarnego', action='store', required=False)
 
 args = parser.parse_args(sys.argv[1:])
 
@@ -38,20 +40,27 @@ running = True
 board = Board(chess.STARTING_FEN if not args.fen else args.fen)
 
 promotion_box = Promotion_Box(-1,'l')
-timer_box = TimerBox(0,0,600,600)
+timer_box = TimerBox(0,0,0,600,600)
 
 current_move = 0
 
 offsets = [0,0]
 
-def redraw(screen, update=True):
-    screen.fill((62,61,57))
+font = pg.font.SysFont(None, board.size//2)
+def redraw(screen, update=True, resize = False):
+    global font, nw, nb
     scrsize = screen.get_size()
-    bsize = min(scrsize)*9//80
+    bsize = min(scrsize)//10
+    screen.fill((62,61,57))
     if update:
         board.update(bsize)
         if promotion_box.size!=-1:
             promotion_box.update(bsize, promotion_box.color)
+    if resize:
+        timer_box.resize(bsize)
+        font = pg.font.SysFont(None, board.size//2)
+        nw = font.render(args.nazwa_bialego, True, "white")
+        nb = font.render(args.nazwa_czarnego, True, "white")
     surface = pg.Surface(scrsize)
     offsets[0] = (scrsize[0]-bsize*8)//2
     offsets[1] = (scrsize[1]-bsize*8)//2
@@ -59,6 +68,8 @@ def redraw(screen, update=True):
     screen.blit(surface, offsets)
     promotion_box.draw(screen)
     timer_box.draw(screen)
+    screen.blit(nw,((scrsize[0]-nw.get_width())//2,offsets[1]-nw.get_height()-5))
+    screen.blit(nb,((scrsize[0]-nb.get_width())//2,9*board.size+5))
 
 
 opponent_moved=False
@@ -81,7 +92,7 @@ threading.Thread(target=get_move).start()
 if args.b and not args.w:
     board.flip()
 
-redraw(screen)
+redraw(screen, True, True)
 clicked = None
 cursor_on_piece = False
 
@@ -208,7 +219,7 @@ while running:
                     board.pop()
             redraw(screen, True)
         elif event.type == pg.WINDOWRESIZED:
-            redraw(screen,True)
+            redraw(screen,True,True)
     if opponent_moved:
         redraw(screen,True)
         opponent_moved = False

@@ -5,7 +5,7 @@ from tiles import Piece, Tile
 class Board(chess.Board):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.size = None
+        self.size = 0
         self.piece_sprites = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
         self.flipped = False
