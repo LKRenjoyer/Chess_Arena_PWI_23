@@ -2,7 +2,7 @@ import numpy as np
 from data import *
 
 class Board:
-    def __init__(self, fastmode = False):
+    def __init__(self):
         self.board = None
         self.turn = None
         self.castling_data = None
