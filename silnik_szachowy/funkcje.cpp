@@ -2270,7 +2270,7 @@ void los2(int a,int b,int tab[13])
 //kolejnosc zdarzen w Zobrist2 tabelce
 // czyj_ruch (jak białych to xor a jak czarnych to unxor), roszady: czy_K, czy_Q, czy_k, czy_q, bwp: dla białych a3,b3,...,h3, dla czarnych a6,b6,...,h6;
 
-int Zobrist_hash_start(pozycja *poz,int tab1[12][64],int tab2[13])
+int Zobrist_hash_start(pozycja *poz)
 {
     int wynik=0;
     for (int i=0;i<8;i++)
@@ -2385,7 +2385,7 @@ int Zobrist_hash_start(pozycja *poz,int tab1[12][64],int tab2[13])
     return wynik;
 }
 
-int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int tab1[12][64],int tab2[13])
+int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash)
 {
     int wynik=hash;
     int x1=pole_w_liczby(ruch[0],ruch[1])[0];
@@ -2735,13 +2735,13 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash,int tab1[12][64],int tab
     return wynik;
 }
 
-bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int tab1[12][64],int tab2[13])
+bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2)
 {
     if (poz->liczba_polowek_ruchow==100)
     {
         return 1;
     }
-    if (poz->czyj_ruch=='w'&&Zobrist_hash_start(poz,tab1,tab2)==hash1)
+    if (poz->czyj_ruch=='w'&&Zobrist_hash_start(poz)==hash1)
     {
     	licznik1++;
     	if (licznik1==3)
@@ -2752,9 +2752,9 @@ bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int tab1
     else if (poz->czyj_ruch=='w')
     {
         licznik1=1;
-        hash1=Zobrist_hash_start(poz,tab1,tab2);
+        hash1=Zobrist_hash_start(poz);
     }
-    if (poz->czyj_ruch=='b'&&Zobrist_hash_start(poz,tab1,tab2)==hash2)
+    if (poz->czyj_ruch=='b'&&Zobrist_hash_start(poz)==hash2)
     {
     	licznik2++;
     	if (licznik2==3)
@@ -2765,7 +2765,7 @@ bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2,int tab1
     else if (poz->czyj_ruch=='b')
     {
         licznik2=1;
-        hash2=Zobrist_hash_start(poz,tab1,tab2);
+        hash2=Zobrist_hash_start(poz);
     }
     int x1,x2,y1,y2;
     for (int i=0;i<8;i++)

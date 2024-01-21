@@ -7,6 +7,10 @@ string najlepszy_ruch;
 int glebokoscaktualna;
 int glebokoscsrodkowa;
 int glebokosckoncowa;
+//rzeczy do hashowania
+int tab1[12][64];
+int tab2[13];
+//koniec rzeczy do hashowania
 
 int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
@@ -17,7 +21,11 @@ int main(int argc, char ** argv) {
     string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
-
+    //tabelki hashy
+    los1(1000000,9999999,tab1);
+    los2(1000000,9999999,tab2);
+    //koniec tabelek hashy
+	
     while(1) {
         if(poz.czyj_ruch == kolor_bota) {
             alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
