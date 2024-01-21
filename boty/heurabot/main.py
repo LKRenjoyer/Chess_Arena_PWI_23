@@ -30,7 +30,7 @@ while not board.is_game_over():
         print(move)
     board.push(move)
     print(move, flush=True)
-    if board.is_game_over():
-        break
+    # if board.is_game_over():
+    #     break
     move = input()
     board.push_uci(move)
