@@ -8,8 +8,8 @@ int glebokoscaktualna;
 int glebokoscsrodkowa;
 int glebokosckoncowa;
 //rzeczy do hashowania
-int tab1[12][64];
-int tab2[13];
+long long tab1[12][64];
+long long tab2[13];
 //koniec rzeczy do hashowania
 
 int main(int argc, char ** argv) {
@@ -22,8 +22,8 @@ int main(int argc, char ** argv) {
     pozycja poz;
     fen_to_chessboard(fen, &poz);
     //tabelki hashy
-    los1(1000000,9999999,tab1);
-    los2(1000000,9999999,tab2);
+    los1(100000000000000,999999999999999,tab1);
+    los2(100000000000000,999999999999999,tab2);
     //koniec tabelek hashy
 	
     while(1) {
