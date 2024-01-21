@@ -70,8 +70,8 @@ def redraw(screen, update=True, resize = False):
     screen.blit(surface, offsets)
     promotion_box.draw(screen)
     timer_box.draw(screen)
-    screen.blit(nb,((scrsize[0]-nw.get_width())//2,offsets[1]-nw.get_height()-5))
-    screen.blit(nw,((scrsize[0]-nb.get_width())//2,9*board.size+5))
+    screen.blit(nb,((scrsize[0]-nb.get_width())//2,offsets[1]-nw.get_height()-5))
+    screen.blit(nw,((scrsize[0]-nw.get_width())//2,9*board.size+5))
 
 
 opponent_moved=False
