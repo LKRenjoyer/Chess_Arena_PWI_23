@@ -216,6 +216,8 @@ class Server:
                 thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,f"{starting_fen}|czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
                 czarny_conn = conn
             thr.start()
+        
+        print(name1[0],name2[0])
 
         # dopoki prawda(gra się nie skończyła):
         #     zapytaj białego o ruch (1)
