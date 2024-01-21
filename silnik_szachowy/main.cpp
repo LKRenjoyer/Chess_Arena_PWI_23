@@ -16,8 +16,8 @@ int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
     najlepszy_ruch = "";
     glebokoscaktualna = 4;
-    glebokoscsrodkowa = 4;
-    glebokosckoncowa = 5;
+    glebokoscsrodkowa = 6;
+    glebokosckoncowa = 6;
     string fen = argv[2];
     pozycja poz;
     fen_to_chessboard(fen, &poz);
@@ -28,6 +28,7 @@ int main(int argc, char ** argv) {
 	
     while(1) {
         if(poz.czyj_ruch == kolor_bota) {
+            czysc();
             alpha_beta(poz, glebokoscaktualna, -10000000, 10000000, 1);
             porusz(najlepszy_ruch, &poz);
             if(najlepszy_ruch.size() == 5 && najlepszy_ruch[4] >= 'A' && najlepszy_ruch[4] <= 'Z') {

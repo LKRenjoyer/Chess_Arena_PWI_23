@@ -2837,6 +2837,10 @@ bool czy_mat(pozycja *poz)
     return 0;
 }
 
+void czysc() {
+    unmp.clear();
+}
+
 //alphabeta(stan_pocz, gl_docelowa, −1000000, 1000000, 1);
 
 long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu) {
@@ -2858,6 +2862,10 @@ long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long doub
             wyn *= (glebokosc);
         }
         return wyn;
+    }
+    int hasz = Zobrist_hash_start(&stan);
+    if(unmp.count(hasz) == 1) {
+        return unmp[hasz];
     }
 
     if(czy_maksymalizujemy_na_ruchu) {
@@ -2895,5 +2903,6 @@ long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long doub
             beta = min(beta, wart);
         }
     }
+    unmp[hasz] = wart;
     return wart;
 }

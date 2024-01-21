@@ -266,7 +266,8 @@ class Server:
                 # print("Koniec gry!")
                 # time.sleep(5)
                 kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
-                self.send_msg_to_client(bialy_conn,kanal2_main[0])             
+                self.send_msg_to_client(bialy_conn,kanal2_main[0])
+                time.sleep(2)     
 
                 print(f"{self.eval_res(board.result())}",flush=True)
                 self.settrue()
@@ -317,7 +318,7 @@ class Server:
                 # time.sleep(5)
                 kanal4_main[0]=f"{white_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
                 self.send_msg_to_client(czarny_conn,kanal4_main[0]) 
-
+                time.sleep(2)
 
 
                 print(f"{self.eval_res(board.result())}",flush=True)
@@ -366,8 +367,9 @@ class Server:
                 # print("Koniec gry!")
                 # time.sleep(5)
                 kanal2_main[0]=f"{black_move}|{timer.czas_bialego}|{timer.czas_czarnego}"
-                self.send_msg_to_client(bialy_conn,kanal2_main[0])             
-
+                self.send_msg_to_client(bialy_conn,kanal2_main[0])           
+                time.sleep(2)
+                
                 print(f"{self.eval_res(board.result())}",flush=True)
                 self.settrue()
                 break

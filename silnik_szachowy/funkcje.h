@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <random>   
 #include <unistd.h>
+#include <unordered_map>
 
 #define pb push_back
 #define st first
@@ -50,4 +51,5 @@ int Zobrist_hash_ruch(string ruch,pozycja *poz,int hash);
 bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2);
 bool czy_mat(pozycja *poz);
 
+void czysc();
 long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu);
