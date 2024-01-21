@@ -38,11 +38,13 @@ bot1,bot2 = args.bot1,args.bot2
 
 
 if args.eve:
-    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve={args.eve}"],stdout=subprocess.PIPE)
+    server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve"],stdout=subprocess.PIPE)
     client1 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot1}"],stdout=subprocess.PIPE)
     client2 = subprocess.Popen([sys.executable,'boty/client.py',f"--name={bot2}"],stdout=subprocess.PIPE)
 
     imie_bialego,imie_czarnego = server.stdout.readline().decode('utf-8').split()
+    # package = server.stdout.readline().decode('utf-8').split()
+    # print(package)
 
     if not(args.nv):
         visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}"], stdin=subprocess.PIPE, encoding="utf-8")

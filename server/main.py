@@ -28,6 +28,7 @@ name2 = [""]
 koniec = [False]
 start_time = 0
 end_time = 0
+otrzymano = [0]
 
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('--fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
@@ -103,6 +104,7 @@ class Server:
         fen,kolor = paczka.split("|")
         self.send_msg_to_client(conn,paczka)
         nazwa[0] = self.recv_msg_from_client(conn)
+        otrzymano[0]+=1
 
 
         if (kolor == "biale" and board.turn==chess.WHITE) or (kolor == "czarne" and board.turn==chess.BLACK):
@@ -217,9 +219,10 @@ class Server:
                 thr = threading.Thread(target=self.handle_client,args=(conn,addr,kanal3_main,kanal4_main,f"{starting_fen}|czarne",gotowy_kanal_3_main,gotowy_kanal_4_main,name2,koniec))
                 czarny_conn = conn
             thr.start()
-        
+        while otrzymano[0]<2:
+            pass
         if args.eve:
-            print(name1[0],name2[0])
+            print(f"{name1[0]} {name2[0]}",flush=True)
         # time.sleep(2)
         # self.send_msg_to_client(bialy_conn,name2[0]) 
         # self.send_msg_to_client(czarny_conn,name1[0]) 
