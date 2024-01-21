@@ -33,11 +33,12 @@ otrzymano = [0]
 parser = argparse.ArgumentParser(description='Główna program do runowania botów')
 parser.add_argument('--fen', type=str, nargs='?', default='base start', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("--eve", action='store_true', help='Entity vs Entity')
+parser.add_argument("--time", type=str, nargs='?',default="600", help='Podaj ile ma czasu ma mieć każdy gracz')
 
 args = parser.parse_args()
 
-with open("xd.txt","a") as f:
-    f.write(f"{args.fen}\n")
+# with open("xd.txt","a") as f:
+#     f.write(f"{args.time}\n")
 
 starting_fen = args.fen
 
@@ -48,8 +49,10 @@ board = chess.Board(starting_fen)
 
 class Timer:
     def __init__(self) -> None:
-        self.czas_bialego = 600
-        self.czas_czarnego = 600
+        self.czas_bialego = int(args.time)
+        self.czas_czarnego = int(args.time)
+        # with open("xd.txt","a") as f:
+        #     f.write(f"{self.czas_bialego} {self.czas_czarnego}\n")
         self.kogo_tura = "nikt"
     
 
