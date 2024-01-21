@@ -30,7 +30,7 @@ class Board(chess.Board):
         if len(self.move_stack)>0:
             last_move = str(self.move_stack[-1])
             if self.flipped:
-                highlight = {(ord(last_move[0])-ord('a'), int(last_move[1])-1), (ord(last_move[2])-ord('a'), int(last_move[3])-1)}
+                highlight = {(7-(ord(last_move[0])-ord('a')), int(last_move[1])-1), (7-(ord(last_move[2])-ord('a')), int(last_move[3])-1)}
             else:
                 highlight = {(ord(last_move[0])-ord('a'), 8-int(last_move[1])), (ord(last_move[2])-ord('a'), 8-int(last_move[3]))}
         self.tiles = pg.sprite.Group()
@@ -53,7 +53,8 @@ class Board(chess.Board):
                 piece = char.lower()
                 piece_color = "ld"[char.islower()]
                 dest_row = 7-row if self.flipped else row
-                self.piece_sprites.add(Piece(f"{piece}{piece_color}", column, dest_row, size))
+                dest_column = 7-column if self.flipped else column
+                self.piece_sprites.add(Piece(f"{piece}{piece_color}", dest_column, dest_row, size))
             elif char!='/':
                 n = int(char)
                 column+=n-1

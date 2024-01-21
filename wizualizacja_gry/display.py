@@ -120,7 +120,7 @@ def try_move(board, move): #sprawdza czy ruch promuje i jeśli nie, to wykonuje 
         return False
 
 def flip_pos(pos):
-    return (pos[0],7-pos[1])
+    return (7-pos[0],7-pos[1])
 
 last_move = None
 move_promotes = False
