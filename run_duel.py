@@ -8,6 +8,7 @@ import subprocess
 import argparse
 import time
 from server.server_const import *
+import random
 
 parser = argparse.ArgumentParser(description='Główny program do runowania botów, musisz dodać folder z nazwą twojego bota do folderu boty i w nim plik main.py lub main.exe')
 #ustawianie trybu gry oraz podawanie nazw botów
@@ -26,11 +27,18 @@ parser.add_argument("-ngrok", type=str, nargs='?',default="localhost", help='Pod
 parser.add_argument("-time", type=str, nargs='?',default="600", help='Podaj ile ma czasu ma mieć każdy gracz')
 parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("-kolor", type=str, nargs='?',default="nic", help='Ustaw kolor jakim ma grac gracz') #not implemented
+parser.add_argument("-randomfen", action='store_true', help='Czy chcesz wystartować grę z randomowym (w miarę równym) fenem')
 
 
+    
 
 args = parser.parse_args()
 
+if args.randomfen:
+    with open("random200_positions.txt","r") as f:
+        args.fen = random.choice(list(map(lambda x:x[5:],filter(lambda x:x.split(" ")[0]=="FEN:",f.read().split("\n")))))
+
+        
 bot1,bot2 = args.bot1,args.bot2
 # print(args.time)
 
