@@ -344,7 +344,7 @@ void pop_move(pair<vector<string>, bitset<5>> pr, position* pos) {
     }
     if (pos->mover == 'W')pos->mover = 'b'; else pos->mover = 'W';
     pos->halfmoves_amo = max(0, pos->halfmoves_amo - 1);
-    if (pos->mover == 'W')pos->moves_amo = max(0, pos->moves_amo - 1);
+    if (pos->mover == 'b')pos->moves_amo = max(0, pos->moves_amo - 1);
 }
 
 // funkcja sprawdza czy na pos->board[a][b] krol koloru color jest szachowany 
