@@ -76,14 +76,15 @@ def redraw(screen, update=True, resize = False):
 
 
 opponent_moved=False
+timer_stopped=False
 def get_move():
     while running:
-        global opponent_moved
+        global opponent_moved, timer_stopped
         try:
             move, twhite, tblack = input().split()
             timer_box.update(twhite, tblack)
-            # print(twhite, tblack)
         except (EOFError, ValueError):
+            timer_stopped = True
             break
         finally:
             opponent_moved = True
@@ -232,9 +233,10 @@ while running:
         redraw(screen, False)
     pg.display.update()
     dt=clock.tick()/1000
-    if board.turn:
-        timer_box.twhite-=dt
-    else:
-        timer_box.tblack-=dt
+    if not timer_stopped:
+        if board.turn:
+            timer_box.twhite-=dt
+        else:
+            timer_box.tblack-=dt
 
 pg.quit()
