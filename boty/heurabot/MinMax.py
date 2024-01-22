@@ -3,7 +3,7 @@ from random import randint, seed
 from itertools import chain
 from data import *
 
-global_max_depth = 4
+global_max_depth = 2
 
 seed(692137)
 hashtable = [randint(1,2**64) for i in range(12*64+3)]
