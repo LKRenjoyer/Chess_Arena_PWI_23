@@ -62,28 +62,37 @@ def evaluate(board:chess.Board, hash):
 def move_eval(board:chess.Board, move):
     return board.is_capture(move)
 
-def AlphaBetaSearch(board, max_depth, hash, depth=0, alpha=float('-inf'), beta=float('inf'), maximize=True):
-    legal_moves = list(board.legal_moves)
+def AlphaBetaSearch(board, max_depth, hash, alpha=float('-inf'), beta=float('inf'), maximize=True, start_from=None):
+    legal_moves = [start_from] if start_from else []
+    legal_moves.extend(board.legal_moves)
     # shuffle(legal_moves)
     # legal_moves.sort(key=partial(move_eval, board))
-    if depth == max_depth or len(legal_moves)==0:
+    if max_depth == 0 or len(legal_moves)==0:
         return evaluate(board, hash), None
     if hash in searched:
         return searched[hash]
     best_move=legal_moves[0]
+    best_score = float('-inf')
     for move in legal_moves:
         new_hash = nextHash(board, move, hash)
         board.push(move)
-        score = -AlphaBetaSearch(board, max_depth, new_hash, depth+1, -beta, -alpha, False)[0]
+        score = -AlphaBetaSearch(board, max_depth-1, new_hash, -beta, -alpha, False)[0]
         board.pop()
         if score >= beta:
-            return beta, move
-        if score > alpha:
-            alpha = score
+            return score, move
+        if score>best_score:
+            best_score=score
             best_move=move
+            if score > alpha:
+                alpha = score
     searched[hash]=alpha,best_move
     return alpha, best_move
 
 def get_best_move(board):
-    searched.clear()
-    return AlphaBetaSearch(board, 4, genHash(board))[1]
+    max_depth = 4
+    best_move = None
+    for i in range(2, max_depth+2, 2):
+        searched.clear()
+        value, best_move = AlphaBetaSearch(board, i, genHash(board), start_from=best_move)
+    print(value, flush=True)
+    return best_move

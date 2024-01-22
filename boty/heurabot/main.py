@@ -22,12 +22,11 @@ class Log:
     def __del__(self):
         self.file.close()
 
-log = Log('test.txt')
+log = Log(f'test_{argv[1]}.txt')
 
 while not board.is_game_over():
-    move = get_best_move(board)
-    # with redirect_stdout(log):
-    #     print(move)
+    with redirect_stdout(log):
+        move = get_best_move(board)
     board.push(move)
     print(move, flush=True)
     # if board.is_game_over():
