@@ -25,6 +25,21 @@ Program `run_duel.py` obsługuje dodatkowo następujące argumenty
 
 Przykład: `python run_duel.py -pve 1000101bot -time=600 -fen="r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 1"` - zawalcz z botem o nazwie 1000101bot gdzie każdy gracz ma 10 minut, a startowy fen jest podany.
 
+Framework posiada opcję gry online należy wtedy wywołać program run_duel z:
+"-online" - potrzebna flaga kiedy chce się tworzyć grę online lub do niej dołączać
+"-host" - jeżeli jesteś graczem który hostuje serwer
+"-player" - jeżeli chcesz grać samemu (a nie bot)
+"-ngrok" - flaga do której można wpisać w formacie: "adres_ip:port" i łączy wtedy clienta z odpowiednim serwerem
+
+Przykład użycia:
+1. osoba: python run_duel.py -host -player -online
+2. osoba: python run_duel.py -player -online -ngrok="0.0.0.0:12345"
+
+Spowoduje to utworzenie gry online, gdzie obaj gracze robią sami ruchy. Client łączy się z ip: 0.0.0.0 i portem: 12345
+
+Plik run_duel.py służy do menage'owania frameworkiem i wczytująć się w kod można rozwiać swoje niektóre wątpliwości.
+Po więcej informacji można wpisać: python run_duel.py --help
+
 # Dostępne boty
 
 ## bot_jana_2
