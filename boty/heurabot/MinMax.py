@@ -1,9 +1,9 @@
 import chess
-from functools import partial
-from random import randint, seed, shuffle
+from random import randint, seed
 from itertools import chain
 from data import *
-from time import perf_counter
+
+global_max_depth = 4
 
 seed(692137)
 hashtable = [randint(1,2**64) for i in range(12*64+3)]
@@ -27,7 +27,7 @@ def nextHash(board, move:chess.Move, hash):
     hash ^= hashtable[(6*piece.color+piece.piece_type-1)+12*move.to_square]
     return hash
 
-piece_values = {chess.Piece.from_symbol(symbol):value for symbol, value in zip('PNBRQKpnbrqk', (100,325,350,500,1000,1000000000,-100,-325,-350,-500,-1000,-100000000))}
+piece_values = {chess.Piece.from_symbol(symbol):value for symbol, value in zip('PNBRQKpnbrqk', (100,325,350,500,1000,0,-100,-325,-350,-500,-1000,0))}
 
 boosts = [0,0]
 evaluated = {}
@@ -40,7 +40,7 @@ def evaluate(board:chess.Board, hash):
     if result is not None:
         if result.winner is None:
             return 0
-        if result.winner:
+        if result.winner == board.turn:
             return float('inf')
         else:
             return float('-inf')
@@ -58,82 +58,35 @@ def evaluate(board:chess.Board, hash):
     evaluated[hash]=score
     return score
 
-def move_eval(board:chess.Board, hash, move):
-    return board.is_capture(move)*2-board.is_attacked_by(not board.turn, move.to_square)
-
-total = [0,0]
-
 def AlphaBetaSearch(board, max_depth, hash, alpha=float('-inf'), beta=float('inf'), maximize=True, start_from=None):
-    time = perf_counter()
     legal_moves = list(board.legal_moves)
-    # shuffle(legal_moves)
-    # legal_moves.sort(key=lambda move:move_eval(board, hash, move))
-    total[0] += perf_counter()-time
 
     if max_depth <= 0 or len(legal_moves)==0:
-        time=perf_counter()
         score = evaluate(board, hash)
-        total[1]+=perf_counter()-time
         return score, None
     if hash in searched:
-        boosts[0]+=1
         return searched[hash]
     
-    if max_depth>1:
-        board.push(chess.Move.null())
-        score = -AlphaBetaSearch(board, max_depth-2, hash, -beta, -alpha, False)[0]
-        board.pop()
-        if score >= beta:
-            boosts[1]+=1
-            return score, None
-        
-    best_move=None
-    best_score = float('-inf')
-    for move in (chain((start_from,), legal_moves) if start_from else legal_moves):
+    legal_moves = chain((start_from,), legal_moves) if start_from else legal_moves
+    best_score=float('-inf')
+    for move in legal_moves:
         new_hash = nextHash(board, move, hash)
         board.push(move)
         score = -AlphaBetaSearch(board, max_depth-1, new_hash, -beta, -alpha, False)[0]
         board.pop()
         if score >= beta:
-            boosts[1]+=1
             return score, move
         if score>best_score:
             best_score=score
             best_move=move
             if score > alpha:
                 alpha = score
-    searched[hash]=alpha,best_move
     return alpha, best_move
 
 def get_best_move(board):
-    max_depth = 4
-
-    boosts[0]=boosts[1]=total[0]=total[1]=0
-    value, best_move = AlphaBetaSearch(board, 1, genHash(board))
-    print(1,boosts, len(evaluated), total, sum(total), flush=True)
+    value, best_move = AlphaBetaSearch(board, 2, genHash(board))
     searched.clear()
-    # evaluated.clear()
-    # print(value)
-    for i in range(2, max_depth+1):
-        # boosts[0]=boosts[1]=total[0]=total[1]=0
+    for i in range(3, global_max_depth+1):
         value, best_move = AlphaBetaSearch(board, i, genHash(board), start_from=best_move)
-        print(i,boosts, len(evaluated), total, sum(total), flush=True)
         searched.clear()
-        # lwindow = 100
-        # rwindow = 100
-        # while True:
-        #     # alpha = value-lwindow
-        #     # beta = value+rwindow
-        #     new_value, best_move = AlphaBetaSearch(board, i, genHash(board), alpha, beta)
-        #     if new_value<alpha:
-        #         lwindow*=2
-        #         print('recalculation')
-        #     elif new_value>beta:
-        #         rwindow*=2
-        #         print('recalculation')
-        #     else:
-        #         break
-        # value=new_value
-    # print(alpha, beta, value, flush=True)
-    searched.clear()
     return best_move
