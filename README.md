@@ -3,6 +3,8 @@ Projekt grupowy na zajęcia PWI 2023 polegający na stworzeniu interfejsu szacho
 
 
 # Jak uruchomić projekt
+Uruchomienie projektu wymaga wersji pythona 3.11. Potencjalnie może działać w dowolnej wersji nowszej niż 3.7, ale nie było to testowane.
+
 Zainstaluj wymagane moduły pythonowe poleceniem `pip install -r requirements.txt`.
 
 Aby uruchomić walkę między botami, użyj polecenia `python run_duel.py -pvp nazwa_bota1 nazwa_bota2`.
