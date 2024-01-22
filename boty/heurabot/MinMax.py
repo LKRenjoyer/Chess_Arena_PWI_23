@@ -3,8 +3,8 @@ from functools import partial
 from random import randint, seed, shuffle
 from data import *
 
-seed(213769)
-hashtable = [randint(1,2**64) for i in range(12*64+1)]
+seed(692137)
+hashtable = [randint(1,2**64) for i in range(12*64+3)]
 currentHash = 0
 
 def genHash(board):
@@ -12,27 +12,27 @@ def genHash(board):
     if board.turn:
         hash ^= hashtable[-1]
     for square, piece in board.piece_map().items():
-        hash ^= hashtable[(6*piece.color+piece.piece_type-1)*(square+1)]
+        hash ^= hashtable[(6*piece.color+piece.piece_type-1)+12*square]
     return hash
 
 def nextHash(board, move:chess.Move, hash):
     hash ^= hashtable[-1]
     piece = board.piece_at(move.to_square)
     if piece is not None:
-        hash ^= hashtable[(6*piece.color+piece.piece_type-1)*(move.to_square+1)]
+        hash ^= hashtable[(6*piece.color+piece.piece_type-1)+12*move.to_square]
     piece = board.piece_at(move.from_square)
-    hash ^= hashtable[(6*piece.color+piece.piece_type-1)*(move.from_square+1)]
-    hash ^= hashtable[(6*piece.color+piece.piece_type-1)*(move.to_square+1)]
+    hash ^= hashtable[(6*piece.color+piece.piece_type-1)+12*move.from_square]
+    hash ^= hashtable[(6*piece.color+piece.piece_type-1)+12*move.to_square]
     return hash
 
 piece_values = {chess.Piece.from_symbol(symbol):value for symbol, value in zip('PNBRQKpnbrqk', (100,325,350,500,1000,0,-100,-325,-350,-500,-1000,0))}
 
 evaluated = {}
+searched = {}
 
-def evaluate(board:chess.Board):
-    fen = board.fen()
-    if fen in evaluated:
-        return evaluated[fen]
+def evaluate(board:chess.Board, hash):
+    if hash in evaluated:
+        return evaluated[hash]
     result = board.outcome()
     if result is not None:
         if result.winner is None:
@@ -56,7 +56,7 @@ def evaluate(board:chess.Board):
     score = material_bonus+position_bonus+mobility_bonus
     if not board.turn:
         score*=-1
-    evaluated[fen]=score
+    evaluated[hash]=score
     return score
 
 def move_eval(board:chess.Board, move):
@@ -64,29 +64,26 @@ def move_eval(board:chess.Board, move):
 
 def AlphaBetaSearch(board, max_depth, hash, depth=0, alpha=float('-inf'), beta=float('inf'), maximize=True):
     legal_moves = list(board.legal_moves)
-    shuffle(legal_moves)
+    # shuffle(legal_moves)
     # legal_moves.sort(key=partial(move_eval, board))
     if depth == max_depth or len(legal_moves)==0:
-        return evaluate(board)
-    if hash in evaluated:
-        return evaluated[hash]
+        return evaluate(board, hash), None
+    if hash in searched:
+        return searched[hash]
     best_move=legal_moves[0]
     for move in legal_moves:
         new_hash = nextHash(board, move, hash)
         board.push(move)
-        score = -AlphaBetaSearch(board, max_depth, new_hash, depth+1, -beta, -alpha, False)
+        score = -AlphaBetaSearch(board, max_depth, new_hash, depth+1, -beta, -alpha, False)[0]
         board.pop()
         if score >= beta:
-            return beta
+            return beta, move
         if score > alpha:
             alpha = score
             best_move=move
-    if depth == 0:
-        return best_move
-    evaluated[hash]=alpha
-    return alpha
+    searched[hash]=alpha,best_move
+    return alpha, best_move
 
 def get_best_move(board):
-    global evaluated
-    evaluated={}
-    return AlphaBetaSearch(board, 4, genHash(board))
+    searched.clear()
+    return AlphaBetaSearch(board, 4, genHash(board))[1]
