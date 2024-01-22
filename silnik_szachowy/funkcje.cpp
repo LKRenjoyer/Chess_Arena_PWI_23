@@ -111,13 +111,13 @@ void porusz(string ruch, pozycja *poz) {
             poz->plansza[7][4] = ' ';
         }
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'P' && ruch[0] != ruch[2] && poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] == ' '){
         //uwaga na bicia w przelocie bialych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'P';
         poz->plansza[(ruch[3] - '1') - 1][(ruch[2] - 'a')] = ' ';
     }
-    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && abs(ruch[1] - ruch[3]) == 2){
+    else if(poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] == 'p' && ruch[0] != ruch[2] && poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] == ' '){
         //uwaga na bicia w przelocie czarnych
         poz->plansza[(ruch[1] - '1')][(ruch[0] - 'a')] = ' ';
         poz->plansza[(ruch[3] - '1')][(ruch[2] - 'a')] = 'p';
@@ -609,13 +609,13 @@ long double ewaluacja_pozycji(pozycja *poz) {
     for(int i = max(0, bk.st - 2); i <= min(7, bk.st + 2); i++) {
         for(int ii = max(0, bk.nd - 2); ii <= min(7, bk.nd + 2); ii++) {
             if(poz->plansza[i][ii] == 'q') {
-                wart -= 1.8;
+                wart -= 1.2;
             }
             else if(poz->plansza[i][ii] == 'w') {
-                wart -= 1;
+                wart -= 0.7;
             }
             else if(poz->plansza[i][ii] == 'b' || poz->plansza[i][ii] == 'n') {
-                wart -= 0.6; 
+                wart -= 0.3; 
             }
             else if(poz->plansza[i][ii] == 'p') {
                 wart -= 0.2;
@@ -626,13 +626,13 @@ long double ewaluacja_pozycji(pozycja *poz) {
     for(int i = max(0, ck.st - 2); i <= min(7, ck.st + 2); i++) {
         for(int ii = max(0, ck.nd - 2); ii <= min(7, ck.nd + 2); ii++) {
             if(poz->plansza[i][ii] == 'Q') {
-                wart += 1.8;
+                wart += 1.2;
             }
             else if(poz->plansza[i][ii] == 'W') {
-                wart += 1;
+                wart += 0.7;
             }
             else if(poz->plansza[i][ii] == 'B' || poz->plansza[i][ii] == 'N') {
-                wart += 0.6; 
+                wart += 0.3; 
             }
             else if(poz->plansza[i][ii] == 'P') {
                 wart += 0.2;
@@ -2244,27 +2244,6 @@ vector <string> mozliwe_ruchy(pozycja *poz)
     return cos;
 }
 
-void los1(long long a,long long b,long long tab[12][64])
-{
-    mt19937_64 gen(getpid());
-    for (int i=0;i<12;i++)
-    {
-    	for (int j=0;j<64;j++)
-    	{
-    	    tab[i][j]=gen()%(b-a+1)+a;
-    	}
-    }
-}
-
-void los2(long long a,long long b,long long tab[13])
-{
-    mt19937_64 gen(getpid());
-    for (int i=0;i<13;i++)
-    {
-        tab[i]=gen()%(b-a+1)+a;
-    }
-}
-
 //kolejnosc figur w Zobrist1 tabelce
 // k,h,r,b,n,p,K,H,R,B,N,P
 //kolejnosc zdarzen w Zobrist2 tabelce
@@ -2327,10 +2306,7 @@ long long Zobrist_hash_start(pozycja *poz)
     	    }
     	}
     }
-    if (poz->czyj_ruch=='w')
-    {
-    	wynik^=tab2[0];
-    }
+    wynik^=tab2[0];
     if (poz->czy_K==1)
     {
     	wynik^=tab2[1];
@@ -2442,10 +2418,7 @@ long long Zobrist_hash_start2(pozycja *poz)
     	    }
     	}
     }
-    if (poz->czyj_ruch=='w')
-    {
-    	wynik^=tab4[0];
-    }
+    wynik^=tab4[0];
     if (poz->czy_K==1)
     {
     	wynik^=tab4[1];
@@ -2954,70 +2927,113 @@ bool czy_mat(pozycja *poz)
 
 void czysc() {
     unmp.clear();
+    unmp2.clear();
 }
 
-//alphabeta(stan_pocz, gl_docelowa, −1000000, 1000000, 1);
+void wypisz_wart_pozycji(pozycja poz) {
+    long long hasz1 = Zobrist_hash_start(&poz) * glebokoscaktualna;
+    long long hasz2 = Zobrist_hash_start2(&poz) * glebokoscaktualna;
+    cout << "hasz1 = " << hasz1 << ' ' << unmp[hasz1] << '\n';
+    cout << "hasz2 = " << hasz2 << ' ' << unmp2[hasz2] << '\n';
+}
 
-long double alpha_beta(pozycja stan, int glebokosc, long double alpha, long double beta, bool czy_maksymalizujemy_na_ruchu) {
+long double alphaBetaMax(pozycja stan, long double alpha, long double beta, int glebokosc) {
+    //fprintf(stderr, "MAX = %Lf %Lf\n", alpha, beta);
     if(glebokosc == 0) {
         long double wyn = ewaluacja_pozycji(&stan);
-        if(kolor_bota == 'b')
-            wyn *= -1;
         if(abs(wyn) > 1000)
-            wyn *= glebokoscaktualna;
+            wyn *= (long double)(glebokosc + 1);
+        if(kolor_bota == 'b')
+            wyn *= (long double)(-1);
+        //fprintf(stderr, "lisc1 %Lf\n", wyn);
+        //wizualizacja(&stan);
         return wyn;
     }
-    long double wart;
     vector <string> ruchy = mozliwe_ruchy(&stan);
+    random_shuffle(ruchy.begin(), ruchy.end());
     if(ruchy.size() == 0) {
         long double wyn = ewaluacja_pozycji(&stan);
-        if(kolor_bota == 'b')
-            wyn *= -1;
         if(abs(wyn) > 1000) {
-            wyn *= (glebokosc);
+            wyn *= (long double)(glebokosc + 1);
         }
+        if(kolor_bota == 'b')
+            wyn *= (long double)(-1);
         return wyn;
     }
-    //long long hasz = Zobrist_hash_start(&stan);
-    //if(unmp.count(hasz) == 1) {
-    //    return unmp[hasz];
-    //}
+    long long hasz = Zobrist_hash_start(&stan) * (glebokosc + 1);
+    long long hasz2 = Zobrist_hash_start2(&stan) * (glebokosc + 1);
+    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
+        if(unmp[hasz] - unmp2[hasz2] < (long double)0.000001 && unmp2[hasz2] - unmp[hasz] < (long double)0.000001)
+            return unmp[hasz];
+        else {
+            fprintf(stderr, "kolizja haszy\n");
+        }
+    }
+    for(int i = 0; i < ruchy.size(); i++) {
+        pozycja stan_2 = stan;
+        porusz(ruchy[i], &stan_2);
+        long double wynik = alphaBetaMin(stan_2, alpha, beta, glebokosc - 1);
+        if(wynik >= beta) {
+            unmp[hasz] = beta;
+            unmp2[hasz2] = beta;
+            return beta;
+        }
+        if(wynik > alpha) {
+            alpha = wynik;
+            if(glebokosc == glebokoscaktualna)
+                najlepszy_ruch = ruchy[i];
+        }
+    }
+    unmp[hasz] = alpha;
+    unmp2[hasz2] = alpha;
+    return alpha;
+}
 
-    if(czy_maksymalizujemy_na_ruchu) {
-        wart = -10000000;
-        for(int i = 0; i < ruchy.size(); i++) {
-            pozycja stan_2 = stan;
-            porusz(ruchy[i], &stan_2);
-            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 0);
-            if(wart2 > wart) {
-                wart = wart2;
-                if(glebokosc == glebokoscaktualna) {
-                    najlepszy_ruch = ruchy[i];
-                }
-            }
-            if(wart >= beta)
-                break;
-            alpha = max(alpha, wart);
+long double alphaBetaMin(pozycja stan, long double alpha, long double beta, int glebokosc) {
+    //fprintf(stderr, "MIN = %Lf %Lf\n", alpha, beta);
+    if(glebokosc == 0) {
+        long double wyn = -ewaluacja_pozycji(&stan);
+        if(kolor_bota == 'w')
+            wyn *= (long double)(-1);
+        if(abs(wyn) > 1000)
+            wyn *= (long double)(glebokosc + 1);
+        //fprintf(stderr, "lisc2 %Lf\n", wyn);
+        return wyn;
+    }
+    vector <string> ruchy = mozliwe_ruchy(&stan);
+    random_shuffle(ruchy.begin(), ruchy.end());
+    if(ruchy.size() == 0) {
+        long double wyn = -ewaluacja_pozycji(&stan);
+        if(abs(wyn) > 1000) {
+            wyn *= (long double)(glebokosc + 1);
+        }
+        if(kolor_bota == 'w')
+            wyn *= (long double)(-1);
+        return wyn;
+    }
+    long long hasz = Zobrist_hash_start(&stan) * (glebokosc + 1);
+    long long hasz2 = Zobrist_hash_start2(&stan) * (glebokosc + 1);
+    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
+        if(unmp[hasz] - unmp2[hasz2] < (long double)0.000001 && unmp2[hasz2] - unmp[hasz] < (long double)0.000001)
+            return unmp[hasz];
+        else {
+            fprintf(stderr, "kolizja haszy\n");
         }
     }
-    else {
-        wart = 10000000;
-        for(int i = 0; i < ruchy.size(); i++) {
-            pozycja stan_2 = stan;
-            porusz(ruchy[i], &stan_2);
-            long double wart2 = alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1);
-            if(wart2 < wart) {
-                wart = wart2;
-                if(glebokosc == glebokoscaktualna) {
-                    najlepszy_ruch = ruchy[i];
-                }
-            }
-            wart = min(wart, alpha_beta(stan_2, glebokosc - 1, alpha, beta, 1));
-            if(wart <= alpha)
-                break;
-            beta = min(beta, wart);
+    for(int i = 0; i < ruchy.size(); i++) {
+        pozycja stan_2 = stan;
+        porusz(ruchy[i], &stan_2);
+        long double wynik = alphaBetaMax(stan_2, alpha, beta, glebokosc - 1);
+        if(wynik <= alpha) {
+            unmp[hasz] = alpha;
+            unmp2[hasz2] = alpha;
+            return alpha;
+        }
+        if(wynik < beta) {
+            beta = wynik;
         }
     }
-    //unmp[hasz] = wart;
-    return wart;
+    unmp[hasz] = beta;
+    unmp2[hasz2] = beta;
+    return beta;
 }
