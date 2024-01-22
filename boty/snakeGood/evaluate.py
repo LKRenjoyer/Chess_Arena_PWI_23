@@ -4,19 +4,19 @@ from data import *
 from zobrist import *
 #temporary version to get replace my subpar chess library with a professional one
 
-#square tables and material values from https://www.chessprogramming.org/Simplified_Evaluation_Function
+#square tables and material values from https://www.chessprogramming.org/Simplified_Evaluation_Function with some tweaks
 
-materialValue = [100, 320, 340, 500, 1000,  0]
+materialValue = [100, 320, 330, 500, 1000,  0]
 
 squareValue = [
     #pawn
     [
         0,  0,  0,  0,  0,  0,  0,  0,
         50, 50, 50, 50, 50, 50, 50, 50,
-        10, 10, 20, 30, 30, 20, 10, 10,
+        10, 10, 10, 30, 30, 10, 10, 10,
         5,  5, 10, 25, 25, 10,  5,  5,
         0,  0,  0, 20, 20,  0,  0,  0,
-        5, -5,-10,  0,  0,-10, -5,  5,
+        5, -5, -6, 15, 15, -6, -5,  5,
         5, 10, 10,-20,-20, 10, 10,  5,
         0,  0,  0,  0,  0,  0,  0,  0
     ],
@@ -24,12 +24,12 @@ squareValue = [
     [
         -50,-40,-30,-30,-30,-30,-40,-50,
         -40,-20,  0,  0,  0,  0,-20,-40,
-        -30,  0, 10, 15, 15, 10,  0,-30,
-        -30,  5, 15, 20, 20, 15,  5,-30,
-        -30,  0, 15, 20, 20, 15,  0,-30,
+        -30,  0, 10, 10, 10, 10,  0,-30,
         -30,  5, 10, 15, 15, 10,  5,-30,
+        -30,  0, 10, 15, 15, 10,  0,-30,
+        -30,  5, 10, 10, 10, 10,  5,-30,
         -40,-20,  0,  5,  5,  0,-20,-40,
-        -50,-40,-30,-30,-30,-30,-40,-50
+        -50,-15,-30,-30,-30,-30,-15,-50
     ],
     #bishop
     [

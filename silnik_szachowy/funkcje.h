@@ -8,8 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <unordered_map>
-
-
+#include <map>
 
 #define pb push_back
 #define st first
@@ -58,7 +57,6 @@ long long Zobrist_hash_ruch(string ruch,pozycja *poz,int hash);
 bool czy_pat(pozycja *poz,int licznik1,int licznik2,int hash1,int hash2);
 bool czy_mat(pozycja *poz);
 
-void wypisz_wart_pozycji(pozycja poz);
 void czysc();
 double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc);
 double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc);

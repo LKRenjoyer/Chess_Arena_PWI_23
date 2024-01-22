@@ -2,6 +2,7 @@
 #Template for AL projects for Dynamics 365 Business Central
 #launch.json folder
 **/__pycache__/
+**/zapis_gier/
 .vscode/
 #Cache folder
 .alcache/
