@@ -25,9 +25,9 @@ class Log:
 log = Log('test.txt')
 
 while not board.is_game_over():
-    move = get_best_move(board, argv[1]=='w')
-    with redirect_stdout(log):
-        print(move)
+    move = get_best_move(board)
+    # with redirect_stdout(log):
+    #     print(move)
     board.push(move)
     print(move, flush=True)
     # if board.is_game_over():

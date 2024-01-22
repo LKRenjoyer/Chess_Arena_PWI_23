@@ -10,10 +10,15 @@ hash = zobrist.getHash(board)
 skip = 0
 if (board.turn == chess.WHITE and sys.argv[1] == 'b') or (board.turn == chess.BLACK and sys.argv[1] == 'w'):
     skip = 1
+ile = 0
 while 1:
     if skip == 0:
         #print(board)
-        zobrist.hashMap.clear()
+        if ile == 10:
+            zobrist.hashMap.clear()
+            ile = 0
+        else:
+            ile += 1
         move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist)
         print(move.uci(), flush=True)
         hash = zobrist.changeHash(board, hash, move.uci())

@@ -1,4 +1,5 @@
-map <int, long double> unmp;
+unordered_map <long long, long double> unmp;
+unordered_map <long long, long double> unmp2;
 
 long double piony_c_pon[8][8] = {
 { 0,   0,   0,   0,   0,   0,   0,   0},
