@@ -1,5 +1,10 @@
-#include<bits/stdc++.h>
-#include<positional_diff.h> 
+#pragma GCC optimize("O3,unroll-loops")
+#include<bits/stdc++.h> 
+#include <algorithm>
+#include <vector>
+#include <random>  
+#include <unistd.h> 
+#include "positional_diff.h" 
 
 #define st first
 #define nd second
@@ -110,8 +115,9 @@ string fen_from_position(position* pos) {
 }
 
 void visualize(position* pos) {
-    cout << "*--------*\n";
-    for (int i = 0; i < 8; i++) {
+    cout << "**--------*\n";
+    for (int i = 0; i < 8; i++) { 
+        cout << 8-i; 
         cout << '|';
         for (int j = 0; j < 8; j++) {
             if (pos->board[i][j] == ' ')
@@ -121,7 +127,8 @@ void visualize(position* pos) {
         }
         cout << "|\n";
     }
-    cout << "*--------*\n";
+    cout << "**--------*\n";
+    cout << "  ABCDEFGH \n"; 
     cout << "ruch: " << pos->mover << "\n";
     cout << "roszada K: " << pos->poss_K << " roszada Q: " << pos->poss_Q << "\n";
     cout << "roszada k: " << pos->poss_k << " roszada q: " << pos->poss_q << "\n";
@@ -211,11 +218,6 @@ position position_from_fen(string fen) {
     //where(ind);
     return pos;
 }
-
-ll position_hash(position* pos) {
-    return 0;
-}
-
 
 
 pair<vector<string>, bitset<5>> make_move(string move, position* pos) {
@@ -482,8 +484,8 @@ bool position_checked(int a, int b, char color, position* pos) {
 }
 string beginnig_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-// [wiersz, kolumna][wiersz, kolumna]
 string uci_from_our_fromat(string move, position* pos) {
+// [wiersz, kolumna][wiersz, kolumna]
     string ans = "";
     if (move == "O-O-O") {
         if (pos->mover == 'W') return "e1c1";
@@ -509,6 +511,7 @@ string uci_from_our_fromat(string move, position* pos) {
     }
     return ans;
 }
+
 
 char number_sign(int val) { return (char)(val + '0'); }
 
@@ -956,40 +959,279 @@ vector<string> possible_moves(position* pos, char color) {
 }
 
 int value[256];  
-void init_data(){ 
+char pieces_amo[256]; 
+
+void init_data(){  
+    for(int i = 0; i < 256; i++) 
+        pieces_amo[i]  = 0; 
     value['P'] = 100;   value['p'] = 100;   
     value['N'] = 320;   value['n'] = 320; 
     value['B'] = 330;   value['b'] = 330; 
     value['R'] = 500;   value['r'] = 500;
     value['Q'] = 900;   value['q'] = 900;  
     value['K'] = 20000; value['k'] = 20000; 
-}
-
-
-int evaluate(position* pos){ 
-    return 0; 
+    // to reverse: 
+    /*
+    knight_diff_black[8][8]; 
+    bishop_diff_black[8][8]; 
+    queen_diff_black[8][8]; 
+    king_diff_beg_black[8][8]; 
+    king_diff_end_black[8][8]; 
+    pawn_diff_beg_black
+    pawn_diff_end_black 
+*/ 
+    for(int i = 0; i < 8; i++){ 
+        for(int j  = 0; j < 8; j++){ 
+            knight_diff_black[7-i][j] = knight_diff[i][j]; 
+            bishop_diff_black[7-i][j] = bishop_diff[i][j]; 
+            queen_diff_black[7-i][j] = queen_diff[i][j];  
+            king_diff_beg_black[7-i][j] = king_diff_beg[i][j]; 
+            king_diff_end_black[7-i][j] = king_diff_end[i][j]; 
+            pawn_diff_beg_black[7-i][j] = pawn_diff_beg[i][j]; 
+            pawn_diff_end_black[7-i][j] = pawn_diff_end[i][j]; 
+        }
+    } 
+    for(int i  = 0; i < 256; i++) 
+        position_diff[i] = NULL; 
+    position_diff['P'] = &pawn_diff_beg; 
+    position_diff['p'] = &pawn_diff_beg_black; 
+    position_diff['N'] = &knight_diff;
+    position_diff['n'] = &knight_diff_black;
+    position_diff['R'] = &rook_diff; 
+    position_diff['r'] = &rook_diff_black; 
+    position_diff['K'] = &king_diff_beg; 
+    position_diff['k'] = &king_diff_beg_black; 
+    position_diff['Q'] = &queen_diff; 
+    position_diff['q'] = &queen_diff_black; 
+    position_diff['B'] = &bishop_diff;  
+    position_diff['b'] = &bishop_diff_black; 
 } 
 
-string best_move(position* pos, int depth){ 
-    return ""; 
+void go_into_endgame(){ 
+    position_diff['P'] = &pawn_diff_end; 
+    position_diff['p'] = &pawn_diff_end_black; 
+    position_diff['K'] = &king_diff_end; 
+    position_diff['k'] = &king_diff_end_black;  
+    check_penalty = 0; 
+}
+
+ll hash_mod = 1000000009, hash_base = 131;  
+ll hash_limit = 1e14; 
+
+ll position_hash(position*pos){ 
+    ll res = 0; 
+    for(int i = 0; i < 8; i++){ 
+        for(int j = 0; j < 8; j++){ 
+            res += pos->board[i][j]; 
+            res *= hash_base; 
+            if(res > hash_limit) 
+                res %= hash_mod; 
+        }
+    } 
+    res += pos->mover; 
+    res *= hash_base; 
+    if(res > hash_limit) 
+        res %= hash_mod;
+    res += (8*pos->poss_Q + 4*pos->poss_K + 2 * pos->poss_q + 1 * pos->poss_k) ; 
+     res *= hash_base; 
+    if(res > hash_limit) 
+        res %= hash_mod; 
+    res += (1000000*pos->col_enpas + 1000* pos->row_enpas+ pos->en_passant); 
+    res *= hash_base; 
+    if(res > hash_limit) 
+        res %= hash_mod; 
+    return res%hash_mod; 
+} 
+
+
+ 
+bool is_endgame = 0;
+vector<char> pieces = {'p', 'r', 'n', 'k', 'q', 'b', 'P', 'R', 'N', 'K', 'Q', 'B'};  
+map<ll, int> eval_memory; 
+char opposite_color(char c){ 
+    if(c == 'W') 
+        return 'b'; 
+    if(c == 'b') 
+        return 'W'; 
+    assert(1 == 0); 
+}
+
+int sign_col(char color){ 
+    if(color == 'W') 
+        return 1; 
+    else 
+        return -1; 
+} 
+mt19937 rng(getpid());  
+int evaluate(position* pos){  
+    if(pos->halfmoves_amo >= 100){ 
+        return 0;    
+    }
+    ll hash = position_hash(pos);  
+    if(eval_memory.find(hash) != eval_memory.end())
+        return eval_memory[hash]; 
+    int white_score = 0, black_score = 0; 
+    vector<string> moves = possible_moves(pos, pos->mover);  
+    shuffle(moves.begin(), moves.end(), rng); 
+    int krow = -1, kcol = -1; 
+    for(int i = 0; i < 8; i++){ 
+        for(int j = 0; j < 8; j++){ 
+            if(pos->mover == 'W' && pos->board[i][j] == 'K'){ 
+                krow = i; kcol = j; 
+            } 
+            else if(pos->mover == 'b' && pos->board[i][j] == 'k'){ 
+                krow = i; kcol = j; 
+            }
+        }
+    } 
+    bool checked = position_checked(krow, kcol, pos->mover,pos);  
+    if(checked && sz(moves) == 0){ 
+        if(pos->mover == 'W'){
+            eval_memory[hash] =  -20000; 
+            return -20000; 
+            }// mat 
+        else{ 
+            eval_memory[hash] =  -20000; 
+            return -20000; 
+        }
+    }  
+    if(!checked && sz(moves) == 0){
+        eval_memory[hash] = 0;
+        return 0; // pat  
+    }
+    // triple repetition
+    // haszowanie i megamapa sa potrzebne
+    // 50-nuda ruchow  
+    
+    for(int i = 0; i < 8; i++){ 
+        for(int j = 0; j < 8; j++){ 
+            if(pos->board[i][j] == ' ')
+                continue;
+            pieces_amo[pos->board[i][j]]++;   
+            if('a' <= pos->board[i][j] && pos->board[i][j] <= 'z')
+                black_score += (*position_diff[pos->board[i][j]])[i][j];
+            else 
+                white_score +=  (*position_diff[pos->board[i][j]])[i][j];
+        }
+    }
+    // insufficient material 
+    if(pieces_amo['Q'] == 0 && pieces_amo['q'] == 0 && pieces_amo['r'] == 0 &&  pieces_amo['R'] == 0 && pieces_amo['p']==0 && pieces_amo['P'] == 0){ 
+        if(pieces_amo['b'] + pieces_amo['n'] <= 1 && pieces_amo['B'] + pieces_amo['N'] <= 1){
+            eval_memory[hash] = 0; 
+            return 0;  
+        }
+        if(pieces_amo['N'] == 0 && pieces_amo['B'] == 0 && pieces_amo['n'] == 2){
+            eval_memory[hash] = 0; 
+            return 0;  
+        }
+        if(pieces_amo['n'] == 0 && pieces_amo['b'] == 0 && pieces_amo['N'] == 2){ 
+            eval_memory[hash] = 0; 
+            return 0;  
+        }
+    }
+    for(auto x : pieces){ 
+        if('a' <= x && x <= 'z') 
+            black_score += pieces_amo[x]*value[x]; 
+        else 
+            white_score += pieces_amo[x]*value[x]; 
+        pieces_amo[x] = 0; 
+    } 
+    // dodac tutaj score za pionki - wolne, zdublowane i izolowane 
+    eval_memory[hash] = (white_score - black_score)*sign_col(pos->mover); 
+    return (white_score - black_score)*sign_col(pos->mover); 
+} 
+
+const int INF = 100000009;  
+string super_anwser; int mega_depth; 
+int nega_best_move(position* pos, int depth){ 
+    if(depth == 0) 
+        return evaluate(pos); 
+    int max = -INF; string git_move; int score; 
+    vector<string> moves = possible_moves(pos, pos->mover);  
+    pair<vector<string>, bitset<5>> data; 
+    for(auto x: moves){   
+        //cout << x << "\n"; 
+        data = make_move(x, pos);
+        //visualize(pos);  
+        score = -nega_best_move(pos, depth-1);  
+        if(score > max){ 
+            max = score; 
+            git_move = x; 
+        } 
+        pop_move(data, pos);
+        //visualize(pos); 
+    } 
+    if(mega_depth == depth){ 
+        super_anwser = git_move; 
+    }
+    return max; 
+}
+
+string search(position *pos, int depth = 3){ 
+    mega_depth = depth; 
+    nega_best_move(pos, depth);
+    return super_anwser; 
 }
 
 
 
-int main() {
+int main() { 
+    srand(time(NULL)); 
     init_data();  
+ 
     position pos;
-    string basic_fen;
-   // getline(cin, basic_fen);
     //basic_fen = beginnig_fen;
     int val;
-    pos = position_from_fen(beginnig_fen);
-    visualize(&pos); 
+    // vector<string> ruchy; 
+    // pos = position_from_fen(beginnig_fen);
+    // ruchy = possible_moves(&pos, pos.mover); 
+    // for(auto x : ruchy){  
+    //     cout << uci_from_our_fromat(x, &pos) << "\n\n"; 
+    //     pair<vector<string>, bitset<5>> rollback = make_move(x, &pos); 
+    //     visualize(&pos);  
+    //     pop_move(rollback, &pos); 
+    //     visualize(&pos); 
+    // } 
+    // exit(0);  
+    pos = position_from_fen(beginnig_fen); 
+    visualize(&pos);   
+    string color; cin >> color;  
+    string uci_move, move; 
+    int used_dep = 3; 
+    if(color == "white"){ 
+        while (1){   
+            cin >> uci_move; 
+            make_move(our_format_from_uci(uci_move,&pos), &pos); 
+            visualize(&pos); 
+            cout << "ewaluacja: " << evaluate(&pos) << "\n"; 
+            move = search(&pos,used_dep); 
+            uci_move = uci_from_our_fromat(move, &pos);  
+            make_move(move, &pos);   
+            visualize(&pos); 
+            cout << "ewaluacja: " << evaluate(&pos) << "\n"; 
+            cout << "ANWSER: " << uci_move << "\n";
+
+        }
+    } 
+    if(color == "black"){ 
+        while (1){   
+            move = search(&pos,used_dep); 
+            uci_move = uci_from_our_fromat(move, &pos);
+            make_move(move, &pos);   
+            visualize(&pos); 
+            cout << "ewaluacja: " << evaluate(&pos) << "\n";
+            cout << "ANWSER: " << uci_move << "\n";
+            cin >> uci_move; 
+            make_move(our_format_from_uci(uci_move, &pos), &pos); 
+            visualize(&pos); 
+            cout << "ewaluacja: " << evaluate(&pos) << "\n";  
+        }
+    }
+
+    
+    cout << evaluate(&pos) << "\n"; 
     exit(0); 
-    vector<string> moves = possible_moves(&pos, pos.mover);
-    // cout << sz(moves) << "\n";
-    // for(auto x : moves)    
-    //     cout << x << "\n";  
+    vector<string> moves = possible_moves(&pos, pos.mover); 
     vector<string> uci_moves;
     for (auto x : moves) {
         uci_moves.pb(uci_from_our_fromat(x, &pos));
