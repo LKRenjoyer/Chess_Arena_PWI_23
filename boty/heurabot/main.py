@@ -3,8 +3,20 @@ from MinMax import *
 import sys
 from sys import argv
 from contextlib import redirect_stdout
+from time import perf_counter
 
 board = chess.Board(fen=argv[2])
+
+# before = perf_counter()
+# for i in range(29474):
+#     # l = []
+#     # l.extend(board.legal_moves)
+#     # for _ in board.legal_moves:...
+#     list(board.legal_moves).sort(key=lambda x:x.from_square)
+#     board.push_uci('e2e4')
+#     board.pop()
+# time = perf_counter()-before
+# print(time)
 
 if (argv[1]=='b' and board.turn) or (argv[1]=='w' and not board.turn):
     move=input()
