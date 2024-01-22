@@ -599,10 +599,10 @@ double ewaluacja_pozycji(pozycja *poz) {
     //izolowane piony
     for(int i = 1; i < 7; i++) {
         if(pionyb[i] > 0 && pionyb[i - 1] == 0 && pionyb[i + 1] == 0) {
-            wart -= 0.25;
+            wart -= 0.15;
         }
         if(pionyc[i] > 0 && pionyc[i - 1] == 0 && pionyc[i + 1] == 0) {
-            wart += 0.25;
+            wart += 0.15;
         }
     }
     //bezpieczenstwo krola bialego
@@ -657,6 +657,14 @@ double ewaluacja_pozycji(pozycja *poz) {
 }
 
 void zmiana_glebokosci(pozycja *poz) {
+
+    //test czy kolizja
+    //for(auto i : liczz) {
+    //    if(i.second > 1) {
+    //        fprintf(stderr, "%d duuuuu\n", i.second);
+    //    }
+    //}
+
     int liczfigury[256] = {};
     for(int i = 0; i <= 7; i++) {
         for(int ii = 0; ii <= 7; ii++) {
@@ -665,15 +673,15 @@ void zmiana_glebokosci(pozycja *poz) {
     }
     bool czy_endgame_b = 0;
     bool czy_endgame_c = 0;
-    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 20)
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 16)
         czy_endgame_b = 1;
-    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 20)
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 16)
         czy_endgame_c = 1;
     bool czy_endgame2_b = 0;
     bool czy_endgame2_c = 0;
-    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 6)
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 8)
         czy_endgame2_b = 1;
-    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 6)
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 8)
         czy_endgame2_c = 1;
     if(czy_endgame_b || czy_endgame2_c)
         glebokoscaktualna = glebokoscsrodkowa;
@@ -834,7 +842,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                         {
                             if (poz->plansza[7][2]==' '&&poz->plansza[7][1]==' '&&poz->plansza[7][3]==' '&&czy_pole_jest_szachowane(7,2,'w',poz)==0&&czy_pole_jest_szachowane(7,3,'w',poz)==0)
                             {
-                                string slowo=pole(i,j,7,1);
+                                string slowo=pole(i,j,7,2);
                                 cos.push_back(slowo);
                             }
                         }
@@ -1573,7 +1581,7 @@ vector <string> mozliwe_ruchy(pozycja *poz)
                         {
                             if (poz->plansza[0][2]==' '&&poz->plansza[0][1]==' '&&poz->plansza[0][3]==' '&&czy_pole_jest_szachowane(0,2,'b',poz)==0&&czy_pole_jest_szachowane(0,3,'b',poz)==0)
                             {
-                                string slowo=pole(i,j,0,1);
+                                string slowo=pole(i,j,0,2);
                                 cos.push_back(slowo);
                             }
                         }
@@ -2261,7 +2269,7 @@ long long Zobrist_hash_start(pozycja *poz)
     	    {
     	    	wynik^=tab1[0][i*8+j];
     	    }
-    	    else if (poz->plansza[i][j]=='h')
+    	    else if (poz->plansza[i][j]=='q')
     	    {
     	    	wynik^=tab1[1][i*8+j];
     	    }
@@ -2285,7 +2293,7 @@ long long Zobrist_hash_start(pozycja *poz)
     	    {
     	    	wynik^=tab1[6][i*8+j];
     	    }
-    	    else if (poz->plansza[i][j]=='H')
+    	    else if (poz->plansza[i][j]=='Q')
     	    {
     	    	wynik^=tab1[7][i*8+j];
     	    }
@@ -2373,7 +2381,7 @@ long long Zobrist_hash_start2(pozycja *poz)
     	    {
     	    	wynik^=tab3[0][i*8+j];
     	    }
-    	    else if (poz->plansza[i][j]=='h')
+    	    else if (poz->plansza[i][j]=='q')
     	    {
     	    	wynik^=tab3[1][i*8+j];
     	    }
@@ -2397,7 +2405,7 @@ long long Zobrist_hash_start2(pozycja *poz)
     	    {
     	    	wynik^=tab3[6][i*8+j];
     	    }
-    	    else if (poz->plansza[i][j]=='H')
+    	    else if (poz->plansza[i][j]=='Q')
     	    {
     	    	wynik^=tab3[7][i*8+j];
     	    }
@@ -2929,13 +2937,7 @@ bool czy_mat(pozycja *poz)
 void czysc() {
     unmp.clear();
     unmp2.clear();
-}
-
-void wypisz_wart_pozycji(pozycja poz) {
-    long long hasz1 = Zobrist_hash_start(&poz) * glebokoscaktualna;
-    long long hasz2 = Zobrist_hash_start2(&poz) * glebokoscaktualna;
-    cout << "hasz1 = " << hasz1 << ' ' << unmp[hasz1] << '\n';
-    cout << "hasz2 = " << hasz2 << ' ' << unmp2[hasz2] << '\n';
+    //liczz.clear();
 }
 
 double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
@@ -2961,8 +2963,9 @@ double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
             wyn *= (double)(-1);
         return wyn;
     }
-    long long hasz = Zobrist_hash_start(&stan) * (glebokosc + 1);
-    long long hasz2 = Zobrist_hash_start2(&stan) * (glebokosc + 1);
+    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    //liczz[hasz]++;
     if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
         if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
             return unmp[hasz];
@@ -3012,8 +3015,9 @@ double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc) {
             wyn *= (double)(-1);
         return wyn;
     }
-    long long hasz = Zobrist_hash_start(&stan) * (glebokosc + 1);
-    long long hasz2 = Zobrist_hash_start2(&stan) * (glebokosc + 1);
+    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    //liczz[hasz]++;
     if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
         if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
             return unmp[hasz];
