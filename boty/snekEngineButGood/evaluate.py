@@ -91,11 +91,13 @@ def evaluate(board):
         partOfTheGame = 1
     #the main loop
     for square, piece in board.piece_map().items():
-        trueSquare = (7 - (square // 8)) * 8 + 7 - (square % 8)
-        if piece.color:
+        trueSquare = (7 - (square // 8)) * 8 + (square % 8)
+        if piece.color == chess.WHITE:
+            #print(f"white {piece.color}, {piece.piece_type - 1}, {trueSquare}")
             score += materialValue[piece.piece_type - 1]
             score += squareValue[piece.piece_type - 1][trueSquare]
         else:
+            #print(f"black {piece.color}, {piece.piece_type - 1}, {trueSquare}")
             score -= materialValue[piece.piece_type - 1]
             score -= squareValue[piece.piece_type - 1][63 - trueSquare]
     if board.turn == chess.BLACK:
@@ -104,6 +106,7 @@ def evaluate(board):
     return score
 
 '''board = chess.Board(startingFen)
+print(evaluate(board))
 print(board)
 legal_moves = list(board.legal_moves)
 print("Legal Moves:")
