@@ -5,14 +5,14 @@ import random
 from zobrist import *
 import time
 
-def alphabetaMax(board, alpha, beta, depth, hash, zobrist, targetDepth):
+def alphabetaMax(board, alpha, beta, depth, hash, zobrist):
     if hash in zobrist.hashMap:
         return zobrist.hashMap[hash]
     possibleMoves = list(board.legal_moves)
-    if depth == targetDepth:
+    if depth == MinMaxDepth:
         return evaluate(board)
     if len(possibleMoves) == 0:
-        return evaluate(board) * (targetDepth - depth)
+        return evaluate(board) * (MinMaxDepth + 5 - depth)
         '''score = 0
         if hash in zobrist.hashMap:
             score = zobrist.hashMap[hash]
@@ -21,11 +21,12 @@ def alphabetaMax(board, alpha, beta, depth, hash, zobrist, targetDepth):
             zobrist.hashMap[hash] = score
         return score
         return evaluate(board)'''
+    random.shuffle(possibleMoves)
     bestMove = None
     for move in possibleMoves:
         newHash = zobrist.changeHash(board, hash, move.uci())
         board.push(move)
-        result = alphabetaMin(board, alpha, beta, depth + 1, newHash, zobrist, targetDepth)
+        result = alphabetaMin(board, alpha, beta, depth + 1, newHash, zobrist)
         board.pop()
         if result >= beta:
             zobrist.hashMap[hash] = beta
@@ -39,14 +40,14 @@ def alphabetaMax(board, alpha, beta, depth, hash, zobrist, targetDepth):
         zobrist.hashMap[hash] = alpha
         return alpha
 
-def alphabetaMin(board, alpha, beta, depth, hash, zobrist, targetDepth):
+def alphabetaMin(board, alpha, beta, depth, hash, zobrist):
     if hash in zobrist.hashMap:
         return zobrist.hashMap[hash]
     possibleMoves = list(board.legal_moves)
-    if depth == targetDepth:
+    if depth == MinMaxDepth:
         return -evaluate(board)
     if len(possibleMoves) == 0:
-        return -evaluate(board) * (targetDepth - depth)
+        return -evaluate(board) * (MinMaxDepth + 5 - depth)
         '''score = 0
         if hash in zobrist.hashMap:
             score = zobrist.hashMap[hash]
@@ -55,11 +56,12 @@ def alphabetaMin(board, alpha, beta, depth, hash, zobrist, targetDepth):
             zobrist.hashMap[hash] = score
         return score
         return -evaluate(board)'''
+    random.shuffle(possibleMoves)
     bestMove = None
     for move in possibleMoves:
         newHash = zobrist.changeHash(board, hash, move.uci())
         board.push(move)
-        result = alphabetaMax(board, alpha, beta, depth + 1, newHash, zobrist, targetDepth)
+        result = alphabetaMax(board, alpha, beta, depth + 1, newHash, zobrist)
         board.pop()
         if result <= alpha:
             zobrist.hashMap[hash] = alpha
@@ -73,7 +75,7 @@ def alphabetaMin(board, alpha, beta, depth, hash, zobrist, targetDepth):
         zobrist.hashMap[hash] = beta
         return beta
     
-'''board = chess.Board("4k3/1r1bbp2/1p1p3p/2p3p1/8/6P1/1P1P1P1P/1RN1K3 w - - 0 1")
+'''board = chess.Board("5k2/8/8/8/Q7/4K3/8/8 b - - 0 1")
 zobrist = Zobrist()
 hash = zobrist.getHash(board)
 while 1:
@@ -84,7 +86,7 @@ while 1:
     hash = zobrist.changeHash(board, hash, move.uci())
     board.push(move)
     print(board)
-    move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist, 6)
-    print(move.uci(), flush=True)
-    hash = zobrist.changeHash(board, hash, move.uci())
+    move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist, 4)
+    print(move, flush=True)
+    hash = zobrist.changeHash(board, hash, move)
     board.push(move)'''

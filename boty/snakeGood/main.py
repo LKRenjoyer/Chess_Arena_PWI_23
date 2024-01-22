@@ -10,14 +10,13 @@ hash = zobrist.getHash(board)
 skip = 0
 if (board.turn == chess.WHITE and sys.argv[1] == 'b') or (board.turn == chess.BLACK and sys.argv[1] == 'w'):
     skip = 1
-depth = MinMaxDepth
 while 1:
-    if len(board.piece_map()) < 10:
-        depth = LateGameDepth
+    '''if len(board.piece_map()) <= 12:
+        depth = LateGameDepth'''
     if skip == 0:
         #print(board)
         zobrist.hashMap.clear()
-        move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist, depth)
+        move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist)
         print(move.uci(), flush=True)
         hash = zobrist.changeHash(board, hash, move.uci())
         board.push(move)

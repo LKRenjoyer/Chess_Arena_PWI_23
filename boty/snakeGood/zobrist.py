@@ -7,7 +7,7 @@ class Zobrist:
         random.seed(seed)
         self.hashKeys = []
         for i in range(12 * 64 + 1):
-            self.hashKeys.append(random.randint(1, infinity * infinity))
+            self.hashKeys.append(random.randint(1, infinity * infinity * infinity))
         self.hashMap = {}
     def getHash(self, board):
         hash = 0
