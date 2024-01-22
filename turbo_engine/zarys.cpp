@@ -1330,17 +1330,4 @@ int main(int argc, char** argv) {
             check_stage(&pos);  
         }
     }
-
-    
-    cout << evaluate(&pos) << "\n"; 
-    exit(0); 
-    vector<string> moves = possible_moves(&pos, pos.mover); 
-    vector<string> uci_moves;
-    for (auto x : moves) {
-        uci_moves.pb(uci_from_our_fromat(x, &pos));
-    }
-    sort(all(uci_moves));
-    cout << sz(uci_moves) << "\n";
-    for (auto x : uci_moves)
-        cout << x << "\n";
 }
