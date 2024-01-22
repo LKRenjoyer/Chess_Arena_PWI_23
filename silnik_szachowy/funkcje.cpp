@@ -2941,6 +2941,16 @@ void czysc() {
 }
 
 double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
+    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    //liczz[hasz]++;
+    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
+        if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
+            return unmp[hasz];
+        else {
+            fprintf(stderr, "kolizja haszy\n");
+        }
+    }
     //fprintf(stderr, "MAX = %Lf %Lf\n", alpha, beta);
     if(glebokosc == 0) {
         double wyn = ewaluacja_pozycji(&stan);
@@ -2950,6 +2960,8 @@ double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
             wyn *= (double)(-1);
         //fprintf(stderr, "lisc1 %Lf\n", wyn);
         //wizualizacja(&stan);
+        unmp[hasz] = wyn;
+        unmp[hasz2] = wyn; 
         return wyn;
     }
     vector <string> ruchy = mozliwe_ruchy(&stan);
@@ -2962,16 +2974,6 @@ double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
         if(kolor_bota == 'b')
             wyn *= (double)(-1);
         return wyn;
-    }
-    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
-    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
-    //liczz[hasz]++;
-    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
-        if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
-            return unmp[hasz];
-        else {
-            fprintf(stderr, "kolizja haszy\n");
-        }
     }
     for(int i = 0; i < ruchy.size(); i++) {
         pozycja stan_2 = stan;
@@ -2994,6 +2996,16 @@ double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc) {
 }
 
 double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc) {
+    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
+    //liczz[hasz]++;
+    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
+        if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
+            return unmp[hasz];
+        else {
+            fprintf(stderr, "kolizja haszy\n");
+        }
+    }
     //fprintf(stderr, "MIN = %Lf %Lf\n", alpha, beta);
     if(glebokosc == 0) {
         double wyn = -ewaluacja_pozycji(&stan);
@@ -3002,6 +3014,8 @@ double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc) {
         if(abs(wyn) > 1000)
             wyn *= (double)(glebokosc + 1);
         //fprintf(stderr, "lisc2 %Lf\n", wyn);
+        unmp[hasz] = wyn;
+        unmp2[hasz2] = wyn;
         return wyn;
     }
     vector <string> ruchy = mozliwe_ruchy(&stan);
@@ -3013,17 +3027,9 @@ double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc) {
         }
         if(kolor_bota == 'w')
             wyn *= (double)(-1);
+        unmp[hasz] = wyn;
+        unmp2[hasz2] = wyn;
         return wyn;
-    }
-    __int128_t hasz = (__int128_t)Zobrist_hash_start(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
-    __int128_t hasz2 = (__int128_t)Zobrist_hash_start2(&stan) ^ ((__int128_t)1 << (80 + glebokosc));
-    //liczz[hasz]++;
-    if(unmp.count(hasz) == 1 && unmp2.count(hasz2) == 1) {
-        if(unmp[hasz] - unmp2[hasz2] < (double)0.000001 && unmp2[hasz2] - unmp[hasz] < (double)0.000001)
-            return unmp[hasz];
-        else {
-            fprintf(stderr, "kolizja haszy\n");
-        }
     }
     for(int i = 0; i < ruchy.size(); i++) {
         pozycja stan_2 = stan;
