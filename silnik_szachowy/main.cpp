@@ -17,7 +17,7 @@ long long tab4[13];
 int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
     najlepszy_ruch = "";
-    glebokoscaktualna = 6;
+    glebokoscaktualna = 4;
     glebokoscsrodkowa = 6;
     glebokosckoncowa = 6;
     string fen = argv[2];

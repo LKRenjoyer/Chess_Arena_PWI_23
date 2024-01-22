@@ -651,6 +651,7 @@ long double ewaluacja_pozycji(pozycja *poz) {
     if(czy.size() == 0) {
         return 0;
     }
+    //roszady
 
     return wart;
 }
@@ -664,17 +665,17 @@ void zmiana_glebokosci(pozycja *poz) {
     }
     bool czy_endgame_b = 0;
     bool czy_endgame_c = 0;
-    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 15)
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 20)
         czy_endgame_b = 1;
-    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 15)
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 20)
         czy_endgame_c = 1;
     bool czy_endgame2_b = 0;
     bool czy_endgame2_c = 0;
-    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 4)
+    if(liczfigury['Q'] * 9 + liczfigury['R'] * 5 + liczfigury['B'] * 3 + liczfigury['N'] * 3 <= 6)
         czy_endgame2_b = 1;
-    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 4)
+    if(liczfigury['q'] * 9 + liczfigury['r'] * 5 + liczfigury['b'] * 3 + liczfigury['n'] * 3 <= 6)
         czy_endgame2_c = 1;
-    if(czy_endgame_b && czy_endgame2_c)
+    if(czy_endgame_b || czy_endgame2_c)
         glebokoscaktualna = glebokoscsrodkowa;
     if((czy_endgame2_b && czy_endgame2_c) || (czy_endgame2_b && czy_endgame_c) || (czy_endgame2_c && czy_endgame_b))
         glebokoscaktualna = glebokosckoncowa;
@@ -2473,15 +2474,15 @@ long long Zobrist_hash_start2(pozycja *poz)
     return wynik;
 }
 
-long long Zobrist_hash_ruch(string ruch,pozycja *poz,int hash)
+long long Zobrist_hash_ruch(string ruch,pozycja *poz,long long hash)
 {
-    int wynik=hash;
-    int x1=pole_w_liczby(ruch[0],ruch[1])[0];
-    int y1=pole_w_liczby(ruch[0],ruch[1])[1];
-    int x2=pole_w_liczby(ruch[2],ruch[3])[0];
-    int y2=pole_w_liczby(ruch[2],ruch[3])[1];
-    int x3;
-    int y3;
+    long long wynik=hash;
+    long long x1=pole_w_liczby(ruch[0],ruch[1])[0];
+    long long y1=pole_w_liczby(ruch[0],ruch[1])[1];
+    long long x2=pole_w_liczby(ruch[2],ruch[3])[0];
+    long long y2=pole_w_liczby(ruch[2],ruch[3])[1];
+    long long x3;
+    long long y3;
     wynik^=tab2[0];
     if (poz->czy_bicie_w_przelocie==1)
     {
