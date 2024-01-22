@@ -238,5 +238,11 @@ while running:
             timer_box.twhite-=dt
         else:
             timer_box.tblack-=dt
+        if timer_box.twhite<=0:
+            timer_box.twhite = 0
+            timer_stopped = True
+        if timer_box.tblack<=0:
+            timer_box.tblack = 0
+            timer_stopped = True
 
 pg.quit()
