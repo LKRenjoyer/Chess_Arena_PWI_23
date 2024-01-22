@@ -11,8 +11,6 @@ skip = 0
 if (board.turn == chess.WHITE and sys.argv[1] == 'b') or (board.turn == chess.BLACK and sys.argv[1] == 'w'):
     skip = 1
 while 1:
-    '''if len(board.piece_map()) <= 12:
-        depth = LateGameDepth'''
     if skip == 0:
         #print(board)
         zobrist.hashMap.clear()
@@ -20,7 +18,7 @@ while 1:
         print(move.uci(), flush=True)
         hash = zobrist.changeHash(board, hash, move.uci())
         board.push(move)
-        if board.is_checkmate():
+        if board.is_checkmate() or board.is_stalemate():
             break
     #print(board)
     skip = 0
@@ -28,6 +26,6 @@ while 1:
     move = chess.Move.from_uci(move)
     hash = zobrist.changeHash(board, hash, move.uci())
     board.push(move)
-    if board.is_checkmate():
+    if board.is_checkmate() or board.is_stalemate():
         break
 exit(0)

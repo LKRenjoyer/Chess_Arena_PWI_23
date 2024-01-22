@@ -1,20 +1,27 @@
 from chess_rewrite import *
 from evaluate import *
 from data import *
-import sys
 import random
+from zobrist import *
+import time
 
-def alphabetaMax(state, alpha, beta, depth):
-    possibleMoves = state.getLegalMoves()
-    if depth == MinMaxDepth or len(possibleMoves) == 0:
-        return evaluate(state)
-    bestMove = None
+def alphabetaMax(board, alpha, beta, depth, hash, zobrist, targetDepth):
+    if hash in zobrist.hashMap:
+        return zobrist.hashMap[hash]
+    possibleMoves = board.getLegalMoves()
+    if depth == targetDepth:
+        return evaluate(board)
+    if len(possibleMoves) == 0:
+        return evaluate(board) * (targetDepth + 5 - depth)
     random.shuffle(possibleMoves)
+    bestMove = None
     for move in possibleMoves:
-        state.push(move)
-        result = alphabetaMin(state, alpha, beta, depth + 1)
-        state.pop()
+        newHash = zobrist.changeHash(board, hash, move)
+        board.push(move)
+        result = alphabetaMin(board, alpha, beta, depth + 1, newHash, zobrist, targetDepth)
+        board.pop()
         if result >= beta:
+            zobrist.hashMap[hash] = beta
             return beta
         if result > alpha:
             alpha = result
@@ -22,19 +29,26 @@ def alphabetaMax(state, alpha, beta, depth):
     if depth == 0:
         return bestMove
     else:
+        zobrist.hashMap[hash] = alpha
         return alpha
 
-def alphabetaMin(state, alpha, beta, depth):
-    possibleMoves = state.getLegalMoves()
-    if depth == MinMaxDepth or len(possibleMoves) == 0:
-        return -evaluate(state)
-    bestMove = None
+def alphabetaMin(board, alpha, beta, depth, hash, zobrist, targetDepth):
+    if hash in zobrist.hashMap:
+        return zobrist.hashMap[hash]
+    possibleMoves = board.getLegalMoves()
+    if depth == targetDepth:
+        return -evaluate(board)
+    if len(possibleMoves) == 0:
+        return -evaluate(board) * (targetDepth + 5 - depth)
     random.shuffle(possibleMoves)
+    bestMove = None
     for move in possibleMoves:
-        state.push(move)
-        result = alphabetaMax(state, alpha, beta, depth + 1)
-        state.pop()
+        newHash = zobrist.changeHash(board, hash, move)
+        board.push(move)
+        result = alphabetaMax(board, alpha, beta, depth + 1, newHash, zobrist, targetDepth)
+        board.pop()
         if result <= alpha:
+            zobrist.hashMap[hash] = alpha
             return alpha
         if result < beta:
             beta = result
@@ -42,4 +56,5 @@ def alphabetaMin(state, alpha, beta, depth):
     if depth == 0:
         return bestMove
     else:
+        zobrist.hashMap[hash] = beta
         return beta

@@ -2,7 +2,6 @@ import chess
 import math
 from data import *
 from zobrist import *
-#temporary version to get replace my subpar chess library with a professional one
 
 #square tables and material values from https://www.chessprogramming.org/Simplified_Evaluation_Function with some tweaks
 
@@ -135,7 +134,7 @@ def evaluate(board):
     
     if board.turn == chess.BLACK:
         score *= -1
-    score += 50
+    score += 50 # bonus for having a tempo advantage
     return score
 
 '''board = chess.Board("5k2/Q7/8/8/8/4K3/8/8 w - - 0 1")
