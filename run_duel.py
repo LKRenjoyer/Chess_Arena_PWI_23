@@ -26,7 +26,7 @@ parser.add_argument("-ngrok", type=str, nargs='?',default="localhost", help='Pod
 #ustawianie gry
 parser.add_argument("-time", type=str, nargs='?',default="600", help='Podaj ile ma czasu ma mieć każdy gracz')
 parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
-parser.add_argument("-kolor", type=str, nargs='?',default="nic", help='Ustaw kolor jakim ma grac gracz') #not implemented
+# parser.add_argument("-kolor", type=str, nargs='?',default="nic", help='Ustaw kolor jakim ma grac gracz') #not implemented
 parser.add_argument("-randomfen", action='store_true', help='Czy chcesz wystartować grę z randomowym (w miarę równym) fenem')
 
 

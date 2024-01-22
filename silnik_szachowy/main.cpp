@@ -17,7 +17,7 @@ long long tab4[13];
 int main(int argc, char ** argv) {
     kolor_bota = argv[1][0];
     najlepszy_ruch = "";
-    glebokoscaktualna = 6;
+    glebokoscaktualna = 4;
     glebokoscsrodkowa = 6;
     glebokosckoncowa = 6;
     string fen = argv[2];
@@ -39,30 +39,19 @@ int main(int argc, char ** argv) {
         tab4[i] = gen() % (b - a + 1) + a;
     //koniec tabelek hashy
 
-    
     while(1) {
         if(poz.czyj_ruch == kolor_bota) {
             czysc();
-            alphaBetaMax(poz, (long double)-100000000, (long double)100000000, glebokoscaktualna);
-            /*
-            vector <string> ruchy = mozliwe_ruchy(&poz);
-            for(int i = 0; i < ruchy.size(); i++) {
-                pozycja poz_2 = poz;
-                porusz(ruchy[i], &poz_2);
-                cout << ruchy[i] << '\n';
-                wypisz_wart_pozycji(poz_2);
-            }
-            */
+            alphaBetaMax(poz, (double)-100000000, (double)100000000, glebokoscaktualna);
             porusz(najlepszy_ruch, &poz);
             if(najlepszy_ruch.size() == 5 && najlepszy_ruch[4] >= 'A' && najlepszy_ruch[4] <= 'Z') {
                 najlepszy_ruch[4] -= ('A' - 'a');
             }
+            if(najlepszy_ruch.size() < 3) {
+                fprintf(stderr, "blad");
+            }
             cout << najlepszy_ruch << endl;
             zmiana_glebokosci(&poz);
-
-            //usunac
-            //wizualizacja(&poz);
-            //usunac
         }
         else {
             string ruch_przeciwnika;
@@ -75,9 +64,7 @@ int main(int argc, char ** argv) {
         if(ruchy.size() == 0)
             break;
     }
-    
 
     return 0;
 }
 
-//fen "r2qkb1r/ppp3p1/4pn1p/8/1n6/P1N2N2/1PPP1PPP/R1BQK2R b KQkq - 0 1"

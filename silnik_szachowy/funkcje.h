@@ -1,3 +1,5 @@
+#pragma GCC optimize("O3","unroll-loops")
+
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -43,7 +45,7 @@ void porusz(string ruch, pozycja *poz);
 bool czy_pole_jest_szachowane(int y, int x, char kolor, pozycja *poz);
 void fen_to_chessboard(string fen, pozycja *poz);
 void wizualizacja(pozycja *poz);
-long double ewaluacja_pozycji(pozycja *poz);
+double ewaluacja_pozycji(pozycja *poz);
 bool czy_w_planszy(int i,int j);
 string pole(int a,int b,int c,int d);
 vector <string> mozliwe_ruchy(pozycja *poz);
@@ -58,5 +60,5 @@ bool czy_mat(pozycja *poz);
 
 void wypisz_wart_pozycji(pozycja poz);
 void czysc();
-long double alphaBetaMax(pozycja stan, long double alpha, long double beta, int glebokosc);
-long double alphaBetaMin(pozycja stan, long double alpha, long double beta, int glebokosc);
+double alphaBetaMax(pozycja stan, double alpha, double beta, int glebokosc);
+double alphaBetaMin(pozycja stan, double alpha, double beta, int glebokosc);
