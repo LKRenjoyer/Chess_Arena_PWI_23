@@ -42,7 +42,7 @@ int main(int argc, char ** argv) {
     while(1) {
         if(poz.czyj_ruch == kolor_bota) {
             czysc();
-            alphaBetaMax(poz, (long double)-100000000, (long double)100000000, glebokoscaktualna);
+            alphaBetaMax(poz, (double)-100000000, (double)100000000, glebokoscaktualna);
             porusz(najlepszy_ruch, &poz);
             if(najlepszy_ruch.size() == 5 && najlepszy_ruch[4] >= 'A' && najlepszy_ruch[4] <= 'Z') {
                 najlepszy_ruch[4] -= ('A' - 'a');
