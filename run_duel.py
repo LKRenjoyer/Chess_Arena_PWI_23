@@ -35,10 +35,10 @@ parser.add_argument("-randomfen", action='store_true', help='Czy chcesz wystarto
 args = parser.parse_args()
 
 if args.randomfen:
-    with open("random200_positions.txt","r") as f:
+    with open("random700_positions.txt","r") as f:
         args.fen = random.choice(list(map(lambda x:x[5:],filter(lambda x:x.split(" ")[0]=="FEN:",f.read().split("\n")))))
 
-        
+
 bot1,bot2 = args.bot1,args.bot2
 # print(args.time)
 
@@ -47,6 +47,15 @@ bot1,bot2 = args.bot1,args.bot2
 # if len(args.boty)<1 and args.pve:
 #     raise ValueError("Nie podano wystarczajaco botow")
 
+name = "xd"
+with open("zapis_gier/nazwa.txt","r+") as f:
+    czyt = int(f.read())
+    name = str(czyt)
+    czyt+=1
+    f.seek(0)
+    f.write(str(czyt))
+
+log = open(f"zapis_gier/{name}","a")
 
 if args.eve:
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve",f"--time={args.time}"],stdout=subprocess.PIPE)
@@ -57,6 +66,7 @@ if args.eve:
     # package = server.stdout.readline().decode('utf-8').split()
     # print(package)
 
+
     if not(args.nv):
         visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}",f"--time={args.time}"], stdin=subprocess.PIPE, encoding="utf-8")
 
@@ -64,6 +74,10 @@ if args.eve:
     while True:
         package = server.stdout.readline().decode('utf-8').strip().split("|")
         move,white_time,black_time = package
+
+        log.write(f"{move}\n")
+        log.flush()
+
 
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
