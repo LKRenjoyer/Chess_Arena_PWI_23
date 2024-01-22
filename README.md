@@ -28,9 +28,9 @@ Przykład: `python run_duel.py -pve 1000101bot -time=600 -fen="r1bqkb1r/pppp1ppp
 # bot_jana_1_lepszy
 
 # snakeOrginal
-Bot napisany w Pythonie przez Cypriana Ziółkowskiego z własną biblioteczką szachową. Okazął się za wolny by obsługiwać na początku gry głębokość 4, zatem działa na głębokości 2 i jest dość słaby. W końcówce radzi sobie z głębokośćią 4 i jest w stanie matować królem i wieżą, bądź królową.
+Bot napisany w Pythonie przez Cypriana Ziółkowskiego z własną biblioteczką szachową. Używa alpha-beta pruning i spamiętywania ewaluacji pozycji za pomocą Zobrist hashing. Okazął się za wolny by obsługiwać na początku gry głębokość 4, zatem działa na głębokości 2 i jest dość słaby. W końcówce radzi sobie z głębokośćią 4 i jest w stanie matować królem i wieżą, bądź królową.
 # snakeGood
-Bot napisany w Pythonie przez Cypriana Ziółkowskiego. Jest to wersja snakeOriginal używająca biblioteki pythonowej chess. Obsługuje głębokość 4 i jest całkiem solidny. W końcówce jest w stanie matować królem i wieżą, bądź królową.
+Bot napisany w Pythonie przez Cypriana Ziółkowskiego. Jest to wersja snakeOriginal używająca biblioteki pythonowej chess. Używa alpha-beta pruning i spamiętywania ewaluacji pozycji za pomocą Zobrist hashing. Obsługuje przez całą grę głębokość 4 i jest całkiem solidny. W końcówce jest w stanie matować królem i wieżą, bądź królową.
 # heurabot
 
 # 1000101bot - jako, że jest on napisany w C++, to należy go skompilować
