@@ -13,6 +13,7 @@ if (board.turn == chess.WHITE and sys.argv[1] == 'b') or (board.turn == chess.BL
 while 1:
     if skip == 0:
         #print(board)
+        zobrist.hashMap.clear()
         move = alphabetaMax(board, -infinity*infinity, infinity*infinity, 0, hash, zobrist)
         print(move.uci(), flush=True)
         hash = zobrist.changeHash(board, hash, move.uci())

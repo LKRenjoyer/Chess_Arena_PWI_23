@@ -8,6 +8,7 @@ import subprocess
 import argparse
 import time
 from server.server_const import *
+import random
 
 parser = argparse.ArgumentParser(description='Główny program do runowania botów, musisz dodać folder z nazwą twojego bota do folderu boty i w nim plik main.py lub main.exe')
 #ustawianie trybu gry oraz podawanie nazw botów
@@ -26,10 +27,17 @@ parser.add_argument("-ngrok", type=str, nargs='?',default="localhost", help='Pod
 parser.add_argument("-time", type=str, nargs='?',default="600", help='Podaj ile ma czasu ma mieć każdy gracz')
 parser.add_argument('-fen', type=str, nargs='?', default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', help='Od jakiego fena gra ma sie zaczac')
 parser.add_argument("-kolor", type=str, nargs='?',default="nic", help='Ustaw kolor jakim ma grac gracz') #not implemented
+parser.add_argument("-randomfen", action='store_true', help='Czy chcesz wystartować grę z randomowym (w miarę równym) fenem')
 
 
+    
 
 args = parser.parse_args()
+
+if args.randomfen:
+    with open("random700_positions.txt","r") as f:
+        args.fen = random.choice(list(map(lambda x:x[5:],filter(lambda x:x.split(" ")[0]=="FEN:",f.read().split("\n")))))
+
 
 bot1,bot2 = args.bot1,args.bot2
 # print(args.time)
@@ -39,6 +47,15 @@ bot1,bot2 = args.bot1,args.bot2
 # if len(args.boty)<1 and args.pve:
 #     raise ValueError("Nie podano wystarczajaco botow")
 
+name = "xd"
+with open("zapis_gier/nazwa.txt","r+") as f:
+    czyt = int(f.read())
+    name = str(czyt)
+    czyt+=1
+    f.seek(0)
+    f.write(str(czyt))
+
+log = open(f"zapis_gier/{name}","a")
 
 if args.eve:
     server = subprocess.Popen([sys.executable,'server/main.py',f'--fen={args.fen}',f"--eve",f"--time={args.time}"],stdout=subprocess.PIPE)
@@ -49,6 +66,7 @@ if args.eve:
     # package = server.stdout.readline().decode('utf-8').split()
     # print(package)
 
+
     if not(args.nv):
         visualization = subprocess.Popen([sys.executable,'wizualizacja_gry/display.py',f'--fen={args.fen}',f"--nazwa_bialego={imie_bialego}",f"--nazwa_czarnego={imie_czarnego}",f"--time={args.time}"], stdin=subprocess.PIPE, encoding="utf-8")
 
@@ -56,6 +74,10 @@ if args.eve:
     while True:
         package = server.stdout.readline().decode('utf-8').strip().split("|")
         move,white_time,black_time = package
+
+        log.write(f"{move}\n")
+        log.flush()
+
 
         if len(move)>5:
             koniec = server.stdout.readline().decode('utf-8').strip()
